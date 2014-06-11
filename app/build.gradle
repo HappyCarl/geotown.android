@@ -23,6 +23,9 @@ android {
     }
 }
 
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.appspot.drive_log:drivelog:v1-1.18.0-rc-SNAPSHOT'
+
 }
