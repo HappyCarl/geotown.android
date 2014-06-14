@@ -3,9 +3,11 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://www.testfairy.com/maven' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.11.+'
+        classpath 'com.testfairy.plugins.gradle:testfairy:1.+'
     }
 }
 

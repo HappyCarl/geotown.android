@@ -1,4 +1,5 @@
 apply plugin: 'android'
+apply plugin: 'testfairy'
 
 android {
     compileSdkVersion 19
@@ -20,6 +21,18 @@ android {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+    }
+
+    testfairyConfig {
+        apiKey "$System.env.TESTFAIRY_KEY"
+        metrics "cpu,memory,network,logcat"
+        video "wifi"
+        videoRate "0.5"
+        videoQuality "low"
+        maxDuration "15m"
+        notify true
+        maxDuration "1h"
+        autoUpdate true
     }
 }
 
