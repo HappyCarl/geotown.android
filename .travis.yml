@@ -1,0 +1,25 @@
+language: android
+android:
+  components:
+  - build-tools-19.1.0
+before_script:
+- openssl aes-256-cbc -k "$KEYSTORE_FILE_PASSWORD" -in release.keystore.enc -d -a
+  -out release.keystore
+script:
+- "./gradlew build"
+- if [ "$TRAVIS_BRANCH" = "develop" ]; then ./gradlew testfairyRelease; fi;
+env:
+  global:
+  - secure: WR7j7bQVR5IAvn4fR9xT5IyQglUxmmDj3ohzrSVmTwDCuHEo/QuZX5QxpJHIciSNUBDEiAIQYmtvYredIdoPk3W0s8d7PCYhMdiKgojs/dD65BfxiXDlEos7Y/seTO84m4M10MN0nnwTf8owzlO9FMQioLbDFzJUTQU9d3/wdCo=
+  - secure: Tk776qT+UkyaWF2h3jSSoCLYBKFTekTJLnPwMg+XBj41ChjeUppvjwlYV5uRpRi9s+4CGW/FT1odafofGrJ7TfgKj49C/6DbaNHSCgEdLKvAdn2BjirlaYzJtf7vBy+VD1u7/13m849EO4o16xrWgHzRBJXJ9pZmYeHt5nUGk3I=
+  - secure: g/LSBmGJMqtgbe+GXZMlAbyMQSkpy7sih7e+3JgfyoyCO84fyos4otZlLgmEwleiYYxBOBAgEBnQfANnbL6cN9YXVowRVSw8bzOr/nqjWfJ7OtWQUOwz6KtKIeOvWAALzivGxU7LCagGuvmpUNKmbrHKzUQFGUxpokGvy66uYh4=
+deploy:
+  provider: releases
+  skip_cleanup: false
+  api_key:
+    secure: FGUpXcIJLqZTKg57W/UqiGuEEykA6yJuUaifxNr0LzA0WhqMvLYJV20p9QtGiS30/qKPC8MqoUjGlwzQpmtwOz5XYcLhxYXTAG42/ZTIwfn1B4mERfGZ0KthWXVfvz+sXUEAM9tM8uWaySOmalZTAQ4cfmGvf1qJubABcDm3VDg=
+  file: "./app/build/outputs/apk/app-release.apk"
+  on:
+    tags: true
+    all_branches: false
+    repo: HappyCarl/geotown.android

@@ -3,14 +3,19 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://www.testfairy.com/maven' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.11.+'
+        classpath 'com.testfairy.plugins.gradle:testfairy:1.+'
     }
 }
 
 allprojects {
     repositories {
         mavenCentral()
+        maven {
+            url "https://raw.github.com/HappyCarl/mvn-repo/master/snapshots"
+        }
     }
 }
