@@ -16,10 +16,10 @@ env:
   - secure: g/LSBmGJMqtgbe+GXZMlAbyMQSkpy7sih7e+3JgfyoyCO84fyos4otZlLgmEwleiYYxBOBAgEBnQfANnbL6cN9YXVowRVSw8bzOr/nqjWfJ7OtWQUOwz6KtKIeOvWAALzivGxU7LCagGuvmpUNKmbrHKzUQFGUxpokGvy66uYh4=
 deploy:
   provider: releases
-  skip_cleanup: false
+  skip_cleanup: true
   api_key:
     secure: FGUpXcIJLqZTKg57W/UqiGuEEykA6yJuUaifxNr0LzA0WhqMvLYJV20p9QtGiS30/qKPC8MqoUjGlwzQpmtwOz5XYcLhxYXTAG42/ZTIwfn1B4mERfGZ0KthWXVfvz+sXUEAM9tM8uWaySOmalZTAQ4cfmGvf1qJubABcDm3VDg=
-  file: "./app/build/outputs/apk/app-release.apk"
+  file: "app/build/outputs/apk/app-release.apk"
   on:
     tags: true
     all_branches: false
