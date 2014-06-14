@@ -2,7 +2,9 @@ language: android
 android:
   components:
     - build-tools-19.1.0
-script: "./gradlew testfairyDebug"
+script: 
+  - ./gradlew build 
+  - if [ "$TRAVIS_BRANCH" = "develop" ]; then ./gradlew testfairyDebug; fi;
 env:
   global:
     secure: WR7j7bQVR5IAvn4fR9xT5IyQglUxmmDj3ohzrSVmTwDCuHEo/QuZX5QxpJHIciSNUBDEiAIQYmtvYredIdoPk3W0s8d7PCYhMdiKgojs/dD65BfxiXDlEos7Y/seTO84m4M10MN0nnwTf8owzlO9FMQioLbDFzJUTQU9d3/wdCo=
