@@ -1,15 +1,28 @@
 apply plugin: 'android'
 apply plugin: 'testfairy'
 
+
 android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
 
+    project.ext.vCode = 1
+    try {
+        project.ext.vCode = Integer.valueOf(System.getenv("TRAVIS_BUILD_NUMBER"))
+    } catch(e) {}
+
+    project.ext.vName = System.getenv("TRAVIS_TAG")
+    if(!project.ext.vName) {
+        project.ext.vName = "1.0.0"
+    } else {
+        project.ext.vName = project.ext.vName.replace("v", "")
+    }
+
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
+        versionCode project.ext.vCode
+        versionName project.ext.vName
     }
 
     compileOptions {
@@ -49,7 +62,6 @@ android {
         autoUpdate true
     }
 }
-
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
