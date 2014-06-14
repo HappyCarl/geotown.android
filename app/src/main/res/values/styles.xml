@@ -2,11 +2,17 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/GeoTownActionBar</item>
+        <item name="android:actionBarStyle">@style/GeoTown.ActionBarStyle</item>
     </style>
 
-    <style name="GeoTownActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">#FF1919</item>
+    <style name="GeoTown.ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/actionbar_background_color</item>
+        <item name="android:titleTextStyle">@style/GeoTown.ActionBar.TitleTextStyle</item>
     </style>
+
+    <style name="GeoTown.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/actionbar_color</item>
+    </style>
+
 
 </resources>
