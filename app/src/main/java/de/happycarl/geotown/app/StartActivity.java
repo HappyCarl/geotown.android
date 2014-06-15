@@ -8,17 +8,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
 
 public class StartActivity extends Activity {
+
+    @InjectView(R.id.textView)
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
+        ButterKnife.inject(this);
+        initSystemBarTint();
+    }
+
+    @OnClick(R.id.click_me_button)
+    protected void buttonClicked() {
+        textView.setText("Erdbeermarmelade!");
+    }
+
+    private void initSystemBarTint() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             setTranslucentStatus(true);
         }
