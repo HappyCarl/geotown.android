@@ -7,7 +7,7 @@ before_script:
   -out release.keystore
 script:
 - "./gradlew build assembleRelease"
-- if [ "$TRAVIS_BRANCH" = "develop" ]; then ./testfairy-upload.sh; fi;
+- if [ "$TRAVIS_BRANCH" = "develop" ]; then ./testfairy-upload.sh app/build/outputs/apk/app-release.apk; fi;
 env:
   global:
   - secure: WR7j7bQVR5IAvn4fR9xT5IyQglUxmmDj3ohzrSVmTwDCuHEo/QuZX5QxpJHIciSNUBDEiAIQYmtvYredIdoPk3W0s8d7PCYhMdiKgojs/dD65BfxiXDlEos7Y/seTO84m4M10MN0nnwTf8owzlO9FMQioLbDFzJUTQU9d3/wdCo=
