@@ -6,9 +6,8 @@ before_script:
 - openssl aes-256-cbc -k "$KEYSTORE_FILE_PASSWORD" -in release.keystore.enc -d -a
   -out release.keystore
 script:
-- "./gradlew build"
-- if [ "$TRAVIS_BRANCH" = "develop" ]; then ./gradlew testfairyRelease; fi;
-- if [ "$TRAVIS_BRANCH" = "master" ]; then ./gradlew assembleRelease; fi;
+- "./gradlew build assembleRelease"
+- if [ "$TRAVIS_BRANCH" = "develop" ]; then curl https://app.testfairy.com/api/upload -F api_key='$TESTFAIRY_KEY' -F apk_file=@app/build/outputs/apk/app-release.apk -F proguard_file=@app/build/outputs/proguard/release/mapping.txt -F metrics='cpu,memory,network,logcat,gps' -F video='off'; fi;
 env:
   global:
   - secure: WR7j7bQVR5IAvn4fR9xT5IyQglUxmmDj3ohzrSVmTwDCuHEo/QuZX5QxpJHIciSNUBDEiAIQYmtvYredIdoPk3W0s8d7PCYhMdiKgojs/dD65BfxiXDlEos7Y/seTO84m4M10MN0nnwTf8owzlO9FMQioLbDFzJUTQU9d3/wdCo=
