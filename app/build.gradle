@@ -41,7 +41,7 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            runProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
         }
@@ -52,13 +52,10 @@ android {
 
     testfairyConfig {
         apiKey "$System.env.TESTFAIRY_KEY"
-        metrics "cpu,memory,network,logcat"
-        video "wifi"
-        videoRate "0.5"
-        videoQuality "low"
-        maxDuration "15m"
+        metrics ""
+        video "off"
         notify true
-        maxDuration "1h"
+        maxDuration "10m"
         autoUpdate true
     }
 }
