@@ -15,17 +15,19 @@ NOTIFY="on"
 # If AUTO_UPDATE is "on" all users will be prompt to update to this build next time they run the app
 AUTO_UPDATE="on"
 
-# The maximum recording duration for every test. 
+# The maximum recording duration for every test.
 MAX_DURATION="10m"
 
-# Is video recording enabled for this build 
+# Is video recording enabled for this build
 VIDEO="off"
 
 # Add a TestFairy watermark to the application icon?
 ICON_WATERMARK="on"
 
+last_commit_hash=`curl https://api.travis-ci.org/repos/HappyCarl/geotown.android/builds | ruby -e "require 'json';s=STDIN.gets;p=JSON.parse(s);l='';for i in p; if i['branch']=='develop' and i['number']<ENV['TRAVIS_BUILD_NUMBER'];l=i['commit'];break;end;end;puts l"`
+git_log=`git --no-pager log --oneline --decorate --pretty=%s $last_commit_hash..HEAD`
 # Comment text will be included in the email sent to testers
-COMMENT=""
+COMMENT="$git_log"
 
 # Your Keystore, Storepass and Alias, the ones you use to sign your app.
 KEYSTORE=release.keystore
@@ -45,31 +47,31 @@ usage() {
 	echo "Usage: testfairy-upload.sh APK_FILENAME"
 	echo
 }
-	
+
 verify_tools() {
 
 	# Windows users: this script requires zip, curl and sed. If not installed please get from http://cygwin.com/
-	
+
 	# Check 'zip' tool
 	${ZIP} -h >/dev/null
 	if [ $? -ne 0 ]; then
 		echo "Could not run zip tool, please check settings"
 		exit 1
 	fi
-	
+
 	# Check 'curl' tool
 	${CURL} --help >/dev/null
 	if [ $? -ne 0 ]; then
 		echo "Could not run curl tool, please check settings"
 		exit 1
 	fi
-	
+
 	OUTPUT=$( ${JARSIGNER} -help 2>&1 | grep "verify" )
 	if [ $? -ne 0 ]; then
 		echo "Could not run jarsigner tool, please check settings"
 		exit 1
 	fi
-	
+
 	# Check 'zipalign' tool
 	OUTPUT=$( ${ZIPALIGN} 2>&1 | grep -i "Zip alignment" )
 	if [ $? -ne 0 ]; then
@@ -134,7 +136,7 @@ JSON=$( ${CURL} -s ${SERVER_ENDPOINT}/api/upload -F api_key=${TESTFAIRY_API_KEY}
 URL=$( echo ${JSON} | sed 's/\\\//\//g' | sed -n 's/.*"instrumented_url"\s*:\s*"\([^"]*\)".*/\1/p' )
 if [ -z "${URL}" ]; then
 	echo "FAILED!"
-	echo 
+	echo
 	echo "Upload failed, please check your settings"
 	exit 1
 fi
