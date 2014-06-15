@@ -49,15 +49,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    testfairyConfig {
-        apiKey "$System.env.TESTFAIRY_KEY"
-        metrics ""
-        video "off"
-        notify true
-        maxDuration "10m"
-        autoUpdate true
-    }
 }
 
 dependencies {
