@@ -50,6 +50,11 @@ android {
     }
 }
 
+configurations.all {
+
+    resolutionStrategy.cacheChangingModulesFor(0,'seconds')
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.appspot.drive_log:geotown:v1-1.18.0-rc-SNAPSHOT'
