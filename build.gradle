@@ -15,5 +15,9 @@ allprojects {
         maven {
             url "https://raw.github.com/HappyCarl/mvn-repo/master/snapshots"
         }
+        maven {
+            url 'http://google-api-client-libraries.appspot.com/mavenrepo'
+        }
+
     }
 }
