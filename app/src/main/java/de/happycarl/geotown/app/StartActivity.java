@@ -23,9 +23,11 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.happycarl.geotown.app.requests.AllMyRoutesRequest;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -70,7 +72,9 @@ public class StartActivity extends Activity {
         if(credential.getSelectedAccountName() != null) {
             //Already signed in
             Log.d("Login","Successfully logged in");
-
+            Toast.makeText(this,"Login successfull",Toast.LENGTH_SHORT);
+            AllMyRoutesRequest req = new AllMyRoutesRequest(this);
+            req.execute((Void) null);
             //I somewhat should be redirecting people here...
         } else {
             Log.d("Login","Showing account picker");
