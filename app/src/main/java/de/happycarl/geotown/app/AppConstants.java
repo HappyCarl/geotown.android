@@ -28,7 +28,7 @@ public class AppConstants {
 
 
     //Appspot stuff
-    public static final String CLIENT_ID = "1005962513631-3tq5l9qibm5aolt87sp32a2ib9ga6in0.apps.googleusercontent.com";
+    public static final String CLIENT_ID = "server:client_id:1005962513631-78253fgvv2ahe6noj99iepmeccibtlvg.apps.googleusercontent.com";
 
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
@@ -36,7 +36,7 @@ public class AppConstants {
 
     public static Geotown getApiServiceHandle(@Nullable GoogleAccountCredential credential) {
         Geotown.Builder gt = new Geotown.Builder(AppConstants.HTTP_TRANSPORT,AppConstants.JSON_FACTORY,credential);
-        gt.setRootUrl("http://https://beta-dot-drive-log.appengine.com/_ah/api");
+        gt.setRootUrl("https://beta-dot-drive-log.appspot.com/_ah/api");
         return gt.build();
     }
 
