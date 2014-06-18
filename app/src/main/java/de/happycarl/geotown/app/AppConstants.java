@@ -77,4 +77,7 @@ public class AppConstants {
     public static final String PREF_NAME = "GeoTown";
     public static final String PREF_ACCOUNT_NAME = "account_name";
 
+    //requests Stuff
+    public static final int REQUEST_ALL_ROUTES = 0;
+
 }

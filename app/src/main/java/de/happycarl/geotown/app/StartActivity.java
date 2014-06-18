@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.happycarl.geotown.app.requests.AllMyRoutesRequest;
+import de.happycarl.geotown.app.requests.RequestDataReceiver;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -37,7 +38,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import java.io.IOException;
 
 
-public class StartActivity extends Activity {
+public class StartActivity extends Activity implements RequestDataReceiver{
 
     static final int REQUEST_ACCOUNT_PICKER = 2;
 
@@ -167,7 +168,17 @@ public class StartActivity extends Activity {
     }
 
 
+    @Override
+    public void onRequestedData(int requestId, Object data) {
+        if(requestId == AppConstants.REQUEST_ALL_ROUTES) {
+            RouteCollection rc = (RouteCollection) data;
 
+            for(Route r :rc.getItems()) {
+                String msg = r.getName() + " : " + r.getLatitude() + "/" + r.getLongitude();
+                Log.i("Routes",msg);
+                Toast.makeText(this,msg,Toast.LENGTH_LONG);
+            }
+        }
 
-
+    }
 }

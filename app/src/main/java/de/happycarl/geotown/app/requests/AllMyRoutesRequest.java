@@ -17,10 +17,12 @@ import de.happycarl.geotown.app.AppConstants;
  */
 public class AllMyRoutesRequest extends AsyncTask<Void, Void, RouteCollection>{
 
-    Context context;
+    RequestDataReceiver receiver;
+    int id;
 
-    public AllMyRoutesRequest(Context context) {
-        this.context = context;
+    public AllMyRoutesRequest(RequestDataReceiver requestDataReceiver) {
+        this.receiver = requestDataReceiver;
+        this.id = AppConstants.REQUEST_ALL_ROUTES;
     }
     @Override
     protected RouteCollection doInBackground(Void... params) {
@@ -39,12 +41,7 @@ public class AllMyRoutesRequest extends AsyncTask<Void, Void, RouteCollection>{
 
     @Override
     protected void onPostExecute(RouteCollection routeCollection) {
-        if (routeCollection != null) {
-            for(Route r : routeCollection.getItems()) {
-                Log.d("AllMyRoutesRequest",r.getName() + " : " + r.getLatitude() + "/" + r.getLongitude());
-            }
-        } else {
-            Log.i("AllMyRoutesRequest","No data returned");
-        }
+        receiver.onRequestedData(id,routeCollection);
+
     }
 }
