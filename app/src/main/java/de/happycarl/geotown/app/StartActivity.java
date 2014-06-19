@@ -17,20 +17,20 @@ import android.widget.Toast;
 import com.appspot.drive_log.geotown.model.UserData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.happycarl.geotown.app.api.requests.CurrentUserDataRequest;
+import de.happycarl.geotown.app.events.CurrentUserDataReceivedEvent;
 import de.happycarl.geotown.app.gui.OverviewActivity;
-import de.happycarl.geotown.app.requests.CurrentUserDataRequest;
-import de.happycarl.geotown.app.requests.RequestDataReceiver;
 
 
-public class StartActivity extends Activity implements RequestDataReceiver {
+public class StartActivity extends Activity {
 
     static final int REQUEST_ACCOUNT_PICKER = 2;
 
 
-    SharedPreferences settings;
     GoogleAccountCredential credential;
     String accountName;
 
@@ -41,27 +41,26 @@ public class StartActivity extends Activity implements RequestDataReceiver {
         setContentView(R.layout.activity_start);
 
         ButterKnife.inject(this);
+        GeotownApplication.getEventBus().register(this);
         initSystemBarTint();
     }
 
     @OnClick(R.id.start_button)
     protected void loginGoogle() {
-        if (!AppConstants.checkGooglePlayServicesAvailable(this))
+        if (!GoogleUtils.checkGooglePlayServicesAvailable(this))
             return;
-        settings = getSharedPreferences(
-                AppConstants.PREF_NAME, 0);
+
         credential = GoogleAccountCredential.usingAudience(this,
                 AppConstants.CLIENT_ID);
-        ;
 
-        setSelectedAccountName(settings.getString(AppConstants.PREF_ACCOUNT_NAME, null));
-        AppConstants.geoTownInstance = AppConstants.getApiServiceHandle(credential);
+        setSelectedAccountName(GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_NAME, null));
+        GeotownApplication.login(credential);
 
         if (credential.getSelectedAccountName() != null) {
             //Already signed in
-            AppConstants.userEmail = credential.getSelectedAccountName();
+            String userEmail = credential.getSelectedAccountName();
             Log.d("Login", "Successfully logged in");
-            CurrentUserDataRequest req = new CurrentUserDataRequest(this);
+            CurrentUserDataRequest req = new CurrentUserDataRequest();
             req.execute((Void) null);
 
             Intent overviewScreen = new Intent(this, OverviewActivity.class);
@@ -129,7 +128,7 @@ public class StartActivity extends Activity implements RequestDataReceiver {
 
     // setSelectedAccountName definition
     private void setSelectedAccountName(String accountName) {
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
         editor.putString(AppConstants.PREF_ACCOUNT_NAME, accountName);
         editor.commit();
         credential.setSelectedAccountName(accountName);
@@ -148,7 +147,7 @@ public class StartActivity extends Activity implements RequestDataReceiver {
                                     AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
                         setSelectedAccountName(accountName);
-                        SharedPreferences.Editor editor = settings.edit();
+                        SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
                         editor.putString(AppConstants.PREF_ACCOUNT_NAME, accountName);
                         editor.commit();
                         // User is authorized.
@@ -159,22 +158,17 @@ public class StartActivity extends Activity implements RequestDataReceiver {
         }
     }
 
-
-    @Override
-    public void onRequestedData(int requestId, Object data) {
-        switch (requestId) {
-
-            case RequestDataReceiver.REQUEST_USER_DATA:
-                if (data == null) {
-                    Toast.makeText(this, "No data from server", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                UserData userData = (UserData) data;
-
-                Toast.makeText(this, "Logged in as " + userData.getEmail(), Toast.LENGTH_LONG).show();
-
-                break;
+    @Subscribe
+    public void onCurrentUserDataReceived(CurrentUserDataReceivedEvent event) {
+        UserData data = event.userData;
+        if (data == null) {
+            Toast.makeText(this, "No data from server", Toast.LENGTH_LONG).show();
+            return;
         }
+        UserData userData = (UserData) data;
+
+        Toast.makeText(this, "Logged in as " + userData.getEmail(), Toast.LENGTH_LONG).show();
 
     }
+
 }

@@ -13,16 +13,17 @@ import com.afollestad.cardsui.CardCenteredHeader;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
 import com.appspot.drive_log.geotown.model.Route;
-import com.appspot.drive_log.geotown.model.RouteCollection;
+import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.happycarl.geotown.app.AppConstants;
+import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
-import de.happycarl.geotown.app.requests.AllMyRoutesRequest;
-import de.happycarl.geotown.app.requests.RequestDataReceiver;
+import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
+import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
 
-public class OverviewActivity extends Activity implements RequestDataReceiver {
+public class OverviewActivity extends Activity {
 
     @InjectView(R.id.route_view)
     CardListView cardListView;
@@ -38,8 +39,10 @@ public class OverviewActivity extends Activity implements RequestDataReceiver {
         setContentView(R.layout.activity_overview);
 
         ButterKnife.inject(this);
+        GeotownApplication.getEventBus().register(this);
 
-        userText.setText(Html.fromHtml("<i>" + AppConstants.userEmail + "</i>"));
+        String userEmail = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_NAME, "");
+        userText.setText(Html.fromHtml("<i>" + userEmail + "</i>"));
 
         adapter = new CardAdapter(this, android.R.color.holo_red_light);
         cardListView.setAdapter(adapter);
@@ -47,7 +50,7 @@ public class OverviewActivity extends Activity implements RequestDataReceiver {
         CardHeader header = new CardHeader(getResources().getString(R.string.my_routes));
         adapter.add(header);
 
-        AllMyRoutesRequest routesRequest = new AllMyRoutesRequest(this);
+        AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
         routesRequest.execute((Void) null);
 
     }
@@ -72,25 +75,17 @@ public class OverviewActivity extends Activity implements RequestDataReceiver {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    @Subscribe
     @SuppressWarnings("rawtypes unchecked")
-    public void onRequestedData(int requestId, Object data) {
-        switch (requestId) {
-            case RequestDataReceiver.REQUEST_ALL_ROUTES:
-                RouteCollection rc = (RouteCollection) data;
-
-                if (rc == null || rc.getItems() == null) {
-                    CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_routes));
-                    adapter.add(empty);
-                    break;
-                }
-                for (Route r : rc.getItems()) {
-                    Card c = new Card(r.getName(), r.getLatitude() + "/" + r.getLongitude());
-                    //TODO:Add image via Picasso
-                    adapter.add(c);
-                }
-
-
+    public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
+        if (event.routes == null || event.routes.size() == 0) {
+            CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_routes));
+            adapter.add(empty);
+        }
+        for (Route r : event.routes) {
+            Card c = new Card(r.getName(), r.getLatitude() + "/" + r.getLongitude());
+            //TODO:Add image via Picasso
+            adapter.add(c);
         }
     }
 

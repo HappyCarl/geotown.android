@@ -1,4 +1,4 @@
-package de.happycarl.geotown.app.requests;
+package de.happycarl.geotown.app.api.requests;
 
 import android.os.AsyncTask;
 
@@ -6,18 +6,13 @@ import com.appspot.drive_log.geotown.model.Route;
 
 import java.io.IOException;
 
-import de.happycarl.geotown.app.AppConstants;
+import de.happycarl.geotown.app.GeotownApplication;
+import de.happycarl.geotown.app.events.RouteDataReceivedEvent;
 
 /**
  * Created by ole on 19.06.14.
  */
 public class RouteRequest extends AsyncTask<Long, Void, Route> {
-
-    RequestDataReceiver requestDataReceiver;
-
-    public RouteRequest(RequestDataReceiver receiver) {
-        this.requestDataReceiver = receiver;
-    }
 
     @Override
     protected Route doInBackground(Long... ids) {
@@ -26,7 +21,7 @@ public class RouteRequest extends AsyncTask<Long, Void, Route> {
             return null;
         }
         try {
-            route = AppConstants.geoTownInstance.routes().get(ids[0]).execute();
+            route = GeotownApplication.getGeotown().routes().get(ids[0]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,6 +31,6 @@ public class RouteRequest extends AsyncTask<Long, Void, Route> {
 
     @Override
     protected void onPostExecute(Route route) {
-        requestDataReceiver.onRequestedData(RequestDataReceiver.REQUEST_ROUTE, route);
+        GeotownApplication.getEventBus().post(new RouteDataReceivedEvent(route));
     }
 }

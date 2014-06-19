@@ -22,57 +22,9 @@ import javax.annotation.Nullable;
  * Created by ole on 18.06.14.
  */
 public class AppConstants {
-
-
     //Appspot stuff
     //TODO: MOVE THIS TO A STRINGS FILE!!!!!
     public static final String CLIENT_ID = "server:client_id:1005962513631-78253fgvv2ahe6noj99iepmeccibtlvg.apps.googleusercontent.com";
-
-    public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
-    public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-
-    public static Geotown geoTownInstance;
-    public static String userEmail;
-
-    public static Geotown getApiServiceHandle(@Nullable GoogleAccountCredential credential) {
-        Geotown.Builder gt = new Geotown.Builder(AppConstants.HTTP_TRANSPORT, AppConstants.JSON_FACTORY, credential);
-        gt.setRootUrl("https://beta-dot-drive-log.appspot.com/_ah/api");
-        gt.setApplicationName("GeoTown");
-        return gt.build();
-    }
-
-    public static int countGoogleAccounts(Context context) {
-        AccountManager am = AccountManager.get(context);
-        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-        if (accounts == null || accounts.length < 1) {
-            return 0;
-        } else {
-            return accounts.length;
-        }
-    }
-
-    public static boolean checkGooglePlayServicesAvailable(Activity activity) {
-        final int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
-        if (GooglePlayServicesUtil.isUserRecoverableError(status)) {
-            showGooglePlayServicesAvailabilityErrorDialog(activity, status);
-            return false;
-        }
-        return true;
-    }
-
-    public static void showGooglePlayServicesAvailabilityErrorDialog(final Activity activity,
-                                                                     final int connectionStatusCode) {
-        final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
-                        connectionStatusCode, activity, REQUEST_GOOGLE_PLAY_SERVICES);
-                dialog.show();
-            }
-        });
-    }
-
 
     //shared prefs stuff
     public static final String PREF_NAME = "GeoTown";
