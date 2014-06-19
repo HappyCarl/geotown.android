@@ -38,7 +38,7 @@ public class AllMyRoutesRequest extends AsyncTask<Void, Void, RouteCollection> {
 
     @Override
     protected void onPostExecute(RouteCollection routeCollection) {
-        receiver.onRequestedData(AppConstants.REQUEST_ALL_ROUTES, routeCollection);
+        receiver.onRequestedData(RequestDataReceiver.REQUEST_ALL_ROUTES, routeCollection);
 
     }
 }
