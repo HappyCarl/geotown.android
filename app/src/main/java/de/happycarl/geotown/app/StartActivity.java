@@ -109,7 +109,6 @@ public class StartActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Nobody needs a menu on the start screen
-        //getMenuInflater().inflate(R.menu.start, menu);
         return true;
     }
 
