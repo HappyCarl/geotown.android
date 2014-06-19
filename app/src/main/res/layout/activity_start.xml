@@ -6,8 +6,9 @@
     tools:context="de.happycarl.geotown.app.StartActivity">
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:text="@string/start_button"
         android:id="@+id/start_button"
         android:layout_alignParentBottom="true"
@@ -20,5 +21,12 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/welcome_banner"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/account_chooser_spinner"
+        android:layout_above="@+id/start_button"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
