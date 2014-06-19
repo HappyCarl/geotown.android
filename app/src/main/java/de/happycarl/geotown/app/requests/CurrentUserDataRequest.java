@@ -33,6 +33,6 @@ public class CurrentUserDataRequest extends AsyncTask<Void, Void, UserData> {
 
     @Override
     protected void onPostExecute(UserData userData) {
-        requestDataReceiver.onRequestedData(AppConstants.REQUEST_USER_DATA,userData);
+        requestDataReceiver.onRequestedData(AppConstants.REQUEST_USER_DATA, userData);
     }
 }

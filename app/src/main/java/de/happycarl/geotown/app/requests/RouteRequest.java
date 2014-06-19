@@ -11,7 +11,7 @@ import de.happycarl.geotown.app.AppConstants;
 /**
  * Created by ole on 19.06.14.
  */
-public class RouteRequest extends AsyncTask<Long, Void,Route> {
+public class RouteRequest extends AsyncTask<Long, Void, Route> {
 
     RequestDataReceiver requestDataReceiver;
 
