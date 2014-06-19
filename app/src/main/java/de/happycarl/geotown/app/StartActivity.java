@@ -4,10 +4,13 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -17,10 +20,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import com.appspot.drive_log.geotown.model.UserData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.otto.Subscribe;
@@ -29,7 +31,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.happycarl.geotown.app.api.requests.CurrentUserDataRequest;
+import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
 import de.happycarl.geotown.app.events.CurrentUserDataReceivedEvent;
+import de.happycarl.geotown.app.events.UsernameSetEvent;
 import de.happycarl.geotown.app.gui.OverviewActivity;
 
 
@@ -44,6 +48,12 @@ public class StartActivity extends Activity {
     @InjectView(R.id.account_chooser_spinner)
     Spinner accountChooser;
 
+    @InjectView(R.id.username_edit_text)
+    EditText usernameEditText;
+
+
+    ProgressDialog progressDialog;
+
 
     private boolean requestedAccountPicker = false;
 
@@ -56,8 +66,12 @@ public class StartActivity extends Activity {
         GeotownApplication.getEventBus().register(this);
         initSystemBarTint();
 
+        GeotownApplication.getEventBus().register(this);
+
+
         accountChooser.setOnTouchListener(spinnerTouchListener);
         accountChooser.setOnKeyListener(spinnerKeyListener);
+        usernameEditText.addTextChangedListener(usernameEditTextListener);
 
         credential = GoogleAccountCredential.usingAudience(this, AppConstants.CLIENT_ID);
 
@@ -99,13 +113,18 @@ public class StartActivity extends Activity {
     protected void loginGoogle() {
         if (!GoogleUtils.checkGooglePlayServicesAvailable(this))
             return;
-
+        if (usernameEditText.getText().toString().length() <= 0) {
+            usernameEditText.setError(getString(R.string.error_no_username));
+            return;
+        }
         setSelectedAccountName(accountName);
 
         GeotownApplication.login(credential);
 
+
         if (credential.getSelectedAccountName() != null) {
-            startOverview();
+            progressDialog = ProgressDialog.show(this, "", getString(R.string.loading));
+            new SetUsernameRequest().execute(usernameEditText.getText().toString().trim());
         } else {
             Log.d("Login", "Showing account picker");
             chooseAccount();
@@ -190,16 +209,14 @@ public class StartActivity extends Activity {
 
     @Subscribe
     public void onCurrentUserDataReceived(CurrentUserDataReceivedEvent event) {
-        UserData data = event.userData;
-        if (data == null) {
-            Toast.makeText(this, "No data from server", Toast.LENGTH_LONG).show();
-            return;
-        }
 
-        UserData userData = data;
 
-        Toast.makeText(this, "Logged in as " + userData.getEmail(), Toast.LENGTH_LONG).show();
+    }
 
+    @Subscribe
+    public void onUsernameSet(UsernameSetEvent e) {
+        progressDialog.hide();
+        startOverview();
     }
 
 
@@ -223,6 +240,24 @@ public class StartActivity extends Activity {
         public boolean onKey(View view, int i, KeyEvent keyEvent) {
             StartActivity.this.accountChooserClicked();
             return true;
+        }
+    };
+
+    private TextWatcher usernameEditTextListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (usernameEditText.getText().toString().length() <= 0)
+                usernameEditText.setError(getString(R.string.error_no_username));
         }
     };
 
