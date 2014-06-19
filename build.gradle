@@ -18,6 +18,9 @@ allprojects {
         maven {
             url 'http://google-api-client-libraries.appspot.com/mavenrepo'
         }
+        flatDir {
+            dirs 'aars'
+        }
 
     }
 }
