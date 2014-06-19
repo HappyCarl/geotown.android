@@ -10,5 +10,10 @@
     <string name="my_routes">My Routes</string>
     <string name="overview_account_of">Account of</string>
     <string name="no_routes">You have no routes</string>
+    <string name="unknown_place">Unknown Place</string>
+    <string name="unknown_town">Unknown Town</string>
+    <string name="unknown_country">Unknown Country</string>
+    <string name="action_about">About</string>
+    <string name="action_refresh">Refresh</string>
 
 </resources>

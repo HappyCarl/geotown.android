@@ -71,6 +71,7 @@ dependencies {
     compile 'com.afollestad.cardsui:CardsUI:1.0.0@aar'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.squareup.okhttp:okhttp:2.0.0-RC2'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.+'
 
     // BEGIN Google APIs
 

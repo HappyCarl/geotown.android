@@ -1,12 +1,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="de.happycarl.geotown.app.gui.OverviewActivity" >
+
+    <item android:id="@+id/action_refresh"
+        android:title="@string/action_refresh"
+        android:icon="@drawable/ic_menu_refresh"
+        android:orderInCategory="50"
+        android:showAsAction="always"/>
+    <!--
+    There are no settings yet
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+        -->
 
-    <item android:id="@+id/exit"
+    <item android:id="@+id/action_about"
+        android:title="@string/action_about"
+        android:orderInCategory="150"
+        android:showAsAction="never"/>
+
+    <item android:id="@+id/action_close"
         android:title="@string/action_close"
         android:orderInCategory="200"
         android:showAsAction="never"/>
