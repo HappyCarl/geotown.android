@@ -5,28 +5,40 @@
     android:fitsSystemWindows="true"
     tools:context="de.happycarl.geotown.app.StartActivity">
 
+    <TextView
+        android:id="@+id/intro_text_view"
+        android:layout_margin="17dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/intro_text"/>
+
+    <Spinner
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/intro_text_view"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/account_chooser_spinner"
+        android:layout_centerHorizontal="true" />
+
     <Button
         android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_height="48dp"
         android:text="@string/start_button"
         android:id="@+id/start_button"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/account_chooser_spinner"
         android:layout_centerHorizontal="true" />
 
     <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:id="@+id/imageView2"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/welcome_banner"/>
+        android:src="@drawable/welcome_banner" />
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/account_chooser_spinner"
-        android:layout_above="@+id/start_button"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -10,5 +10,6 @@
     <string name="my_routes">My Routes</string>
     <string name="overview_account_of">Account of</string>
     <string name="no_routes">You have no routes</string>
+    <string name="intro_text">Welcome! Please sign in to proceed.</string>
 
 </resources>
