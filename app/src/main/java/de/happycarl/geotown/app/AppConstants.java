@@ -18,13 +18,10 @@ import com.google.api.client.json.JsonFactory;
 import javax.annotation.Nullable;
 
 
-
 /**
  * Created by ole on 18.06.14.
  */
 public class AppConstants {
-
-
 
 
     //Appspot stuff
@@ -34,9 +31,10 @@ public class AppConstants {
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
 
     public static Geotown geoTownInstance;
+    public static String userEmail;
 
     public static Geotown getApiServiceHandle(@Nullable GoogleAccountCredential credential) {
-        Geotown.Builder gt = new Geotown.Builder(AppConstants.HTTP_TRANSPORT,AppConstants.JSON_FACTORY,credential);
+        Geotown.Builder gt = new Geotown.Builder(AppConstants.HTTP_TRANSPORT, AppConstants.JSON_FACTORY, credential);
         gt.setRootUrl("https://beta-dot-drive-log.appspot.com/_ah/api");
         gt.setApplicationName("GeoTown");
         return gt.build();
@@ -55,7 +53,7 @@ public class AppConstants {
     public static boolean checkGooglePlayServicesAvailable(Activity activity) {
         final int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
         if (GooglePlayServicesUtil.isUserRecoverableError(status)) {
-            showGooglePlayServicesAvailabilityErrorDialog(activity,status);
+            showGooglePlayServicesAvailabilityErrorDialog(activity, status);
             return false;
         }
         return true;

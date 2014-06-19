@@ -11,7 +11,7 @@ import de.happycarl.geotown.app.AppConstants;
 /**
  * Created by ole on 19.06.14.
  */
-public class RouteRequest extends AsyncTask<Long, Void,Route> {
+public class RouteRequest extends AsyncTask<Long, Void, Route> {
 
     RequestDataReceiver requestDataReceiver;
 
@@ -26,7 +26,7 @@ public class RouteRequest extends AsyncTask<Long, Void,Route> {
             return null;
         }
         try {
-            route = AppConstants.geoTownInstance.geoTownEndpoints().getRoute(ids[0]).execute();
+            route = AppConstants.geoTownInstance.routes().get(ids[0]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

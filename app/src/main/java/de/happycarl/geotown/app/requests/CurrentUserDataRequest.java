@@ -24,7 +24,7 @@ public class CurrentUserDataRequest extends AsyncTask<Void, Void, UserData> {
         UserData userData = null;
 
         try {
-            userData = AppConstants.geoTownInstance.geoTownEndpoints().getCurrentUserData().execute();
+            userData = AppConstants.geoTownInstance.userdata().get().execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,6 +33,6 @@ public class CurrentUserDataRequest extends AsyncTask<Void, Void, UserData> {
 
     @Override
     protected void onPostExecute(UserData userData) {
-        requestDataReceiver.onRequestedData(AppConstants.REQUEST_USER_DATA,userData);
+        requestDataReceiver.onRequestedData(AppConstants.REQUEST_USER_DATA, userData);
     }
 }
