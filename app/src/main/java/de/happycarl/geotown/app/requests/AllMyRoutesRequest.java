@@ -25,7 +25,7 @@ public class AllMyRoutesRequest extends AsyncTask<Void, Void, RouteCollection> {
         RouteCollection rc = null;
 
         try {
-            rc = AppConstants.geoTownInstance.geoTownEndpoints().getMyRoutes().execute();
+            rc = AppConstants.geoTownInstance.routes().listMine().execute();
 
         } catch (IOException e) {
 

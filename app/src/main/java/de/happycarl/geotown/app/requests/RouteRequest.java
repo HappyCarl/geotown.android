@@ -26,7 +26,7 @@ public class RouteRequest extends AsyncTask<Long, Void, Route> {
             return null;
         }
         try {
-            route = AppConstants.geoTownInstance.geoTownEndpoints().getRoute(ids[0]).execute();
+            route = AppConstants.geoTownInstance.routes().get(ids[0]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
