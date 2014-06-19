@@ -32,11 +32,12 @@ public class AppConstants {
 
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-    public static Geotown geotownInstance;
+    public static Geotown geoTownInstance;
 
     public static Geotown getApiServiceHandle(@Nullable GoogleAccountCredential credential) {
         Geotown.Builder gt = new Geotown.Builder(AppConstants.HTTP_TRANSPORT,AppConstants.JSON_FACTORY,credential);
         gt.setRootUrl("https://beta-dot-drive-log.appspot.com/_ah/api");
+        gt.setApplicationName("GeoTown");
         return gt.build();
     }
 

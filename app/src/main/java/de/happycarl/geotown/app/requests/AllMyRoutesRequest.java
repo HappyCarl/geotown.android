@@ -1,11 +1,8 @@
 package de.happycarl.geotown.app.requests;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
 
 import java.io.IOException;
@@ -29,7 +26,7 @@ public class AllMyRoutesRequest extends AsyncTask<Void, Void, RouteCollection>{
         RouteCollection rc = null;
 
         try {
-            rc = AppConstants.geotownInstance.geoTownEndpoints().getMyRoutes().execute();
+            rc = AppConstants.geoTownInstance.geoTownEndpoints().getMyRoutes().execute();
         } catch (IOException e) {
 
             Log.d("AllMyRoutesRequest", "ERROR:" + e.toString());
