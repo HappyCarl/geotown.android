@@ -32,6 +32,7 @@ public class AppConstants {
 
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+
     public static Geotown geoTownInstance;
 
     public static Geotown getApiServiceHandle(@Nullable GoogleAccountCredential credential) {
@@ -80,5 +81,7 @@ public class AppConstants {
 
     //requests Stuff
     public static final int REQUEST_ALL_ROUTES = 0;
+    public static final int REQUEST_USER_DATA = 1;
+    public static final int REQUEST_ROUTE = 2;
 
 }
