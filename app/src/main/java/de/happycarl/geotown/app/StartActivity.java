@@ -66,7 +66,7 @@ public class StartActivity extends Activity implements RequestDataReceiver {
 
             Intent overviewScreen = new Intent(this, OverviewActivity.class);
             startActivity(overviewScreen);
-            overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
             finish();
 
         } else {
@@ -171,7 +171,7 @@ public class StartActivity extends Activity implements RequestDataReceiver {
                 }
                 UserData userData = (UserData) data;
 
-                Toast.makeText(this, "Logged in as "+userData.getEmail(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Logged in as " + userData.getEmail(), Toast.LENGTH_LONG).show();
 
                 break;
         }

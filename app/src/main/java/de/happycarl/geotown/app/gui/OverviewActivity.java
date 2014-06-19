@@ -1,12 +1,8 @@
 package de.happycarl.geotown.app.gui;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -18,12 +14,6 @@ import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
