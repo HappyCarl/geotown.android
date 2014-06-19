@@ -105,5 +105,8 @@
 -dontwarn com.squareup.okhttp.internal.http.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn java.nio.**
--dontwarn com.squareup.okhttp.OkUrlFactory
+-dontwarn com.squareup.**
+-dontwarn com.j256.ormlite.**
+-dontwarn javax.persistence.**
+
 
