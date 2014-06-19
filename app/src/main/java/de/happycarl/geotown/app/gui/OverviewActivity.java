@@ -123,7 +123,7 @@ public class OverviewActivity extends Activity {
             //TODO:Add image via Picasso
             CardTarget target = new CardTarget(c,this,adapter);
             Picasso.with(this).load("https://maps.google.com/maps/api/staticmap?center=" + r.getLatitude() + ","+r.getLongitude()+"&size=128x128&zoom=8").into(target);
-            adapter.add(c);
+            
 
         }
     }
