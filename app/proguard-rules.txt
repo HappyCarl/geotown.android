@@ -104,6 +104,6 @@
 # OkHttp oddities
 -dontwarn com.squareup.okhttp.internal.http.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
--dontwarn java.nio.*
+-dontwarn java.nio.** { *; }
 -dontwarn com.squareup.okhttp.OkUrlFactory
 
