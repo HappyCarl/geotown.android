@@ -32,11 +32,13 @@ public class AppConstants {
 
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-    public static Geotown geotownInstance;
+
+    public static Geotown geoTownInstance;
 
     public static Geotown getApiServiceHandle(@Nullable GoogleAccountCredential credential) {
         Geotown.Builder gt = new Geotown.Builder(AppConstants.HTTP_TRANSPORT,AppConstants.JSON_FACTORY,credential);
         gt.setRootUrl("https://beta-dot-drive-log.appspot.com/_ah/api");
+        gt.setApplicationName("GeoTown");
         return gt.build();
     }
 
@@ -76,5 +78,10 @@ public class AppConstants {
     //shared prefs stuff
     public static final String PREF_NAME = "GeoTown";
     public static final String PREF_ACCOUNT_NAME = "account_name";
+
+    //requests Stuff
+    public static final int REQUEST_ALL_ROUTES = 0;
+    public static final int REQUEST_USER_DATA = 1;
+    public static final int REQUEST_ROUTE = 2;
 
 }

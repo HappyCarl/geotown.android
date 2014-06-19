@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,30 +11,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
-import com.appspot.drive_log.geotown.Geotown;
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
+import com.appspot.drive_log.geotown.model.UserData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
+import de.happycarl.geotown.app.requests.AllMyRoutesRequest;
+import de.happycarl.geotown.app.requests.CurrentUserDataRequest;
+import de.happycarl.geotown.app.requests.RequestDataReceiver;
 
-import android.accounts.Account;
 import android.accounts.AccountManager;
-
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.common.AccountPicker;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import android.widget.Toast;
 
 import java.io.IOException;
 
 
-public class StartActivity extends Activity {
+public class StartActivity extends Activity implements RequestDataReceiver{
 
     static final int REQUEST_ACCOUNT_PICKER = 2;
 
@@ -65,17 +60,18 @@ public class StartActivity extends Activity {
                 AppConstants.CLIENT_ID);;
 
         setSelectedAccountName(settings.getString(AppConstants.PREF_ACCOUNT_NAME,null));
-        AppConstants.geotownInstance = AppConstants.getApiServiceHandle(credential);
+        AppConstants.geoTownInstance = AppConstants.getApiServiceHandle(credential);
 
         if(credential.getSelectedAccountName() != null) {
             //Already signed in
             Log.d("Login","Successfully logged in");
-
+            Toast.makeText(this,"Login successful",Toast.LENGTH_SHORT).show();
+            CurrentUserDataRequest req = new CurrentUserDataRequest(this);
+            req.execute((Void) null);
             //I somewhat should be redirecting people here...
         } else {
             Log.d("Login","Showing account picker");
             chooseAccount();
-            loginGoogle();
         }
 
 
@@ -156,6 +152,7 @@ public class StartActivity extends Activity {
                         editor.putString(AppConstants.PREF_ACCOUNT_NAME, accountName);
                         editor.commit();
                         // User is authorized.
+                        loginGoogle();
                     }
                 }
                 break;
@@ -163,7 +160,41 @@ public class StartActivity extends Activity {
     }
 
 
+    @Override
+    public void onRequestedData(int requestId, Object data) {
+        switch (requestId) {
+            case AppConstants.REQUEST_ALL_ROUTES:
+                if(data == null) {
+                    Toast.makeText(this,"No data from server",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                RouteCollection rc = (RouteCollection) data;
+
+                if(rc.getItems() == null) {
+                    Log.d("Routes","no routes");
+                    Toast.makeText(this,"You have no routes",Toast.LENGTH_LONG).show();
+                    return;
+                }
 
 
+                for(Route r : rc.getItems()) {
+                    String msg = r.getName() + " : " + r.getLatitude() + "/" + r.getLongitude();
+                    Log.i("Routes",msg);
+                    Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
+                }
+                break;
 
+            case AppConstants.REQUEST_USER_DATA:
+                if(data == null) {
+                    Toast.makeText(this,"No data from server",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                UserData userData = (UserData) data;
+
+                Toast.makeText(this,userData.getEmail() + " : " + userData.getRoutes().size() + " Routes",Toast.LENGTH_LONG).show();
+
+                break;
+        }
+
+    }
 }
