@@ -190,7 +190,8 @@ public class StartActivity extends Activity {
             Toast.makeText(this, "No data from server", Toast.LENGTH_LONG).show();
             return;
         }
-        UserData userData = (UserData) data;
+        
+        UserData userData = data;
 
         Toast.makeText(this, "Logged in as " + userData.getEmail(), Toast.LENGTH_LONG).show();
 
