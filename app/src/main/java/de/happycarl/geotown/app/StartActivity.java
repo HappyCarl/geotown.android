@@ -63,6 +63,26 @@ public class StartActivity extends Activity {
 
         Account[] list = credential.getAllAccounts();
         setAccountName(list[0].name);
+
+        String storedAccountName = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_NAME, "");
+        if (!storedAccountName.isEmpty()) {
+            setSelectedAccountName(storedAccountName);
+
+            GeotownApplication.login(credential);
+            startOverview();
+        }
+    }
+
+    private void startOverview() {
+        //Already signed in
+        Log.d("Login", "Successfully logged in");
+        CurrentUserDataRequest req = new CurrentUserDataRequest();
+        req.execute((Void) null);
+
+        Intent overviewScreen = new Intent(this, OverviewActivity.class);
+        startActivity(overviewScreen);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        finish();
     }
 
     private void updateAccountChooserValue(String accountName) {
@@ -85,16 +105,7 @@ public class StartActivity extends Activity {
         GeotownApplication.login(credential);
 
         if (credential.getSelectedAccountName() != null) {
-            //Already signed in
-            Log.d("Login", "Successfully logged in");
-            CurrentUserDataRequest req = new CurrentUserDataRequest();
-            req.execute((Void) null);
-
-            Intent overviewScreen = new Intent(this, OverviewActivity.class);
-            startActivity(overviewScreen);
-            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-            finish();
-
+            startOverview();
         } else {
             Log.d("Login", "Showing account picker");
             chooseAccount();
@@ -190,7 +201,7 @@ public class StartActivity extends Activity {
             Toast.makeText(this, "No data from server", Toast.LENGTH_LONG).show();
             return;
         }
-        
+
         UserData userData = data;
 
         Toast.makeText(this, "Logged in as " + userData.getEmail(), Toast.LENGTH_LONG).show();
