@@ -65,6 +65,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:5.1.0'
     compile 'com.afollestad.silk:silk:1.0.0@aar'
     compile 'com.afollestad.cardsui:CardsUI:1.0.0@aar'
+    compile 'com.squareup.picasso:picasso:2.3.2'
 
     // BEGIN Google APIs
 

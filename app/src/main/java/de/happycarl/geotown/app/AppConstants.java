@@ -31,6 +31,7 @@ public class AppConstants {
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
 
     public static Geotown geoTownInstance;
+    public static String userEmail;
 
     public static Geotown getApiServiceHandle(@Nullable GoogleAccountCredential credential) {
         Geotown.Builder gt = new Geotown.Builder(AppConstants.HTTP_TRANSPORT, AppConstants.JSON_FACTORY, credential);
