@@ -164,7 +164,7 @@ public class StartActivity extends Activity implements RequestDataReceiver {
     public void onRequestedData(int requestId, Object data) {
         switch (requestId) {
 
-            case AppConstants.REQUEST_USER_DATA:
+            case RequestDataReceiver.REQUEST_USER_DATA:
                 if (data == null) {
                     Toast.makeText(this, "No data from server", Toast.LENGTH_LONG).show();
                     return;

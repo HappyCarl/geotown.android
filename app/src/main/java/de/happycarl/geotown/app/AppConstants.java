@@ -25,6 +25,7 @@ public class AppConstants {
 
 
     //Appspot stuff
+    //TODO: MOVE THIS TO A STRINGS FILE!!!!!
     public static final String CLIENT_ID = "server:client_id:1005962513631-78253fgvv2ahe6noj99iepmeccibtlvg.apps.googleusercontent.com";
 
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
@@ -77,9 +78,6 @@ public class AppConstants {
     public static final String PREF_NAME = "GeoTown";
     public static final String PREF_ACCOUNT_NAME = "account_name";
 
-    //requests Stuff
-    public static final int REQUEST_ALL_ROUTES = 0;
-    public static final int REQUEST_USER_DATA = 1;
-    public static final int REQUEST_ROUTE = 2;
+
 
 }

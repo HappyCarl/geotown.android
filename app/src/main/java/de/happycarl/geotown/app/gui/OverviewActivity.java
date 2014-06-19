@@ -73,9 +73,10 @@ public class OverviewActivity extends Activity implements RequestDataReceiver {
     }
 
     @Override
+    @SuppressWarnings("rawtypes unchecked")
     public void onRequestedData(int requestId, Object data) {
         switch (requestId) {
-            case AppConstants.REQUEST_ALL_ROUTES:
+            case RequestDataReceiver.REQUEST_ALL_ROUTES:
                 RouteCollection rc = (RouteCollection) data;
 
                 if (rc == null || rc.getItems() == null) {

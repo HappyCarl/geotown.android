@@ -36,6 +36,6 @@ public class RouteRequest extends AsyncTask<Long, Void, Route> {
 
     @Override
     protected void onPostExecute(Route route) {
-        requestDataReceiver.onRequestedData(AppConstants.REQUEST_ROUTE, route);
+        requestDataReceiver.onRequestedData(RequestDataReceiver.REQUEST_ROUTE, route);
     }
 }
