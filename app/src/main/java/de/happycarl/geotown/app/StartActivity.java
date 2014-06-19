@@ -58,7 +58,6 @@ public class StartActivity extends Activity {
 
         if (credential.getSelectedAccountName() != null) {
             //Already signed in
-            String userEmail = credential.getSelectedAccountName();
             Log.d("Login", "Successfully logged in");
             CurrentUserDataRequest req = new CurrentUserDataRequest();
             req.execute((Void) null);

@@ -81,6 +81,7 @@ public class OverviewActivity extends Activity {
         if (event.routes == null || event.routes.size() == 0) {
             CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_routes));
             adapter.add(empty);
+            return;
         }
         for (Route r : event.routes) {
             Card c = new Card(r.getName(), r.getLatitude() + "/" + r.getLongitude());

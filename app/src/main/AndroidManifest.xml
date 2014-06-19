@@ -25,7 +25,8 @@
 
         <activity
             android:name=".gui.OverviewActivity"
-            android:label="@string/title_activity_overview" >
+            android:label="@string/title_activity_overview"
+            android:windowTranslucentStatus="true">
         </activity>
     </application>
 
