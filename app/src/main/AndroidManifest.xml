@@ -23,7 +23,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".gui.Overview"
+            android:name=".gui.OverviewActivity"
             android:label="@string/title_activity_overview" >
         </activity>
     </application>

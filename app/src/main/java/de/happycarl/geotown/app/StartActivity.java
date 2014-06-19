@@ -14,15 +14,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.appspot.drive_log.geotown.model.Route;
-import com.appspot.drive_log.geotown.model.RouteCollection;
 import com.appspot.drive_log.geotown.model.UserData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.happycarl.geotown.app.gui.Overview;
+import de.happycarl.geotown.app.gui.OverviewActivity;
 import de.happycarl.geotown.app.requests.CurrentUserDataRequest;
 import de.happycarl.geotown.app.requests.RequestDataReceiver;
 
@@ -66,7 +64,7 @@ public class StartActivity extends Activity implements RequestDataReceiver {
             CurrentUserDataRequest req = new CurrentUserDataRequest(this);
             req.execute((Void) null);
 
-            Intent overviewScreen = new Intent(this, Overview.class);
+            Intent overviewScreen = new Intent(this, OverviewActivity.class);
             startActivity(overviewScreen);
             overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
             finish();

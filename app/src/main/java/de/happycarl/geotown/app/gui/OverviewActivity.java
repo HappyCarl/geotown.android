@@ -32,7 +32,7 @@ import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.requests.AllMyRoutesRequest;
 import de.happycarl.geotown.app.requests.RequestDataReceiver;
 
-public class Overview extends Activity implements RequestDataReceiver{
+public class OverviewActivity extends Activity implements RequestDataReceiver {
 
     @InjectView(R.id.route_view)
     CardListView cardListView;
@@ -93,12 +93,11 @@ public class Overview extends Activity implements RequestDataReceiver{
                     adapter.add(empty);
                     break;
                 }
-                for(Route r : rc.getItems()) {
-                    Card c = new Card(r.getName(),r.getLatitude()+ "/" + r.getLongitude());
+                for (Route r : rc.getItems()) {
+                    Card c = new Card(r.getName(), r.getLatitude() + "/" + r.getLongitude());
                     //TODO:Add image via Picasso
                     adapter.add(c);
                 }
-
 
 
         }
