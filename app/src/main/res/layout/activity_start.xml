@@ -15,9 +15,19 @@
         android:layout_centerHorizontal="true"
         android:text="@string/intro_text"/>
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="@string/username"
+        android:ems="10"
+        android:id="@+id/username_edit_text"
+        android:layout_below="@+id/intro_text_view"
+        android:layout_centerHorizontal="true" />
+
     <Spinner
         android:layout_marginTop="15dp"
-        android:layout_below="@+id/intro_text_view"
+        android:layout_below="@+id/username_edit_text"
         android:layout_marginBottom="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,11 +44,13 @@
 
     <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="300dp"
+        android:layout_height="200dp"
         android:id="@+id/imageView2"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/welcome_banner" />
+
+
 
 
 </RelativeLayout>

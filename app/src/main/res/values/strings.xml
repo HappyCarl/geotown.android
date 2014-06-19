@@ -16,5 +16,7 @@
     <string name="action_about">About</string>
     <string name="action_refresh">Refresh</string>
     <string name="intro_text">Welcome! Please sign in to proceed.</string>
-
+    <string name="username">Username</string>
+    <string name="error_no_username">Please enter a username.</string>
+    <string name="loading">Doing awesome shit...</string>
 </resources>
