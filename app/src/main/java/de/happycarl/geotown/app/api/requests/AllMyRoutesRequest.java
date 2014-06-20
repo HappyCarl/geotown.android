@@ -3,9 +3,12 @@ package de.happycarl.geotown.app.api.requests;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
@@ -35,7 +38,11 @@ public class AllMyRoutesRequest extends AsyncTask<Void, Void, RouteCollection> {
 
     @Override
     protected void onPostExecute(RouteCollection routeCollection) {
-        GeotownApplication.getEventBus().post(new MyRoutesDataReceivedEvent(routeCollection.getItems()));
+        List<Route> routes = new ArrayList<>();
+        if (routeCollection.getItems() != null) {
+            routes = routeCollection.getItems();
+        }
+        GeotownApplication.getEventBus().post(new MyRoutesDataReceivedEvent(routes));
 
     }
 }
