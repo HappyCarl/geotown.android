@@ -1,9 +1,12 @@
 package de.happycarl.geotown.app.gui;
 
 import android.app.Activity;
+import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +17,11 @@ import com.afollestad.cardsui.CardCenteredHeader;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
 import com.appspot.drive_log.geotown.model.Route;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
@@ -33,7 +41,21 @@ import de.happycarl.geotown.app.events.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.views.RouteCard;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
-public class OverviewActivity extends Activity {
+public class OverviewActivity extends Activity implements
+        GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
+
+    private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
+
+    private static final int DEFAULT_NEAR_ROUTES_SEARCH_RADIUS = 1000000; // in m (afaik :) )
+
+    private static final int MILLISECONDS_PER_SECOND = 1000;
+    public static final int UPDATE_INTERVAL_IN_SECONDS = 20;
+    private static final long UPDATE_INTERVAL =
+            MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
+    private static final int FASTEST_INTERVAL_IN_SECONDS = 5;
+    private static final long FASTEST_INTERVAL =
+            MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
 
     @InjectView(R.id.route_view)
     CardListView cardListView;
@@ -49,7 +71,10 @@ public class OverviewActivity extends Activity {
     private List<Route> myRoutes = new ArrayList<Route>();
     private List<Route> nearRoutes = new ArrayList<Route>();
     boolean loadingMyRoutes = false;
-    boolean loadingNearRoutes = true;
+    boolean loadingNearRoutes = false;
+
+    private LocationClient locationClient;
+    private LocationRequest locationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +87,33 @@ public class OverviewActivity extends Activity {
         adapter = new CardAdapter(this, R.color.primary_color);
         cardListView.setAdapter(adapter);
 
+        locationClient = new LocationClient(this, this, this);
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(
+                LocationRequest.PRIORITY_LOW_POWER);
+        locationRequest.setInterval(UPDATE_INTERVAL);
+        locationRequest.setFastestInterval(FASTEST_INTERVAL);
+
         refreshRoutes();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        locationClient.connect();
+
+    }
+
+    @Override
+    protected void onStop() {
+        if (locationClient.isConnected()) {
+            locationClient.removeLocationUpdates(this);
+        }
+
+        // Disconnecting the client invalidates it.
+        locationClient.disconnect();
+        super.onStop();
     }
 
 
@@ -105,13 +156,20 @@ public class OverviewActivity extends Activity {
         loadingLayout.setVisibility(View.VISIBLE);
         cardUILayout.setVisibility(View.GONE);
 
+        reloadMyRoutes();
+    }
+
+    private void reloadMyRoutes() {
         AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
         routesRequest.execute((Void) null);
         loadingMyRoutes = true;
+    }
 
+    private void reloadNearRoutes(Location currentLocation) {
+
+        Log.d("OverviewActivity", locationClient.isConnected() + "");
         NearRoutesRequest nearRoutesRequest = new NearRoutesRequest();
-        //TODO: get value from GPS.
-        nearRoutesRequest.execute(new NearRoutesRequest.NearRoutesParams(52, 8, 10000000));
+        nearRoutesRequest.execute(new NearRoutesRequest.NearRoutesParams(currentLocation.getLatitude(), currentLocation.getLongitude(), DEFAULT_NEAR_ROUTES_SEARCH_RADIUS));
         loadingNearRoutes = true;
     }
 
@@ -206,6 +264,43 @@ public class OverviewActivity extends Activity {
         return result;
     }
 
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        locationClient.requestLocationUpdates(locationRequest, this);
+        Log.d("OverviewActivity", "Location Client connected!");
+    }
+
+    @Override
+    public void onDisconnected() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(
+                        this,
+                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
+            } catch (IntentSender.SendIntentException e) {
+                // Log the error
+                e.printStackTrace();
+            }
+        } else {
+            /*
+             * If no resolution is available, display a dialog to the
+             * user with the error.
+             */
+            Log.e("OverviewActivity", "Couldn't connect to location client: " + connectionResult.getErrorCode());
+        }
+    }
+
     private CardHeader.ActionListener nearRoutesActionListener = new CardHeader.ActionListener() {
 
         @Override
@@ -214,5 +309,9 @@ public class OverviewActivity extends Activity {
         }
     };
 
+    @Override
+    public void onLocationChanged(Location location) {
+        reloadNearRoutes(location);
 
+    }
 }
