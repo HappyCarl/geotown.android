@@ -153,9 +153,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
             case R.id.action_about:
 
                 break;
-            case R.id.action_refresh:
-                refreshRoutes();
-                break;
 
         }
         return super.onOptionsItemSelected(item);
