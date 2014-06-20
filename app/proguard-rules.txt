@@ -115,5 +115,4 @@
     @com.squareup.otto.Produce public *;
 }
 
-
--dontwarn com.j256.ormlite.*
+-keepattributes *Annotation*
