@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.cardsui.Card;
+import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardCenteredHeader;
 import com.afollestad.cardsui.CardHeader;
@@ -34,7 +35,7 @@ import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
 import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
-public class OverviewActivity extends Activity implements Card.CardMenuListener<CardBase>{
+public class OverviewActivity extends Activity implements CardListView.CardClickListener{
 
     @InjectView(R.id.route_view)
     CardListView cardListView;
@@ -60,7 +61,7 @@ public class OverviewActivity extends Activity implements Card.CardMenuListener<
 
         adapter = new CardAdapter(this, android.R.color.holo_red_light);
         cardListView.setAdapter(adapter);
-
+        cardListView.setOnCardClickListener(this);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading routes");
@@ -72,14 +73,11 @@ public class OverviewActivity extends Activity implements Card.CardMenuListener<
     }
 
     @Override
-    protected void onItemTapped(int index, CardBase item, View view) {
+    public void onCardClick(int index, CardBase item, View view) {
         Toast.makeText(this,"Card clicked: " + item.getTitle(),Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void onMenuItemClick(CardBase card, MenuItem item) {
-        Toast.makeText(this,"Menu item clicked for " + card.getTitle() + ": " + item.getTitle(),Toast.LENGTH_LONG).show();
-    }
+
 
 
     @Override
