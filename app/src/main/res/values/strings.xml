@@ -21,5 +21,6 @@
     <string name="loading">Doing awesome shit...</string>
     <string name="near_routes">Near Routes</string>
     <string name="no_near_routes">No near routes :(</string>
+    <string name="near_routes_no_location">Waiting for GPS...</string>
     <string name="see_more">See More</string>
 </resources>

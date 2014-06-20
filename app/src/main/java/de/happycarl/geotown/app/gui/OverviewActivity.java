@@ -75,6 +75,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private LocationClient locationClient;
     private LocationRequest locationRequest;
 
+    private boolean locationUpdateReceived = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,7 +203,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
         adapter.add(header);
 
         if (nearRoutes == null || nearRoutes.size() == 0) {
-            CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_near_routes));
+            CardCenteredHeader empty = null;
+            if (locationUpdateReceived)
+                empty = new CardCenteredHeader(getResources().getString(R.string.no_near_routes));
+            else
+                empty = new CardCenteredHeader(getString(R.string.near_routes_no_location));
             adapter.add(empty);
         }
 
@@ -310,6 +316,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
+        this.locationUpdateReceived = true;
+        updateCardsUI();
         reloadNearRoutes(location);
 
     }
