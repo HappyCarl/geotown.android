@@ -19,4 +19,6 @@
     <string name="username">Username</string>
     <string name="error_no_username">Please enter a username.</string>
     <string name="loading">Doing awesome shit...</string>
+    <string name="title_activity_route_detail">RouteDetail</string>
+
 </resources>
