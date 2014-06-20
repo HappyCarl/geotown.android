@@ -208,14 +208,8 @@ public class StartActivity extends Activity {
     }
 
     @Subscribe
-    public void onCurrentUserDataReceived(CurrentUserDataReceivedEvent event) {
-
-
-    }
-
-    @Subscribe
     public void onUsernameSet(UsernameSetEvent e) {
-        progressDialog.hide();
+        progressDialog.cancel();
         startOverview();
     }
 
