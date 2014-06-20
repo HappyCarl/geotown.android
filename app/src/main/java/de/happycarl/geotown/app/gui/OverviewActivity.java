@@ -39,10 +39,13 @@ import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.views.RouteCard;
 import de.happycarl.geotown.app.models.GeoTownRoute;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
+        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener {
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
 
@@ -62,8 +65,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
     @InjectView(R.id.overview_loading_layout)
     LinearLayout loadingLayout;
 
-    @InjectView(R.id.overview_card_layout)
-    LinearLayout cardUILayout;
+    @InjectView(R.id.overview_card_ptr_layout)
+    PullToRefreshLayout cardUILayout;
 
     CardAdapter adapter;
 
@@ -84,6 +87,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
+
+        ActionBarPullToRefresh.from(this)
+                .allChildrenArePullable()
+                .listener(this)
+                .setup(cardUILayout);
 
         adapter = new CardAdapter(this, R.color.primary_color);
         cardListView.setAdapter(adapter);
@@ -243,6 +251,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
         loadingLayout.setVisibility(View.GONE);
         cardUILayout.setVisibility(View.VISIBLE);
 
+        this.cardUILayout.setRefreshComplete();
+
     }
 
     private String getLocationName(double latitude, double longitude) {
@@ -282,6 +292,19 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     @Override
+    public void onLocationChanged(Location location) {
+        this.locationUpdateReceived = true;
+        updateCardsUI();
+        reloadNearRoutes(location);
+
+    }
+
+    @Override
+    public void onRefreshStarted(View view) {
+        this.refreshRoutes();
+    }
+
+    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         if (connectionResult.hasResolution()) {
             try {
@@ -314,11 +337,5 @@ public class OverviewActivity extends SystemBarTintActivity implements
         }
     };
 
-    @Override
-    public void onLocationChanged(Location location) {
-        this.locationUpdateReceived = true;
-        updateCardsUI();
-        reloadNearRoutes(location);
 
-    }
 }

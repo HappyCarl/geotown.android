@@ -3,7 +3,6 @@ package de.happycarl.geotown.app.gui.views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
@@ -28,7 +27,6 @@ public class RouteCard extends Card implements Target {
 
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
-        Log.d("Picasso", "Loaded Bitmap");
         setThumbnail(con, bitmap);
         adapter.update(this, true);
 
