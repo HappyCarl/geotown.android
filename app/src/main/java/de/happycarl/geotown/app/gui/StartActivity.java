@@ -2,12 +2,9 @@ package de.happycarl.geotown.app.gui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,14 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
@@ -39,7 +33,7 @@ import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
 import de.happycarl.geotown.app.events.UsernameSetEvent;
 
 
-public class StartActivity extends Activity {
+public class StartActivity extends SystemBarTintActivity {
 
     static final int REQUEST_ACCOUNT_PICKER = 2;
 
@@ -66,7 +60,6 @@ public class StartActivity extends Activity {
 
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
-        initSystemBarTint();
 
         GeotownApplication.getEventBus().register(this);
 
@@ -143,30 +136,6 @@ public class StartActivity extends Activity {
                 REQUEST_ACCOUNT_PICKER);
     }
 
-
-    private void initSystemBarTint() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setTranslucentStatus(true);
-        }
-
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setNavigationBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.actionbar_background_color);
-    }
-
-    @TargetApi(19)
-    private void setTranslucentStatus(boolean on) {
-        Window win = getWindow();
-        WindowManager.LayoutParams winParams = win.getAttributes();
-        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-        if (on) {
-            winParams.flags |= bits;
-        } else {
-            winParams.flags &= ~bits;
-        }
-        win.setAttributes(winParams);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

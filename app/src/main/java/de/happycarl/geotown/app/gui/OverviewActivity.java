@@ -1,6 +1,5 @@
 package de.happycarl.geotown.app.gui;
 
-import android.app.Activity;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
@@ -41,7 +40,7 @@ import de.happycarl.geotown.app.events.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.views.RouteCard;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
-public class OverviewActivity extends Activity implements
+public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
