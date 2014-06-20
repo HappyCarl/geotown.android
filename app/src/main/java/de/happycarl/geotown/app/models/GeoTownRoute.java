@@ -4,6 +4,7 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
+import com.appspot.drive_log.geotown.model.Route;
 
 import java.util.List;
 
@@ -42,5 +43,22 @@ public class GeoTownRoute extends Model{
                 .where("routeID = ?",id)
                 .limit(1)
                 .executeSingle();
+    }
+
+    public static void update(Route r, boolean createIfNotExist) {
+        GeoTownRoute route = getRoute(r.getId());
+        if (route == null) {
+            if (!createIfNotExist)
+                return;
+            route = new GeoTownRoute();
+        }
+        route.id = r.getId();
+        route.name = r.getName();
+        route.latitude = r.getLatitude();
+        route.longitude = r.getLongitude();
+        route.owner = r.getOwner().getUsername();
+        route.mine = true;
+        route.save();
+
     }
 }

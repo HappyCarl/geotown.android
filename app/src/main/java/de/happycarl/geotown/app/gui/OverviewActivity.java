@@ -127,20 +127,7 @@ public class OverviewActivity extends Activity {
             RouteCard c = new RouteCard(this,adapter,r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
             Picasso.with(this).load("https://maps.google.com/maps/api/staticmap?center=" + r.getLatitude() + ","+r.getLongitude()+"&size=128x128&zoom=8").placeholder(R.drawable.ic_launcher).into(c);
 
-            if(GeoTownRoute.getRoute(r.getId()) == null) {
-                Log.d("Database","Added route to database: " + r.getId());
-                GeoTownRoute route = new GeoTownRoute();
-                route.id = r.getId();
-                route.name = r.getName();
-                route.latitude = r.getLatitude();
-                route.longitude = r.getLongitude();
-                route.owner = r.getOwner().getUsername();
-                route.mine = true;
-                route.save();
-
-            }
-
-
+            GeoTownRoute.update(r, true);
         }
 
         progressDialog.dismiss();
