@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import de.happycarl.geotown.app.gui.R;
+import de.happycarl.geotown.app.R;
 
 public class RouteDetail extends Activity {
 

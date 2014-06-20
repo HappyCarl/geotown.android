@@ -10,7 +10,9 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
@@ -32,7 +34,7 @@ import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
 import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
-public class OverviewActivity extends Activity {
+public class OverviewActivity extends Activity implements Card.CardMenuListener<CardBase>{
 
     @InjectView(R.id.route_view)
     CardListView cardListView;
@@ -67,6 +69,16 @@ public class OverviewActivity extends Activity {
         AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
         routesRequest.execute((Void) null);
 
+    }
+
+    @Override
+    protected void onItemTapped(int index, CardBase item, View view) {
+        Toast.makeText(this,"Card clicked: " + item.getTitle(),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onMenuItemClick(CardBase card, MenuItem item) {
+        Toast.makeText(this,"Menu item clicked for " + card.getTitle() + ": " + item.getTitle(),Toast.LENGTH_LONG).show();
     }
 
 
