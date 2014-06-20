@@ -59,7 +59,7 @@ public class OverviewActivity extends Activity {
         adapter = new CardAdapter(this, android.R.color.holo_red_light);
         cardListView.setAdapter(adapter);
 
-
+        //TODO: Do this in a less obstrusive way.
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading routes");
         progressDialog.setMessage("This might take a second...");
