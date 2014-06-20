@@ -3,6 +3,7 @@ package de.happycarl.geotown.app;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import com.activeandroid.ActiveAndroid;
 import com.appspot.drive_log.geotown.Geotown;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.squareup.otto.Bus;
@@ -48,5 +49,13 @@ public class GeotownApplication extends Application {
         mGeotown = ApiUtils.getApiServiceHandle(null);
 
         mEventBus.post(new ApplicationStartedEvent(this));
+
+        ActiveAndroid.initialize(this);
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        ActiveAndroid.dispose();
     }
 }

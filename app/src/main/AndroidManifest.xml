@@ -19,15 +19,18 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
         <activity
             android:name=".gui.OverviewActivity"
             android:label="@string/title_activity_overview"
             android:windowTranslucentStatus="true">
         </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="local.db" />
     </application>
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />

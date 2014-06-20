@@ -2,10 +2,12 @@ package de.happycarl.geotown.app.gui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
 import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
+import de.happycarl.geotown.app.models.GeoTownRoute;
 
 public class OverviewActivity extends Activity {
 
@@ -124,7 +127,19 @@ public class OverviewActivity extends Activity {
             RouteCard c = new RouteCard(this,adapter,r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
             Picasso.with(this).load("https://maps.google.com/maps/api/staticmap?center=" + r.getLatitude() + ","+r.getLongitude()+"&size=128x128&zoom=8").placeholder(R.drawable.ic_launcher).into(c);
 
-            
+            if(GeoTownRoute.getRoute(r.getId()) == null) {
+                Log.d("Database","Added route to database: " + r.getId());
+                GeoTownRoute route = new GeoTownRoute();
+                route.id = r.getId();
+                route.name = r.getName();
+                route.latitude = r.getLatitude();
+                route.longitude = r.getLongitude();
+                route.owner = r.getOwner().getUsername();
+                route.mine = true;
+                route.save();
+
+            }
+
 
         }
 
