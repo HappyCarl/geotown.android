@@ -2,17 +2,12 @@ package de.happycarl.geotown.app.gui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardCenteredHeader;
 import com.afollestad.cardsui.CardHeader;
@@ -22,14 +17,17 @@ import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
+import de.happycarl.geotown.app.api.requests.NearRoutesRequest;
 import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
+import de.happycarl.geotown.app.events.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
 public class OverviewActivity extends Activity {
@@ -41,6 +39,9 @@ public class OverviewActivity extends Activity {
 
     CardAdapter adapter;
 
+    private List<Route> myRoutes = new ArrayList<Route>();
+    private List<Route> nearRoutes = new ArrayList<Route>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,16 +50,15 @@ public class OverviewActivity extends Activity {
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
 
-        adapter = new CardAdapter(this, android.R.color.holo_red_light);
+        adapter = new CardAdapter(this, R.color.primary_color);
         cardListView.setAdapter(adapter);
 
         //TODO: Do this in a less obstrusive way.
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading routes");
         progressDialog.setMessage("This might take a second...");
-        progressDialog.show();
-        AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
-        routesRequest.execute((Void) null);
+
+        refreshRoutes();
 
     }
 
@@ -91,39 +91,80 @@ public class OverviewActivity extends Activity {
 
                 break;
             case R.id.action_refresh:
-                progressDialog.show();
-                adapter.clear();
-
-                AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
-                routesRequest.execute((Void) null);
+                refreshRoutes();
                 break;
 
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void refreshRoutes() {
+        progressDialog.show();
+
+        AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
+        routesRequest.execute((Void) null);
+
+        NearRoutesRequest nearRoutesRequest = new NearRoutesRequest();
+        //TODO: get value from GPS.
+        nearRoutesRequest.execute(new NearRoutesRequest.NearRoutesParams(52, 8, 10000000));
+    }
+
     @Subscribe
-    @SuppressWarnings("rawtypes unchecked")
+    public void onNearRoutesDataReceived(NearRoutesDataReceivedEvent event) {
+        this.nearRoutes = event.routes;
+        updateCardsUI();
+    }
+
+    @Subscribe
     public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
-        if (event.routes == null || event.routes.size() == 0) {
+        myRoutes = event.routes;
+        progressDialog.dismiss();
+        updateCardsUI();
+    }
+
+    @SuppressWarnings("rawtypes unchecked")
+    private void updateCardsUI() {
+        adapter.clear();
+        // Near ROutes
+        CardHeader header = new CardHeader(getResources().getString(R.string.near_routes));
+        header.setClickable(true);
+        header.setAction(getResources().getString(R.string.see_more), nearRoutesActionListener);
+        adapter.add(header);
+
+        if (nearRoutes == null || nearRoutes.size() == 0) {
+            CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_near_routes));
+            adapter.add(empty);
+        }
+
+        if (nearRoutes != null) {
+            int i = 0; // Only show 3 near routes.
+            for (Route r : nearRoutes) {
+                if(i >= 3) break;
+                RouteCard c = new RouteCard(this, adapter, r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
+                Picasso.with(this).load("https://maps.google.com/maps/api/staticmap?center=" + r.getLatitude() + "," + r.getLongitude() + "&size=128x128&zoom=8").placeholder(R.drawable.ic_launcher).into(c);
+
+                GeoTownRoute.update(r, true);
+                i++;
+            }
+        }
+
+        // My Routes
+        CardHeader header2 = new CardHeader(getResources().getString(R.string.my_routes));
+        adapter.add(header2);
+
+        if (myRoutes == null || myRoutes.size() == 0) {
             CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_routes));
             adapter.add(empty);
-            return;
         }
 
+        if (myRoutes != null) {
+            for (Route r : myRoutes) {
+                RouteCard c = new RouteCard(this, adapter, r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
+                Picasso.with(this).load("https://maps.google.com/maps/api/staticmap?center=" + r.getLatitude() + "," + r.getLongitude() + "&size=128x128&zoom=8").placeholder(R.drawable.ic_launcher).into(c);
 
-
-        CardHeader header = new CardHeader(getResources().getString(R.string.my_routes));
-        adapter.add(header);
-        for (Route r : event.routes) {
-
-            RouteCard c = new RouteCard(this,adapter,r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
-            Picasso.with(this).load("https://maps.google.com/maps/api/staticmap?center=" + r.getLatitude() + ","+r.getLongitude()+"&size=128x128&zoom=8").placeholder(R.drawable.ic_launcher).into(c);
-
-            GeoTownRoute.update(r, true);
+                GeoTownRoute.update(r, true);
+            }
         }
-
-        progressDialog.dismiss();
 
 
     }
@@ -137,11 +178,11 @@ public class OverviewActivity extends Activity {
             Address address = gc.getFromLocation(latitude, longitude, 1).get(0);
 
             String town = getResources().getString(R.string.unknown_town);
-            if(address.getLocality()!=null) {
+            if (address.getLocality() != null) {
                 town = address.getLocality();
             }
             String country = getResources().getString(R.string.unknown_country);
-            if(address.getCountryName() != null) {
+            if (address.getCountryName() != null) {
                 country = address.getCountryName();
             }
             result = town + ", " + country;
@@ -152,7 +193,13 @@ public class OverviewActivity extends Activity {
         return result;
     }
 
+    private CardHeader.ActionListener nearRoutesActionListener = new CardHeader.ActionListener() {
 
+        @Override
+        public void onHeaderActionClick(CardHeader cardHeader) {
+            // TODO: Show "NearRoutesActivity" here.
+        }
+    };
 
 
 }
