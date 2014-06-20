@@ -9,7 +9,7 @@
         android:name=".GeotownApplication"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".StartActivity"
+            android:name=".gui.StartActivity"
             android:label="@string/app_name"
             android:windowTranslucentStatus="true" >
             <intent-filter>

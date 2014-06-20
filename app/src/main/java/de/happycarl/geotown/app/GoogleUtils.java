@@ -44,4 +44,9 @@ public class GoogleUtils {
             }
         });
     }
+
+    public static String getStaticMapUrl(double lat, double lng, int zoom, int size) {
+        return "https://maps.google.com/maps/api/staticmap?center=" + lat + "," + lng + "&size=" + size + "x" + size +
+                "&zoom=" + zoom;
+    }
 }

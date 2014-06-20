@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="de.happycarl.geotown.app.StartActivity">
+    tools:context="de.happycarl.geotown.app.gui.StartActivity">
 
 
     <TextView
@@ -44,7 +44,7 @@
         android:layout_centerHorizontal="true" />
 
 
-    <de.happycarl.geotown.app.gui.FadingImageView
+    <de.happycarl.geotown.app.gui.views.FadingImageView
         android:layout_width="fill_parent"
         android:layout_height="150dp"
         android:id="@+id/imageView2"

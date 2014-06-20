@@ -1,4 +1,4 @@
-package de.happycarl.geotown.app;
+package de.happycarl.geotown.app.gui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -30,11 +30,13 @@ import com.squareup.otto.Subscribe;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.happycarl.geotown.app.AppConstants;
+import de.happycarl.geotown.app.GeotownApplication;
+import de.happycarl.geotown.app.GoogleUtils;
+import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.CurrentUserDataRequest;
 import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
-import de.happycarl.geotown.app.events.CurrentUserDataReceivedEvent;
 import de.happycarl.geotown.app.events.UsernameSetEvent;
-import de.happycarl.geotown.app.gui.OverviewActivity;
 
 
 public class StartActivity extends Activity {

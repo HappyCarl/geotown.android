@@ -1,4 +1,4 @@
-package de.happycarl.geotown.app.gui;
+package de.happycarl.geotown.app.gui.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -20,9 +20,10 @@ public class RouteCard extends Card implements Target {
 
 
     public RouteCard(Context context, CardAdapter adapter, String title, String content) {
-        super(title,content);
+        super(title, content);
         con = context;
         this.adapter = adapter;
+        this.adapter.update(this, true);
     }
 
     @Override

@@ -1,12 +1,13 @@
 package de.happycarl.geotown.app.gui;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardCenteredHeader;
@@ -23,11 +24,13 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.happycarl.geotown.app.GeotownApplication;
+import de.happycarl.geotown.app.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
 import de.happycarl.geotown.app.api.requests.NearRoutesRequest;
 import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.NearRoutesDataReceivedEvent;
+import de.happycarl.geotown.app.gui.views.RouteCard;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
 public class OverviewActivity extends Activity {
@@ -35,12 +38,18 @@ public class OverviewActivity extends Activity {
     @InjectView(R.id.route_view)
     CardListView cardListView;
 
-    private ProgressDialog progressDialog;
+    @InjectView(R.id.overview_loading_layout)
+    LinearLayout loadingLayout;
+
+    @InjectView(R.id.overview_card_layout)
+    LinearLayout cardUILayout;
 
     CardAdapter adapter;
 
     private List<Route> myRoutes = new ArrayList<Route>();
     private List<Route> nearRoutes = new ArrayList<Route>();
+    boolean loadingMyRoutes = false;
+    boolean loadingNearRoutes = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +62,7 @@ public class OverviewActivity extends Activity {
         adapter = new CardAdapter(this, R.color.primary_color);
         cardListView.setAdapter(adapter);
 
-        //TODO: Do this in a less obstrusive way.
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Loading routes");
-        progressDialog.setMessage("This might take a second...");
-
         refreshRoutes();
-
     }
 
 
@@ -99,32 +102,41 @@ public class OverviewActivity extends Activity {
     }
 
     private void refreshRoutes() {
-        progressDialog.show();
+        loadingLayout.setVisibility(View.VISIBLE);
+        cardUILayout.setVisibility(View.GONE);
 
         AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
         routesRequest.execute((Void) null);
+        loadingMyRoutes = true;
 
         NearRoutesRequest nearRoutesRequest = new NearRoutesRequest();
         //TODO: get value from GPS.
         nearRoutesRequest.execute(new NearRoutesRequest.NearRoutesParams(52, 8, 10000000));
+        loadingNearRoutes = true;
     }
 
     @Subscribe
     public void onNearRoutesDataReceived(NearRoutesDataReceivedEvent event) {
         this.nearRoutes = event.routes;
-        updateCardsUI();
+        loadingNearRoutes = false;
+
+        if (!loadingMyRoutes)
+            updateCardsUI();
     }
 
     @Subscribe
     public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
         myRoutes = event.routes;
-        progressDialog.dismiss();
-        updateCardsUI();
+        loadingMyRoutes = false;
+
+        if (!loadingNearRoutes)
+            updateCardsUI();
     }
 
     @SuppressWarnings("rawtypes unchecked")
     private void updateCardsUI() {
         adapter.clear();
+
         // Near ROutes
         CardHeader header = new CardHeader(getResources().getString(R.string.near_routes));
         header.setClickable(true);
@@ -139,9 +151,9 @@ public class OverviewActivity extends Activity {
         if (nearRoutes != null) {
             int i = 0; // Only show 3 near routes.
             for (Route r : nearRoutes) {
-                if(i >= 3) break;
+                if (i >= 3) break;
                 RouteCard c = new RouteCard(this, adapter, r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
-                Picasso.with(this).load("https://maps.google.com/maps/api/staticmap?center=" + r.getLatitude() + "," + r.getLongitude() + "&size=128x128&zoom=8").placeholder(R.drawable.ic_launcher).into(c);
+                Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
 
                 GeoTownRoute.update(r, true);
                 i++;
@@ -160,12 +172,13 @@ public class OverviewActivity extends Activity {
         if (myRoutes != null) {
             for (Route r : myRoutes) {
                 RouteCard c = new RouteCard(this, adapter, r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
-                Picasso.with(this).load("https://maps.google.com/maps/api/staticmap?center=" + r.getLatitude() + "," + r.getLongitude() + "&size=128x128&zoom=8").placeholder(R.drawable.ic_launcher).into(c);
+                Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
 
                 GeoTownRoute.update(r, true);
             }
         }
-
+        loadingLayout.setVisibility(View.GONE);
+        cardUILayout.setVisibility(View.VISIBLE);
 
     }
 

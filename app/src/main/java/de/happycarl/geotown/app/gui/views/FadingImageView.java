@@ -1,4 +1,4 @@
-package de.happycarl.geotown.app.gui;
+package de.happycarl.geotown.app.gui.views;
 
 import android.content.Context;
 import android.content.res.Resources;
