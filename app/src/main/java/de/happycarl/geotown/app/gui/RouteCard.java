@@ -13,14 +13,14 @@ import com.squareup.picasso.Target;
 /**
  * Created by ole on 19.06.14.
  */
-public class CardTarget implements Target {
+public class RouteCard extends Card implements Target {
 
-    Card c;
     Context con;
     CardAdapter adapter;
 
-    public CardTarget(Card card, Context context, CardAdapter adapter) {
-        c = card;
+
+    public RouteCard(Context context, CardAdapter adapter, String title, String content) {
+        super(title,content);
         con = context;
         this.adapter = adapter;
     }
@@ -28,8 +28,9 @@ public class CardTarget implements Target {
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
         Log.d("Picasso", "Loaded Bitmap");
-        c.setThumbnail(con, bitmap);
-        adapter.update(c, true);
+        setThumbnail(con, bitmap);
+        adapter.update(this, true);
+
     }
 
     @Override
