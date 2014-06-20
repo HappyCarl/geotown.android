@@ -18,16 +18,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true">
 
-        <TextView android:id="@+id/overview_account_of"
-            android:text="@string/overview_account_of"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-        <TextView android:id="@+id/overview_user"
-            android:text="Username"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="30dp" />
-
         <com.afollestad.cardsui.CardListView
             android:id="@+id/route_view"
             android:layout_width="fill_parent"

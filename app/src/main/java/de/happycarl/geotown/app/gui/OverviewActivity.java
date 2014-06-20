@@ -37,9 +37,6 @@ public class OverviewActivity extends Activity {
     @InjectView(R.id.route_view)
     CardListView cardListView;
 
-    @InjectView(R.id.overview_user)
-    TextView userText;
-
     private ProgressDialog progressDialog;
 
     CardAdapter adapter;
@@ -51,10 +48,6 @@ public class OverviewActivity extends Activity {
 
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
-
-        String userEmail = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_NAME, "");
-        userText.setText(Html.fromHtml("<i>" + userEmail + "</i>"));
-
 
         adapter = new CardAdapter(this, android.R.color.holo_red_light);
         cardListView.setAdapter(adapter);
