@@ -115,4 +115,8 @@
     @com.squareup.otto.Produce public *;
 }
 
+-keep class com.activeandroid.** { *; }
 -keepattributes *Annotation*
+-keepattributes Column
+-keepattributes Table
+-keep public class de.happycarl.geotown.app.models.** { *; }
