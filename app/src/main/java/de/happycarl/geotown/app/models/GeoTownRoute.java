@@ -45,6 +45,14 @@ public class GeoTownRoute extends Model{
                 .executeSingle();
     }
 
+    public static GeoTownRoute getRoute(String name) {
+        return new Select()
+                .from(GeoTownRoute.class)
+                .where("name = ?",name)
+                .limit(1)
+                .executeSingle();
+    }
+
     public static void update(Route r, boolean createIfNotExist) {
         GeoTownRoute route = getRoute(r.getId());
         if (route == null) {

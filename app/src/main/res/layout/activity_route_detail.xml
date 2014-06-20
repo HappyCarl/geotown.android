@@ -14,18 +14,23 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         >
+
+
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="com.google.android.gms.maps.MapFragment"/>
-
+            android:layout_height="0dp"
+            android:layout_weight=".50"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:clickable="false"/>
 
         <TextView
             android:text="@string/hello_world"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/textView" />
+            android:layout_weight=".50"
+            android:textSize="40dp"
+            android:id="@+id/detail_route_name" />
 
         </LinearLayout>
 

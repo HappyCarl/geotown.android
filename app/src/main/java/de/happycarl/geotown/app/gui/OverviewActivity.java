@@ -74,7 +74,10 @@ public class OverviewActivity extends Activity implements CardListView.CardClick
 
     @Override
     public void onCardClick(int index, CardBase item, View view) {
-        Toast.makeText(this,"Card clicked: " + item.getTitle(),Toast.LENGTH_LONG).show();
+
+        Intent intent = new Intent(this, RouteDetail.class);
+        intent.putExtra("routeID", GeoTownRoute.getRoute(item.getTitle().toString()).id);
+        startActivity(intent);
     }
 
 
