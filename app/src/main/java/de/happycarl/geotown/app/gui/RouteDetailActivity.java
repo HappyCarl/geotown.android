@@ -5,7 +5,11 @@ import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +29,7 @@ import com.squareup.otto.Subscribe;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.GetRouteWaypointsRequest;
@@ -56,6 +61,9 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     private long routeId = -1;
     private Route mRoute;
+
+    private NfcAdapter mNfcAdapter;
+    private NdefMessage mNdefMessage;
 
 
     //================================================================================
@@ -91,6 +99,9 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         loadRoute();
 
         updateRouteUI();
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
     }
 
     @Override
@@ -104,6 +115,28 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     protected void onPause() {
         finish();
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d("OnResume","resumed");
+
+
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+            NdefMessage[] msgs;
+            Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            if (rawMsgs != null) {
+                msgs = new NdefMessage[rawMsgs.length];
+                for (int i = 0; i < rawMsgs.length; i++) {
+                    msgs[i] = (NdefMessage) rawMsgs[i];
+                }
+
+                Log.d("NFC", msgs[0].getRecords()[0].toString());
+            }
+        }
+
+
+        super.onResume();
     }
 
     //================================================================================
@@ -135,6 +168,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         }
     }
 
+
     private void updateRouteUI() {
         if (mRoute == null) {
             return;
@@ -165,6 +199,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
 
         updateShareIntent();
+        updateAndroidBeamPayload();
     }
 
 
@@ -178,13 +213,23 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         routeIntent.putExtra("routeID", routeId);
 
 
-        String routeShare = "http://geotown.de/" + routeId;
+        String routeShare = AppConstants.SHARE_DOMAIN_NAME + routeId;
         String shareTextRaw = getResources().getString(R.string.share_text);
         String shareText = String.format(shareTextRaw, routeShare, "(Not yet in store)");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
         shareIntent.setType("text/plain");
 
         mShareActionProvider.setShareIntent(shareIntent);
+    }
+
+    private void updateAndroidBeamPayload() {
+        if(mNfcAdapter != null) {
+            NdefRecord[] records = new NdefRecord[] {NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + mRoute.getId()), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
+
+            mNdefMessage = new NdefMessage(records);
+
+            mNfcAdapter.setNdefPushMessage(mNdefMessage,this);
+        }
     }
 
 

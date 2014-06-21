@@ -26,7 +26,7 @@
             android:clickable="false"/>
 
         <TextView
-            android:text="@string/username"
+            android:text="@string/route"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="40sp"

@@ -12,4 +12,7 @@ public class AppConstants {
     public static final String PREF_NAME = "GeoTown";
     public static final String PREF_ACCOUNT_NAME = "account_name";
 
+    //Sharing stuff
+    public static final String SHARE_DOMAIN_NAME = "http://geotown.de/";
+
 }
