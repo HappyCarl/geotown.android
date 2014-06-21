@@ -1,6 +1,5 @@
 package de.happycarl.geotown.app.gui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Address;
@@ -12,12 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.afollestad.cardsui.Card;
-import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardAdapter;
+import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardCenteredHeader;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
@@ -51,17 +47,17 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener ,CardListView.CardClickListener{
+        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener, CardListView.CardClickListener {
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
 
     private static final int DEFAULT_NEAR_ROUTES_SEARCH_RADIUS = 1000000; // in m (afaik :) )
 
     private static final int MILLISECONDS_PER_SECOND = 1000;
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 20;
+    public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
     private static final long UPDATE_INTERVAL =
             MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
-    private static final int FASTEST_INTERVAL_IN_SECONDS = 5;
+    private static final int FASTEST_INTERVAL_IN_SECONDS = 1;
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
 
@@ -80,7 +76,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private List<Route> myRoutes = new ArrayList<Route>();
     private List<Route> nearRoutes = new ArrayList<Route>();
     boolean loadingMyRoutes = false;
-    boolean loadingNearRoutes = false;
+    boolean loadingNearRoutes = true;
 
     private LocationClient locationClient;
     private LocationRequest locationRequest;
@@ -143,8 +139,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -182,6 +176,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
         cardUILayout.setVisibility(View.GONE);
 
         reloadMyRoutes();
+        locationUpdateReceived = false;
     }
 
     private void reloadMyRoutes() {
@@ -308,9 +303,12 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        this.locationUpdateReceived = true;
+
         updateCardsUI();
-        reloadNearRoutes(location);
+
+        if (!locationUpdateReceived)
+            reloadNearRoutes(location);
+        this.locationUpdateReceived = true;
 
     }
 
