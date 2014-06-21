@@ -1,6 +1,7 @@
 package de.happycarl.geotown.app.gui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
@@ -50,7 +51,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener {
+        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener ,CardListView.CardClickListener{
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
 
@@ -64,7 +65,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
 
-public class OverviewActivity extends Activity implements CardListView.CardClickListener{
 
     @InjectView(R.id.route_view)
     CardListView cardListView;
