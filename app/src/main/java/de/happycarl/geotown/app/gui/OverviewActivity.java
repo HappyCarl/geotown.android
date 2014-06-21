@@ -37,6 +37,7 @@ import de.happycarl.geotown.app.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
 import de.happycarl.geotown.app.api.requests.NearRoutesRequest;
+import de.happycarl.geotown.app.events.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.views.RouteCard;
@@ -50,6 +51,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener, CardListView.CardClickListener {
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
+    private static final int GET_ROUTE_BY_NAME_DETAIL_REQUEST = 421;
 
     private static final int DEFAULT_NEAR_ROUTES_SEARCH_RADIUS = 1000000; // in m (afaik :) )
 
@@ -132,12 +134,18 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Override
     public void onCardClick(int index, CardBase item, View view) {
+        GeoTownRoute.getRoute(item.getTitle().toString(), GET_ROUTE_BY_NAME_DETAIL_REQUEST);
 
-        Intent intent = new Intent(this, RouteDetail.class);
-        intent.putExtra("routeID", GeoTownRoute.getRoute(item.getTitle().toString()).id);
-        startActivity(intent);
     }
 
+    @Subscribe
+    public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
+        if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST) {
+            Intent intent = new Intent(this, RouteDetail.class);
+            intent.putExtra("routeID", event.route.id);
+            startActivity(intent);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -234,7 +242,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
             int i = 0; // Only show 3 near routes.
             for (Route r : nearRoutes) {
                 if (i >= 3) break;
-                RouteCard c = new RouteCard(this, adapter, r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
+                RouteCard c = new RouteCard(this, adapter, r);
                 Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
                 GeoTownRoute.update(r, true);
                 i++;
@@ -252,7 +260,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         if (myRoutes != null) {
             for (Route r : myRoutes) {
-                RouteCard c = new RouteCard(this, adapter, r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
+                RouteCard c = new RouteCard(this, adapter, r);
                 Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
 
                 GeoTownRoute.update(r, true);
