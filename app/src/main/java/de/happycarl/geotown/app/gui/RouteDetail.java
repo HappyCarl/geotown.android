@@ -47,6 +47,8 @@ public class RouteDetail extends Activity {
         map.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         map.getMap().moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(route.latitude,route.longitude) , 14.0f) );
         map.getMap().addMarker(new MarkerOptions().position(new LatLng(route.latitude,route.longitude)).title(route.name).snippet(route.owner));
+        map.getMap().getUiSettings().setAllGesturesEnabled(false);
+
 
     }
 
