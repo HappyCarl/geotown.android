@@ -47,6 +47,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener, CardListView.CardClickListener {
 
+    //================================================================================
+    // Constants
+    //================================================================================
+
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
     private static final int GET_ROUTE_BY_NAME_DETAIL_REQUEST = 425498458;
 
@@ -60,6 +64,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
 
+    //================================================================================
+    // Properties
+    //================================================================================
 
     @InjectView(R.id.route_view)
     CardListView cardListView;
@@ -70,7 +77,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     @InjectView(R.id.overview_card_ptr_layout)
     PullToRefreshLayout cardUILayout;
 
-    CardAdapter adapter;
+    private CardAdapter adapter;
 
     private List<Route> myRoutes = new ArrayList<Route>();
     private List<Route> nearRoutes = new ArrayList<Route>();
@@ -81,6 +88,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private LocationRequest locationRequest;
 
     private boolean locationUpdateReceived = false;
+
+    //================================================================================
+    // Activity Lifecycle
+    //================================================================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,19 +146,13 @@ public class OverviewActivity extends SystemBarTintActivity implements
         super.onStop();
     }
 
+    //================================================================================
+    // UI
+    //================================================================================
+
     @Override
     public void onCardClick(int index, CardBase item, View view) {
         GeoTownRoute.getRoute(item.getTitle().toString(), GET_ROUTE_BY_NAME_DETAIL_REQUEST);
-
-    }
-
-    @Subscribe
-    public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
-        if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST) {
-            Intent intent = new Intent(this, RouteDetailActivity.class);
-            intent.putExtra("routeID", event.route.id);
-            startActivity(intent);
-        }
     }
 
     @Override
@@ -155,11 +160,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.overview, menu);
         return true;
-    }
-
-
-    protected void exitButton() {
-        finish();
     }
 
     @Override
@@ -180,46 +180,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void refreshRoutes() {
-        loadingLayout.setVisibility(View.VISIBLE);
-        cardUILayout.setVisibility(View.GONE);
-
-        reloadMyRoutes();
-        locationUpdateReceived = false;
-    }
-
-    private void reloadMyRoutes() {
-        AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
-        routesRequest.execute((Void) null);
-        loadingMyRoutes = true;
-    }
-
-    private void reloadNearRoutes(Location currentLocation) {
-
-        Log.d("OverviewActivity", locationClient.isConnected() + "");
-        NearRoutesRequest nearRoutesRequest = new NearRoutesRequest();
-        nearRoutesRequest.execute(new NearRoutesRequest.NearRoutesParams(currentLocation.getLatitude(), currentLocation.getLongitude(), DEFAULT_NEAR_ROUTES_SEARCH_RADIUS));
-        loadingNearRoutes = true;
-    }
-
-    @Subscribe
-    public void onNearRoutesDataReceived(NearRoutesDataReceivedEvent event) {
-        this.nearRoutes = event.routes;
-        loadingNearRoutes = false;
-
-        if (!loadingMyRoutes)
-            updateCardsUI();
-    }
-
-    @Subscribe
-    public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
-        myRoutes = event.routes;
-        loadingMyRoutes = false;
-
-        if (!loadingNearRoutes)
-            updateCardsUI();
     }
 
     @SuppressWarnings("rawtypes unchecked")
@@ -277,6 +237,69 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     @Override
+    public void onRefreshStarted(View view) {
+        this.refreshRoutes();
+    }
+
+    private void refreshRoutes() {
+        loadingLayout.setVisibility(View.VISIBLE);
+        cardUILayout.setVisibility(View.GONE);
+
+        loadMyRoutes();
+        locationUpdateReceived = false;
+    }
+
+    //================================================================================
+    // Network
+    //================================================================================
+
+    private void loadMyRoutes() {
+        AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
+        routesRequest.execute((Void) null);
+        loadingMyRoutes = true;
+    }
+
+    private void loadNearRoutes(Location currentLocation) {
+        Log.d("OverviewActivity", locationClient.isConnected() + "");
+        NearRoutesRequest nearRoutesRequest = new NearRoutesRequest();
+        nearRoutesRequest.execute(new NearRoutesRequest.NearRoutesParams(currentLocation.getLatitude(), currentLocation.getLongitude(), DEFAULT_NEAR_ROUTES_SEARCH_RADIUS));
+        loadingNearRoutes = true;
+    }
+
+    @Subscribe
+    public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
+        if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST) {
+            Intent intent = new Intent(this, RouteDetailActivity.class);
+            intent.putExtra("routeID", event.route.id);
+            startActivity(intent);
+        }
+    }
+
+    @Subscribe
+    public void onNearRoutesDataReceived(NearRoutesDataReceivedEvent event) {
+        this.nearRoutes = event.routes;
+        loadingNearRoutes = false;
+
+        if (!loadingMyRoutes)
+            updateCardsUI();
+    }
+
+    @Subscribe
+    public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
+        myRoutes = event.routes;
+        loadingMyRoutes = false;
+
+        if (!loadingNearRoutes)
+            updateCardsUI();
+    }
+
+
+    //================================================================================
+    // GeoLocation Services
+    //================================================================================
+
+
+    @Override
     public void onConnected(Bundle bundle) {
         locationClient.requestLocationUpdates(locationRequest, this);
         Log.d("OverviewActivity", "Location Client connected!");
@@ -289,18 +312,12 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-
         updateCardsUI();
 
         if (!locationUpdateReceived)
-            reloadNearRoutes(location);
+            loadNearRoutes(location);
+
         this.locationUpdateReceived = true;
-
-    }
-
-    @Override
-    public void onRefreshStarted(View view) {
-        this.refreshRoutes();
     }
 
     @Override
