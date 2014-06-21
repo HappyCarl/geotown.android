@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.events.RouteWaypointsReceivedEvent;
+import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
 
 /**
  * Created by ole on 20.06.14.

@@ -1,4 +1,4 @@
-package de.happycarl.geotown.app.events;
+package de.happycarl.geotown.app.events.db;
 
 import de.happycarl.geotown.app.models.GeoTownRoute;
 

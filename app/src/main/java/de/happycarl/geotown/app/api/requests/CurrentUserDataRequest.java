@@ -6,10 +6,8 @@ import com.appspot.drive_log.geotown.model.UserData;
 
 import java.io.IOException;
 
-import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.api.ApiUtils;
-import de.happycarl.geotown.app.events.CurrentUserDataReceivedEvent;
+import de.happycarl.geotown.app.events.net.CurrentUserDataReceivedEvent;
 
 /**
  * Created by ole on 19.06.14.

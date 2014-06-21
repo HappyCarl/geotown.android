@@ -29,8 +29,8 @@ import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.GetRouteWaypointsRequest;
 import de.happycarl.geotown.app.api.requests.RouteRequest;
-import de.happycarl.geotown.app.events.RouteDataReceivedEvent;
-import de.happycarl.geotown.app.events.RouteWaypointsReceivedEvent;
+import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
+import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
 
 public class RouteDetailActivity extends SystemBarTintActivity {
 

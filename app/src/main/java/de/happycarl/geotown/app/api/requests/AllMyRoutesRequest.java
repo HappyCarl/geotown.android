@@ -10,10 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.api.ApiUtils;
-import de.happycarl.geotown.app.events.MyRoutesDataReceivedEvent;
+import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 
 /**
  * Created by ole on 18.06.14.

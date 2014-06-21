@@ -7,7 +7,7 @@ import com.appspot.drive_log.geotown.model.Route;
 import java.io.IOException;
 
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.events.RouteDataReceivedEvent;
+import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 
 /**
  * Created by ole on 19.06.14.

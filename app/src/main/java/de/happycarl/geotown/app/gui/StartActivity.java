@@ -30,7 +30,7 @@ import de.happycarl.geotown.app.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.CurrentUserDataRequest;
 import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
-import de.happycarl.geotown.app.events.UsernameSetEvent;
+import de.happycarl.geotown.app.events.net.UsernameSetEvent;
 
 
 public class StartActivity extends SystemBarTintActivity {

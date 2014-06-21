@@ -1,4 +1,4 @@
-package de.happycarl.geotown.app.events;
+package de.happycarl.geotown.app.events.net;
 
 import com.appspot.drive_log.geotown.model.Waypoint;
 

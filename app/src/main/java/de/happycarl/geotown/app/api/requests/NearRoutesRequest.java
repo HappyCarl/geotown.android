@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.events.NearRoutesDataReceivedEvent;
+import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
 
 /**
  * Created by jhbruhn on 20.06.14.

@@ -11,8 +11,8 @@ import com.appspot.drive_log.geotown.model.Route;
 import java.util.List;
 
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.events.GeoTownRouteRetrievedEvent;
-import de.happycarl.geotown.app.events.GeoTownRouteSavedEvent;
+import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
+import de.happycarl.geotown.app.events.db.GeoTownRouteSavedEvent;
 
 /**
  * Created by ole on 20.06.14.
