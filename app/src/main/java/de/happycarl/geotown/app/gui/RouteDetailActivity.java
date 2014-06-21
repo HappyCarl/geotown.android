@@ -104,6 +104,10 @@ public class RouteDetailActivity extends SystemBarTintActivity {
             return;
         }
 
+        if (getActionBar() != null) {
+            getActionBar().setTitle(mRoute.name);
+        }
+
         FragmentManager fm = this.getFragmentManager();
         mMapFragment = (MapFragment) fm.findFragmentById(R.id.map);
 
