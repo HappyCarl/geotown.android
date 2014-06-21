@@ -30,6 +30,11 @@
         <activity
             android:name=".gui.RouteDetail"
             android:label="@string/title_activity_route_detail" >
+            <intent-filter>
+                <action android:name="de.happycarl.geotown.app.ROUTE_ID" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
         </activity>
 
 

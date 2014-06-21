@@ -87,7 +87,7 @@ public class RouteDetail extends SystemBarTintActivity {
 
     @Subscribe
     public void onRouteWaypointsReceived(RouteWaypointsReceivedEvent event) {
-        Log.d("RouteDetail","Got waypoints");
+        Log.d("RouteDetail", "Got waypoints");
         int waypointCount = 0;
         if(event.waypoints != null) {
             waypointCount = event.waypoints.size();
@@ -108,7 +108,13 @@ public class RouteDetail extends SystemBarTintActivity {
 
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        String routeShare = "geotown://" + mRoute.id;
+
+        Intent routeIntent = new Intent();
+        routeIntent.setAction("de.happycarl.geotown.app.ROUTE_ID");
+        routeIntent.putExtra("routeID",mRoute.id);
+
+
+        String routeShare = "http://geotown.de/"+mRoute.id;
         String shareTextRaw = getResources().getString(R.string.share_text);
         String shareText = String.format(shareTextRaw, routeShare, "(Not yet in store)");
         shareIntent.putExtra(Intent.EXTRA_TEXT,shareText);
