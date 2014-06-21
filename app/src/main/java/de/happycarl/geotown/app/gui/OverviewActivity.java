@@ -83,8 +83,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     private boolean locationUpdateReceived = false;
 
-    private boolean detailRequested = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +113,12 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        GeotownApplication.getEventBus().unregister(this);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         locationClient.connect();
@@ -140,11 +144,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Subscribe
     public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
-        if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST || !detailRequested) {
+        if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST) {
             Intent intent = new Intent(this, RouteDetailActivity.class);
             intent.putExtra("routeID", event.route.id);
-            startActivityForResult(intent, SHOW_ROUTE_REQUEST);
-            detailRequested = true;
+            startActivity(intent);
         }
     }
 
@@ -272,17 +275,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         this.cardUILayout.setRefreshComplete();
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case SHOW_ROUTE_REQUEST:
-                detailRequested = false;
-                break;
-        }
     }
 
     @Override

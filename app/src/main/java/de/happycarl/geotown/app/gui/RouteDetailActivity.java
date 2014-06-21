@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -55,11 +56,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     ShareActionProvider mShareActionProvider;
 
-    boolean created = false;
-
-    boolean waypointsLoaded = false;
-    boolean routeRetrieved = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +63,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
-
-        created = true;
 
         String path = "";
         if (getIntent().getData() != null && getIntent().getData().getPath() != null)
@@ -93,15 +87,19 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         updateRouteUI();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        GeotownApplication.getEventBus().unregister(this);
+    }
+
     private void loadWaypoints() {
-        if (waypointsLoaded) return;
         GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
         getRouteWaypointsRequest.execute(routeId);
-        waypointsLoaded = true;
     }
 
     private void updateRouteUI() {
-        if (mRoute == null || !created) {
+        if (mRoute == null) {
             return;
         }
 
@@ -122,7 +120,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         }
 
 
-        if (mMapFragment == null) return;
         mMapFragment.getMap().setMyLocationEnabled(false);
         mMapFragment.getMap().setTrafficEnabled(false);
         mMapFragment.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
@@ -136,8 +133,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     @Subscribe
     public void onRouteReceived(RouteDataReceivedEvent event) {
-        if (routeRetrieved) return;
-
         mRoute = event.route;
         this.runOnUiThread(new Runnable() {
             @Override
@@ -147,7 +142,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
             }
         });
         loadWaypoints();
-        routeRetrieved = true;
     }
 
     @Override
@@ -158,6 +152,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     @Subscribe
     public void onRouteWaypointsReceived(RouteWaypointsReceivedEvent event) {
+        Log.d("Routes", "Waypoints Event received" + event);
         int waypointCount = 0;
         if (event.waypoints != null) {
             waypointCount = event.waypoints.size();
