@@ -34,25 +34,33 @@ import de.happycarl.geotown.app.events.RouteWaypointsReceivedEvent;
 
 public class RouteDetailActivity extends SystemBarTintActivity {
 
-    private long routeId = -1;
+    //================================================================================
+    // Properties
+    //================================================================================
+
 
     @InjectView(R.id.detail_route_name)
-    TextView routeName;
+    private TextView routeName;
 
     @InjectView(R.id.detail_route_owner)
-    TextView routeOwner;
+    private TextView routeOwner;
 
     @InjectView(R.id.detail_route_waypoints)
-    TextView routeWaypoints;
+    private TextView routeWaypoints;
 
     @InjectView(R.id.play_route)
-    Button playRoute;
+    private Button playRoute;
 
-    MapFragment mMapFragment;
+    private MapFragment mMapFragment;
+    private ShareActionProvider mShareActionProvider;
 
-    Route mRoute;
+    private long routeId = -1;
+    private Route mRoute;
 
-    ShareActionProvider mShareActionProvider;
+
+    //================================================================================
+    // Activity Lifecycle
+    //================================================================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +88,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
             }
         }
 
-        new RouteRequest().execute(routeId);
+        loadRoute();
 
         updateRouteUI();
     }
@@ -91,9 +99,40 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         GeotownApplication.getEventBus().unregister(this);
     }
 
-    private void loadWaypoints() {
-        GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
-        getRouteWaypointsRequest.execute(routeId);
+
+    @Override
+    protected void onPause() {
+        finish();
+        super.onPause();
+    }
+
+    //================================================================================
+    // UI
+    //================================================================================
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.route_detail, menu);
+
+        MenuItem item = menu.findItem(R.id.share_route);
+
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+
+        updateShareIntent();
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void updateRouteUI() {
@@ -129,51 +168,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     }
 
 
-    @Subscribe
-    public void onRouteReceived(RouteDataReceivedEvent event) {
-        mRoute = event.route;
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateRouteUI();
-
-            }
-        });
-        loadWaypoints();
-    }
-
-    @Override
-    protected void onPause() {
-        finish();
-        super.onPause();
-    }
-
-    @Subscribe
-    public void onRouteWaypointsReceived(RouteWaypointsReceivedEvent event) {
-        Log.d("Routes", "Waypoints Event received" + event);
-        int waypointCount = 0;
-        if (event.waypoints != null) {
-            waypointCount = event.waypoints.size();
-        }
-
-        routeWaypoints.setText(waypointCount + " " + getResources().getString(R.string.waypoints));
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.route_detail, menu);
-
-        MenuItem item = menu.findItem(R.id.share_route);
-
-        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
-
-        updateShareIntent();
-
-        return true;
-    }
-
     private void updateShareIntent() {
         if (mShareActionProvider == null) return;
         Intent shareIntent = new Intent();
@@ -191,18 +185,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         shareIntent.setType("text/plain");
 
         mShareActionProvider.setShareIntent(shareIntent);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
 
@@ -246,4 +228,44 @@ public class RouteDetailActivity extends SystemBarTintActivity {
             finish(); //Back to Overview screen
         }
     }
+
+
+    //================================================================================
+    // Network
+    //================================================================================
+
+    private void loadRoute() {
+        new RouteRequest().execute(routeId);
+    }
+
+    private void loadWaypoints() {
+        GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
+        getRouteWaypointsRequest.execute(routeId);
+    }
+
+    @Subscribe
+    public void onRouteReceived(RouteDataReceivedEvent event) {
+        mRoute = event.route;
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateRouteUI();
+
+            }
+        });
+        loadWaypoints();
+    }
+
+
+    @Subscribe
+    public void onRouteWaypointsReceived(RouteWaypointsReceivedEvent event) {
+        Log.d("Routes", "Waypoints Event received" + event);
+        int waypointCount = 0;
+        if (event.waypoints != null) {
+            waypointCount = event.waypoints.size();
+        }
+
+        routeWaypoints.setText(waypointCount + " " + getResources().getString(R.string.waypoints));
+    }
+
 }
