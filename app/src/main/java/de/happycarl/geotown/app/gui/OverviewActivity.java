@@ -48,7 +48,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener, CardListView.CardClickListener {
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
-    private static final int GET_ROUTE_BY_NAME_DETAIL_REQUEST = 421;
+    private static final int GET_ROUTE_BY_NAME_DETAIL_REQUEST = 425498458;
+    private static final int SHOW_ROUTE_REQUEST = 0xdeadbeef;
 
     private static final int DEFAULT_NEAR_ROUTES_SEARCH_RADIUS = 1000000; // in m (afaik :) )
 
@@ -81,6 +82,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private LocationRequest locationRequest;
 
     private boolean locationUpdateReceived = false;
+
+    private boolean detailRequested = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,10 +140,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Subscribe
     public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
-        if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST) {
+        if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST || !detailRequested) {
             Intent intent = new Intent(this, RouteDetailActivity.class);
             intent.putExtra("routeID", event.route.id);
-            startActivity(intent);
+            startActivityForResult(intent, SHOW_ROUTE_REQUEST);
+            detailRequested = true;
         }
     }
 
@@ -268,6 +272,17 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         this.cardUILayout.setRefreshComplete();
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case SHOW_ROUTE_REQUEST:
+                detailRequested = false;
+                break;
+        }
     }
 
     @Override

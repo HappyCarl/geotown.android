@@ -128,6 +128,8 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         mMapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mRoute.latitude, mRoute.longitude), 14.0f));
         mMapFragment.getMap().addMarker(new MarkerOptions().position(new LatLng(mRoute.latitude, mRoute.longitude)).title(mRoute.name).snippet(mRoute.owner));
         mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
+
+        updateShareIntent();
     }
 
 
@@ -173,23 +175,28 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
         mShareActionProvider = (ShareActionProvider) item.getActionProvider();
 
+        updateShareIntent();
+
+        return true;
+    }
+
+    private void updateShareIntent() {
+        if (mShareActionProvider == null) return;
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
 
         Intent routeIntent = new Intent();
         routeIntent.setAction("de.happycarl.geotown.app.ROUTE_ID");
-        routeIntent.putExtra("routeID", mRoute.id);
+        routeIntent.putExtra("routeID", routeId);
 
 
-        String routeShare = "http://geotown.de/" + mRoute.id;
+        String routeShare = "http://geotown.de/" + routeId;
         String shareTextRaw = getResources().getString(R.string.share_text);
         String shareText = String.format(shareTextRaw, routeShare, "(Not yet in store)");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
         shareIntent.setType("text/plain");
 
         mShareActionProvider.setShareIntent(shareIntent);
-
-        return true;
     }
 
 
