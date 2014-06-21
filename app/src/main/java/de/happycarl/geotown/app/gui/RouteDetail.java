@@ -59,13 +59,38 @@ public class RouteDetail extends SystemBarTintActivity {
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
 
-        created = true;
+
+
+
+    }
+
+    @Override
+    protected void onStart() {
         GeoTownRoute.getRoute(getIntent().getLongExtra("routeID", 0L), ROUTE_REQ_ID);
-        updateRouteUI();
+        //updateRouteUI();
+
+        created = true;
+        super.onStart();
+
     }
 
     private void updateRouteUI() {
-        if (route == null || !created) return;
+        if (route == null || !created) {
+            Log.d("UpdateRouteUI","Returning");
+            return;
+        }
+
+        FragmentManager fm = this.getFragmentManager();
+        map = (MapFragment) fm.findFragmentById(R.id.map);
+        if(map == null) {
+            Log.d("Map","MapFragment is null");
+
+            GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
+            getRouteWaypointsRequest.execute(route.id);
+
+            return;
+        }
+
         routeName.setText(Html.fromHtml("<b>" + route.name + "</b>"));
         routeOwner.setText(Html.fromHtml("<i>by " + route.owner + "</i>"));
 
@@ -77,8 +102,8 @@ public class RouteDetail extends SystemBarTintActivity {
             playRoute.setEnabled(false);
         }
 
-        FragmentManager fm = this.getFragmentManager();
-        map = (MapFragment) fm.findFragmentById(R.id.map);
+
+
         map.getMap().setMyLocationEnabled(false);
         map.getMap().setTrafficEnabled(false);
         map.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
@@ -90,6 +115,7 @@ public class RouteDetail extends SystemBarTintActivity {
     @Subscribe
     public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
         if (event.id != ROUTE_REQ_ID) return;
+        Log.d("Route","Received route :" + event.route.id);
         route = event.route;
         this.runOnUiThread(new Runnable() {
             @Override
@@ -99,6 +125,12 @@ public class RouteDetail extends SystemBarTintActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onPause() {
+        finish();
+        super.onPause();
     }
 
     @Subscribe
