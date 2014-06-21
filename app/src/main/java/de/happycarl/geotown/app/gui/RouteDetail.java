@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -51,6 +50,9 @@ public class RouteDetail extends SystemBarTintActivity {
 
     boolean created = false;
 
+    boolean waypointsLoaded = false;
+    boolean routeRetrieved = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,43 +61,31 @@ public class RouteDetail extends SystemBarTintActivity {
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
 
+        created = true;
 
+        GeoTownRoute.getRoute(getIntent().getLongExtra("routeID", 0L), ROUTE_REQ_ID);
 
-
+        updateRouteUI();
     }
 
-    @Override
-    protected void onStart() {
-        GeoTownRoute.getRoute(getIntent().getLongExtra("routeID", 0L), ROUTE_REQ_ID);
-        //updateRouteUI();
-
-        created = true;
-        super.onStart();
-
+    private void loadWaypoints() {
+        if (waypointsLoaded) return;
+        GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
+        getRouteWaypointsRequest.execute(route.id);
+        waypointsLoaded = true;
     }
 
     private void updateRouteUI() {
         if (route == null || !created) {
-            Log.d("UpdateRouteUI","Returning");
             return;
         }
 
         FragmentManager fm = this.getFragmentManager();
         map = (MapFragment) fm.findFragmentById(R.id.map);
-        if(map == null) {
-            Log.d("Map","MapFragment is null");
-
-            GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
-            getRouteWaypointsRequest.execute(route.id);
-
-            return;
-        }
 
         routeName.setText(Html.fromHtml("<b>" + route.name + "</b>"));
         routeOwner.setText(Html.fromHtml("<i>by " + route.owner + "</i>"));
 
-        GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
-        getRouteWaypointsRequest.execute(route.id);
 
         if (GeotownApplication.getPreferences().getLong("current_route", 0L) == route.id) {
             playRoute.setText(R.string.currently_playing);
@@ -103,7 +93,7 @@ public class RouteDetail extends SystemBarTintActivity {
         }
 
 
-
+        if (map == null) return;
         map.getMap().setMyLocationEnabled(false);
         map.getMap().setTrafficEnabled(false);
         map.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
@@ -114,8 +104,8 @@ public class RouteDetail extends SystemBarTintActivity {
 
     @Subscribe
     public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
+        if (routeRetrieved) return;
         if (event.id != ROUTE_REQ_ID) return;
-        Log.d("Route","Received route :" + event.route.id);
         route = event.route;
         this.runOnUiThread(new Runnable() {
             @Override
@@ -124,7 +114,8 @@ public class RouteDetail extends SystemBarTintActivity {
 
             }
         });
-
+        loadWaypoints();
+        routeRetrieved = true;
     }
 
     @Override
@@ -135,7 +126,6 @@ public class RouteDetail extends SystemBarTintActivity {
 
     @Subscribe
     public void onRouteWaypointsReceived(RouteWaypointsReceivedEvent event) {
-        Log.d("RouteDetail", "Got waypoints");
         int waypointCount = 0;
         if (event.waypoints != null) {
             waypointCount = event.waypoints.size();
