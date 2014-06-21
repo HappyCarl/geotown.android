@@ -2,4 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="de.happycarl.geotown.app.gui.RouteDetail" >
 
+    <item
+        android:id="@+id/share_route"
+        android:title="Share"
+        android:showAsAction="ifRoom"
+        android:actionProviderClass="android.widget.ShareActionProvider" />
 </menu>
