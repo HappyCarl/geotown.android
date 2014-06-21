@@ -2,8 +2,6 @@ package de.happycarl.geotown.app.gui;
 
 import android.content.Intent;
 import android.content.IntentSender;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +24,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -273,31 +270,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     }
 
-    private String getLocationName(double latitude, double longitude) {
-        String result = getResources().getString(R.string.unknown_place);
-
-        Geocoder gc = new Geocoder(this);
-
-        try {
-            Address address = gc.getFromLocation(latitude, longitude, 1).get(0);
-
-            String town = getResources().getString(R.string.unknown_town);
-            if (address.getLocality() != null) {
-                town = address.getLocality();
-            }
-            String country = getResources().getString(R.string.unknown_country);
-            if (address.getCountryName() != null) {
-                country = address.getCountryName();
-            }
-            result = town + ", " + country;
-        } catch (IOException | IndexOutOfBoundsException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
-
     @Override
     public void onConnected(Bundle bundle) {
         locationClient.requestLocationUpdates(locationRequest, this);
@@ -357,6 +329,5 @@ public class OverviewActivity extends SystemBarTintActivity implements
             // TODO: Show "NearRoutesActivity" here.
         }
     };
-
 
 }
