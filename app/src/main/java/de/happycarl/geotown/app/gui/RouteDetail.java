@@ -34,6 +34,8 @@ public class RouteDetail extends SystemBarTintActivity {
 
     private static final int ROUTE_REQ_ID = 425694594;
 
+    private long routeId = -1;
+
     @InjectView(R.id.detail_route_name)
     TextView routeName;
 
@@ -67,7 +69,20 @@ public class RouteDetail extends SystemBarTintActivity {
 
         created = true;
 
-        GeoTownRoute.getRoute(getIntent().getLongExtra("routeID", 0L), ROUTE_REQ_ID);
+        String path = "";
+        if (getIntent().getData() != null && getIntent().getData().getPath() != null)
+            path = getIntent().getData().getPath().replaceAll("[^\\d]", "");
+
+        routeId = getIntent().getLongExtra("routeID", -1L);
+
+        if (routeId == -1 && !path.isEmpty()) {
+            try {
+                routeId = Long.valueOf(path);
+            } catch (RuntimeException e) {
+            }
+        }
+
+        GeoTownRoute.getRoute(routeId, ROUTE_REQ_ID);
 
         updateRouteUI();
     }
@@ -75,7 +90,7 @@ public class RouteDetail extends SystemBarTintActivity {
     private void loadWaypoints() {
         if (waypointsLoaded) return;
         GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
-        getRouteWaypointsRequest.execute(mRoute.id);
+        getRouteWaypointsRequest.execute(routeId);
         waypointsLoaded = true;
     }
 
@@ -154,13 +169,13 @@ public class RouteDetail extends SystemBarTintActivity {
 
         Intent routeIntent = new Intent();
         routeIntent.setAction("de.happycarl.geotown.app.ROUTE_ID");
-        routeIntent.putExtra("routeID",mRoute.id);
+        routeIntent.putExtra("routeID", mRoute.id);
 
 
-        String routeShare = "http://geotown.de/"+mRoute.id;
+        String routeShare = "http://geotown.de/" + mRoute.id;
         String shareTextRaw = getResources().getString(R.string.share_text);
         String shareText = String.format(shareTextRaw, routeShare, "(Not yet in store)");
-        shareIntent.putExtra(Intent.EXTRA_TEXT,shareText);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
         shareIntent.setType("text/plain");
 
         mShareActionProvider.setShareIntent(shareIntent);
