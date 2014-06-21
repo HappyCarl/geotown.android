@@ -241,7 +241,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 if (i >= 3) break;
                 RouteCard c = new RouteCard(this, adapter, r.getName(), getLocationName(r.getLatitude(), r.getLongitude()));
                 Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
-
                 GeoTownRoute.update(r, true);
                 i++;
             }

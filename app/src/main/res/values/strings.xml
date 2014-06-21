@@ -19,5 +19,7 @@
     <string name="near_routes_no_location">Waiting for GPS…</string>
     <string name="see_more">See More</string>
     <string name="title_activity_route_detail">RouteDetail</string>
+    <string name="play">Play Route</string>
+    <string name="waypoints">Waypoints</string>
 
 </resources>

@@ -26,6 +26,7 @@ public class GetRouteWaypointsRequest extends AsyncTask<Long, Void, WaypointColl
     protected WaypointCollection doInBackground(Long... params) {
         WaypointCollection wc = null;
 
+        Log.d("WaypointRequest","Getting waypoints for route" + params[0]);
         try {
             wc = GeotownApplication.getGeotown().waypoints().list(params[0]).execute();
 
