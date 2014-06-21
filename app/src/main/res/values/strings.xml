@@ -18,7 +18,7 @@
     <string name="no_near_routes">No near routes :(</string>
     <string name="near_routes_no_location">Waiting for GPS…</string>
     <string name="see_more">See More</string>
-    <string name="title_activity_route_detail">RouteDetail</string>
+    <string name="title_activity_route_detail">Look at the Route</string>
     <string name="play">Play Route</string>
     <string name="waypoints">Waypoints</string>
     <string name="cancel_current_route">Are you sure you want to cancel playing your current Route and start this one instead? \n(Progress will be saved)</string>
