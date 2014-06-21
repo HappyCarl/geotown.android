@@ -42,7 +42,7 @@ public class GetRouteWaypointsRequest extends AsyncTask<Long, Void, WaypointColl
     @Override
     protected void onPostExecute(WaypointCollection list) {
         List<Waypoint> waypoints = new ArrayList<>();
-        if(list.getItems() != null) {
+        if(list != null && list.getItems() != null) {
             waypoints = list.getItems();
         }
 
