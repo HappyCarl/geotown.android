@@ -91,7 +91,7 @@ public class RouteDetail extends SystemBarTintActivity {
         routeOwner.setText(Html.fromHtml("<i>by " + mRoute.owner + "</i>"));
 
 
-        if (GeotownApplication.getPreferences().getLong("current_route", 0L) == route.id) {
+        if (GeotownApplication.getPreferences().getLong("current_route", 0L) == mRoute.id) {
             playRoute.setText(R.string.currently_playing);
             playRoute.setEnabled(false);
         }
