@@ -18,9 +18,9 @@
     <string name="intro_text">Welcome! Please sign in to proceed.</string>
     <string name="username">Username</string>
     <string name="error_no_username">Please enter a username.</string>
-    <string name="loading">Doing awesome shit...</string>
+    <string name="loading">Doing awesome shit…</string>
     <string name="near_routes">Near Routes</string>
     <string name="no_near_routes">No near routes :(</string>
-    <string name="near_routes_no_location">Waiting for GPS...</string>
+    <string name="near_routes_no_location">Waiting for GPS…</string>
     <string name="see_more">See More</string>
 </resources>
