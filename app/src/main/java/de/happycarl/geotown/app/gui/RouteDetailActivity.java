@@ -34,8 +34,6 @@ import de.happycarl.geotown.app.events.RouteWaypointsReceivedEvent;
 
 public class RouteDetailActivity extends SystemBarTintActivity {
 
-    private static final int ROUTE_REQ_ID = 425694594;
-
     private long routeId = -1;
 
     @InjectView(R.id.detail_route_name)

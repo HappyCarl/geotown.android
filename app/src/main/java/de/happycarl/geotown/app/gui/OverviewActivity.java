@@ -49,7 +49,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
     private static final int GET_ROUTE_BY_NAME_DETAIL_REQUEST = 425498458;
-    private static final int SHOW_ROUTE_REQUEST = 0xdeadbeef;
 
     private static final int DEFAULT_NEAR_ROUTES_SEARCH_RADIUS = 1000000; // in m (afaik :) )
 
