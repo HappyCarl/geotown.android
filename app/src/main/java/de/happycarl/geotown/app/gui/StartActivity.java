@@ -34,6 +34,9 @@ import de.happycarl.geotown.app.events.UsernameSetEvent;
 
 
 public class StartActivity extends SystemBarTintActivity {
+    //================================================================================
+    // Constants
+    //================================================================================
 
     static final int REQUEST_ACCOUNT_PICKER = 2;
 
