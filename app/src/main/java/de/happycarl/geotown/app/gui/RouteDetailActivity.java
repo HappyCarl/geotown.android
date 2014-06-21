@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.appspot.drive_log.geotown.model.Route;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -26,9 +27,9 @@ import butterknife.OnClick;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.GetRouteWaypointsRequest;
-import de.happycarl.geotown.app.events.GeoTownRouteRetrievedEvent;
+import de.happycarl.geotown.app.api.requests.RouteRequest;
+import de.happycarl.geotown.app.events.RouteDataReceivedEvent;
 import de.happycarl.geotown.app.events.RouteWaypointsReceivedEvent;
-import de.happycarl.geotown.app.models.GeoTownRoute;
 
 public class RouteDetailActivity extends SystemBarTintActivity {
 
@@ -50,7 +51,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     MapFragment mMapFragment;
 
-    GeoTownRoute mRoute;
+    Route mRoute;
 
     ShareActionProvider mShareActionProvider;
 
@@ -87,7 +88,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
             }
         }
 
-        GeoTownRoute.getRoute(routeId, ROUTE_REQ_ID);
+        new RouteRequest().execute(routeId);
 
         updateRouteUI();
     }
@@ -105,17 +106,17 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         }
 
         if (getActionBar() != null) {
-            getActionBar().setTitle(mRoute.name);
+            getActionBar().setTitle(mRoute.getName());
         }
 
         FragmentManager fm = this.getFragmentManager();
         mMapFragment = (MapFragment) fm.findFragmentById(R.id.map);
 
-        routeName.setText(Html.fromHtml("<b>" + mRoute.name + "</b>"));
-        routeOwner.setText(Html.fromHtml("<i>by " + mRoute.owner + "</i>"));
+        routeName.setText(Html.fromHtml("<b>" + mRoute.getName() + "</b>"));
+        routeOwner.setText(Html.fromHtml("<i>by " + mRoute.getOwner().getUsername() + "</i>"));
 
 
-        if (GeotownApplication.getPreferences().getLong("current_route", 0L) == mRoute.id) {
+        if (GeotownApplication.getPreferences().getLong("current_route", 0L) == mRoute.getId()) {
             playRoute.setText(R.string.currently_playing);
             playRoute.setEnabled(false);
         }
@@ -125,8 +126,8 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         mMapFragment.getMap().setMyLocationEnabled(false);
         mMapFragment.getMap().setTrafficEnabled(false);
         mMapFragment.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        mMapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mRoute.latitude, mRoute.longitude), 14.0f));
-        mMapFragment.getMap().addMarker(new MarkerOptions().position(new LatLng(mRoute.latitude, mRoute.longitude)).title(mRoute.name).snippet(mRoute.owner));
+        mMapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mRoute.getLatitude(), mRoute.getLongitude()), 14.0f));
+        mMapFragment.getMap().addMarker(new MarkerOptions().position(new LatLng(mRoute.getLatitude(), mRoute.getLongitude())).title(mRoute.getName()).snippet(mRoute.getOwner().getUsername()));
         mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
 
         updateShareIntent();
@@ -134,9 +135,9 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
 
     @Subscribe
-    public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
+    public void onRouteReceived(RouteDataReceivedEvent event) {
         if (routeRetrieved) return;
-        if (event.id != ROUTE_REQ_ID) return;
+
         mRoute = event.route;
         this.runOnUiThread(new Runnable() {
             @Override
@@ -247,7 +248,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         } else { //No current Route
 
 
-            editor.putLong("current_route", mRoute.id);
+            editor.putLong("current_route", mRoute.getId());
             editor.apply();
             finish(); //Back to Overview screen
         }
