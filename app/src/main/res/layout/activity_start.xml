@@ -10,7 +10,7 @@
         android:id="@+id/intro_text_view"
         android:layout_margin="17dp"
         android:layout_marginTop="20dp"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
