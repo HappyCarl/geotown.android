@@ -25,5 +25,6 @@
     <string name="currently_playing">Currently playing</string>
     <string name="share_text">Hey, check this out epic GeoTown Route: %1$s.\nNot playing GeoTown yet? Get it now: %2$s</string>
     <string name="route">Route</string>
+    <string name="local_routes">Local Routes</string>
 
 </resources>

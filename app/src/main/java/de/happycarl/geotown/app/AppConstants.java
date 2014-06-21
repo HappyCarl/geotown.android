@@ -10,6 +10,7 @@ public class AppConstants {
 
     //shared prefs stuff
     public static final String PREF_NAME = "GeoTown";
+    public static final String PREF_ACCOUNT_EMAIL = "account_email";
     public static final String PREF_ACCOUNT_NAME = "account_name";
 
     //Sharing stuff

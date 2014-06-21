@@ -36,6 +36,7 @@ import de.happycarl.geotown.app.api.requests.GetRouteWaypointsRequest;
 import de.happycarl.geotown.app.api.requests.RouteRequest;
 import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
+import de.happycarl.geotown.app.models.GeoTownRoute;
 
 public class RouteDetailActivity extends SystemBarTintActivity {
 
@@ -291,6 +292,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     @Subscribe
     public void onRouteReceived(RouteDataReceivedEvent event) {
         mRoute = event.route;
+        GeoTownRoute.update(mRoute,true);
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {

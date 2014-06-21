@@ -1,6 +1,7 @@
 package de.happycarl.geotown.app.models;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
@@ -10,6 +11,7 @@ import com.appspot.drive_log.geotown.model.Route;
 
 import java.util.List;
 
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownRouteSavedEvent;
@@ -83,7 +85,9 @@ public class GeoTownRoute extends Model {
             route.latitude = r.getLatitude();
             route.longitude = r.getLongitude();
             route.owner = r.getOwner().getUsername();
-            route.mine = true;
+            String user = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "");
+            route.mine = r.getOwner().getEmail().equals(user);
+            Log.d("Update",route.mine + " : " + route.owner + " : " + user);
             route.save();
             return route;
         }

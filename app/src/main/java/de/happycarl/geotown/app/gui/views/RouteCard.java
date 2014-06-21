@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.models.GeoTownRoute;
 
 /**
  * Created by ole on 19.06.14.
@@ -33,6 +34,16 @@ public class RouteCard extends Card implements Target {
         con = context;
         this.adapter = adapter;
         Location l = new Location(route.getLatitude(), route.getLongitude());
+        this.setContent(CACHE.get(l) + "");
+        this.adapter.update(this, true);
+        new GeoCodingAsyncTask(context, l).execute();
+    }
+
+    public RouteCard(Context context, CardAdapter adapter, GeoTownRoute route) {
+        super(route.name, "");
+        con = context;
+        this.adapter = adapter;
+        Location l = new Location(route.latitude, route.latitude);
         this.setContent(CACHE.get(l) + "");
         this.adapter.update(this, true);
         new GeoCodingAsyncTask(context, l).execute();

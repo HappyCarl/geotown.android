@@ -81,6 +81,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     private List<Route> myRoutes = new ArrayList<Route>();
     private List<Route> nearRoutes = new ArrayList<Route>();
+    private List<GeoTownRoute> localRoutes = new ArrayList<>();
     boolean loadingMyRoutes = false;
     boolean loadingNearRoutes = true;
 
@@ -186,7 +187,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private void updateCardsUI() {
         adapter.clear();
 
-        // Near ROutes
+        // Near Routes
         CardHeader header = new CardHeader(getResources().getString(R.string.near_routes));
         header.setClickable(true);
         header.setAction(getResources().getString(R.string.see_more), nearRoutesActionListener);
@@ -207,8 +208,24 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 if (i >= 3) break;
                 RouteCard c = new RouteCard(this, adapter, r);
                 Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
-                GeoTownRoute.update(r, true);
                 i++;
+            }
+        }
+
+        //local Routes
+
+        CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
+        adapter.add(localHeader);
+
+        if(localRoutes == null || localRoutes.isEmpty()) {
+            CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_routes));
+            adapter.add(empty);
+        } else {
+            for (GeoTownRoute r : localRoutes) {
+                if(!r.mine) {
+                    RouteCard c = new RouteCard(this,adapter,r);
+                    Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.latitude, r.longitude, 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
+                }
             }
         }
 
@@ -226,7 +243,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 RouteCard c = new RouteCard(this, adapter, r);
                 Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
 
-                GeoTownRoute.update(r, true);
             }
         }
         loadingLayout.setVisibility(View.GONE);
@@ -280,6 +296,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
         this.nearRoutes = event.routes;
         loadingNearRoutes = false;
 
+        for(Route r : nearRoutes) {
+            GeoTownRoute.update(r, true);
+        }
+
         if (!loadingMyRoutes)
             updateCardsUI();
     }
@@ -288,6 +308,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
     public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
         myRoutes = event.routes;
         loadingMyRoutes = false;
+
+        for(Route r : nearRoutes) {
+            GeoTownRoute.update(r, true);
+        }
 
         if (!loadingNearRoutes)
             updateCardsUI();
