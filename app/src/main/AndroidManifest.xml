@@ -27,7 +27,7 @@
             android:label="@string/title_activity_overview"></activity>
 
         <activity
-            android:name=".gui.RouteDetail"
+            android:name=".gui.RouteDetailActivity"
             android:label="@string/title_activity_route_detail">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

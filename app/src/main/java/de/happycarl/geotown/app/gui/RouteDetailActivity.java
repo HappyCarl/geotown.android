@@ -30,7 +30,7 @@ import de.happycarl.geotown.app.events.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.RouteWaypointsReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
-public class RouteDetail extends SystemBarTintActivity {
+public class RouteDetailActivity extends SystemBarTintActivity {
 
     private static final int ROUTE_REQ_ID = 425694594;
 

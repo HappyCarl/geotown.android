@@ -138,7 +138,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     @Subscribe
     public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
         if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST) {
-            Intent intent = new Intent(this, RouteDetail.class);
+            Intent intent = new Intent(this, RouteDetailActivity.class);
             intent.putExtra("routeID", event.route.id);
             startActivity(intent);
         }
