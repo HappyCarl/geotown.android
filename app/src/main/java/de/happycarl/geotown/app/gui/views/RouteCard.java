@@ -17,7 +17,6 @@ public class RouteCard extends Card implements Target {
     Context con;
     CardAdapter adapter;
 
-
     public RouteCard(Context context, CardAdapter adapter, String title, String content) {
         super(title, content);
         con = context;

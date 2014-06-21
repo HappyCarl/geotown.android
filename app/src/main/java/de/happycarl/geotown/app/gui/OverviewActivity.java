@@ -1,5 +1,6 @@
 package de.happycarl.geotown.app.gui;
 
+import android.app.Activity;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
@@ -10,7 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.cardsui.Card;
+import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardCenteredHeader;
 import com.afollestad.cardsui.CardHeader;
@@ -59,6 +64,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
 
+public class OverviewActivity extends Activity implements CardListView.CardClickListener{
+
     @InjectView(R.id.route_view)
     CardListView cardListView;
 
@@ -98,6 +105,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         locationClient = new LocationClient(this, this, this);
 
+        cardListView.setOnCardClickListener(this);
+
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(
                 LocationRequest.PRIORITY_LOW_POWER);
@@ -124,6 +133,16 @@ public class OverviewActivity extends SystemBarTintActivity implements
         locationClient.disconnect();
         super.onStop();
     }
+
+    @Override
+    public void onCardClick(int index, CardBase item, View view) {
+
+        Intent intent = new Intent(this, RouteDetail.class);
+        intent.putExtra("routeID", GeoTownRoute.getRoute(item.getTitle().toString()).id);
+        startActivity(intent);
+    }
+
+
 
 
     @Override
