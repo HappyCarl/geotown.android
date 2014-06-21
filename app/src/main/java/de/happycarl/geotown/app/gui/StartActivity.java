@@ -37,21 +37,25 @@ public class StartActivity extends SystemBarTintActivity {
 
     static final int REQUEST_ACCOUNT_PICKER = 2;
 
+    //================================================================================
+    // Properties
+    //================================================================================
 
-    GoogleAccountCredential credential;
-    String accountName;
+    private GoogleAccountCredential credential;
+    private String accountName;
+    private boolean requestedAccountPicker = false;
 
     @InjectView(R.id.account_chooser_spinner)
-    Spinner accountChooser;
+    private Spinner accountChooser;
 
     @InjectView(R.id.username_edit_text)
-    EditText usernameEditText;
+    private EditText usernameEditText;
 
+    private ProgressDialog progressDialog;
 
-    ProgressDialog progressDialog;
-
-
-    private boolean requestedAccountPicker = false;
+    //================================================================================
+    // Activity Lifecycle
+    //================================================================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +64,6 @@ public class StartActivity extends SystemBarTintActivity {
 
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
-
-        GeotownApplication.getEventBus().register(this);
-
 
         accountChooser.setOnTouchListener(spinnerTouchListener);
         accountChooser.setOnKeyListener(spinnerKeyListener);
@@ -80,6 +81,48 @@ public class StartActivity extends SystemBarTintActivity {
             GeotownApplication.login(credential);
             startOverview();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GeotownApplication.getEventBus().unregister(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_ACCOUNT_PICKER:
+                if (data != null && data.getExtras() != null) {
+                    requestedAccountPicker = false;
+                    String accountName =
+                            data.getExtras().getString(
+                                    AccountManager.KEY_ACCOUNT_NAME);
+                    if (accountName != null) {
+                        setSelectedAccountName(accountName);
+                    }
+                }
+                break;
+        }
+    }
+
+
+    //================================================================================
+    // UI
+    //================================================================================
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Nobody needs a menu on the start screen
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //So why would someone need an event responder
+        return true;
     }
 
     private void startOverview() {
@@ -119,7 +162,7 @@ public class StartActivity extends SystemBarTintActivity {
 
         if (credential.getSelectedAccountName() != null) {
             progressDialog = ProgressDialog.show(this, "", getString(R.string.loading));
-            new SetUsernameRequest().execute(usernameEditText.getText().toString().trim());
+            startSetUsernameRequest((usernameEditText.getText().toString().trim()));
         } else {
             Log.d("Login", "Showing account picker");
             chooseAccount();
@@ -137,19 +180,6 @@ public class StartActivity extends SystemBarTintActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Nobody needs a menu on the start screen
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //So why would someone need an event responder
-        return true;
-    }
-
     // setSelectedAccountName definition
     private void setSelectedAccountName(String accountName) {
         SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
@@ -159,23 +189,12 @@ public class StartActivity extends SystemBarTintActivity {
         this.accountName = accountName;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_ACCOUNT_PICKER:
-                if (data != null && data.getExtras() != null) {
-                    requestedAccountPicker = false;
-                    String accountName =
-                            data.getExtras().getString(
-                                    AccountManager.KEY_ACCOUNT_NAME);
-                    if (accountName != null) {
-                        setSelectedAccountName(accountName);
-                    }
-                }
-                break;
-        }
+    //================================================================================
+    // Networking
+    //================================================================================
+
+    private void startSetUsernameRequest(String name) {
+        new SetUsernameRequest().execute(name);
     }
 
     @Subscribe
