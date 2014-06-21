@@ -1,9 +1,9 @@
 package de.happycarl.geotown.app.gui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import butterknife.ButterKnife;
@@ -43,9 +44,11 @@ public class RouteDetail extends SystemBarTintActivity {
     @InjectView(R.id.play_route)
     Button playRoute;
 
-    MapFragment map;
+    MapFragment mMapFragment;
 
-    GeoTownRoute route;
+    GeoTownRoute mRoute;
+
+    ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,27 +58,29 @@ public class RouteDetail extends SystemBarTintActivity {
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
 
-        route = GeoTownRoute.getRoute(getIntent().getLongExtra("routeID",0L));
+        mRoute = GeoTownRoute.getRoute(getIntent().getLongExtra("routeID",0L));
 
-        routeName.setText(Html.fromHtml("<b>" + route.name + "</b>"));
-        routeOwner.setText(Html.fromHtml("<i>by "+route.owner + "</i>"));
+        routeName.setText(Html.fromHtml("<b>" + mRoute.name + "</b>"));
+        routeOwner.setText(Html.fromHtml("<i>by "+ mRoute.owner + "</i>"));
 
         GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
-        getRouteWaypointsRequest.execute(route.id);
+        getRouteWaypointsRequest.execute(mRoute.id);
 
-        if(GeotownApplication.getPreferences().getLong("current_route",0L) == route.id) {
+        if(GeotownApplication.getPreferences().getLong("current_route",0L) == mRoute.id) {
             playRoute.setText(R.string.currently_playing);
             playRoute.setEnabled(false);
         }
 
         FragmentManager fm = this.getFragmentManager();
-        map = (MapFragment)fm.findFragmentById(R.id.map);
-        map.getMap().setMyLocationEnabled(false);
-        map.getMap().setTrafficEnabled(false);
-        map.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        map.getMap().moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(route.latitude,route.longitude) , 14.0f) );
-        map.getMap().addMarker(new MarkerOptions().position(new LatLng(route.latitude,route.longitude)).title(route.name).snippet(route.owner));
-        map.getMap().getUiSettings().setAllGesturesEnabled(false);
+        mMapFragment = (MapFragment)fm.findFragmentById(R.id.map);
+        mMapFragment.getMap().setMyLocationEnabled(false);
+        mMapFragment.getMap().setTrafficEnabled(false);
+        mMapFragment.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+        mMapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mRoute.latitude, mRoute.longitude), 14.0f));
+        mMapFragment.getMap().addMarker(new MarkerOptions().position(new LatLng(mRoute.latitude, mRoute.longitude)).title(mRoute.name).snippet(mRoute.owner));
+        mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
+
+
 
 
     }
@@ -96,17 +101,33 @@ public class RouteDetail extends SystemBarTintActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.route_detail, menu);
+
+        MenuItem item = menu.findItem(R.id.share_route);
+
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        String routeShare = "geotown://" + mRoute.id;
+        String shareTextRaw = getResources().getString(R.string.share_text);
+        String shareText = String.format(shareTextRaw, routeShare, "(Not yet in store)");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,shareText);
+        shareIntent.setType("text/plain");
+
+        mShareActionProvider.setShareIntent(shareIntent);
+
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
         return super.onOptionsItemSelected(item);
     }
+
 
     @OnClick(R.id.play_route)
     public void playCurrentRoute() {
@@ -142,7 +163,7 @@ public class RouteDetail extends SystemBarTintActivity {
 
         } else { //No current Route
 
-            editor.putLong("current_route",route.id);
+            editor.putLong("current_route", mRoute.id);
             editor.apply();
             finish(); //Back to Overview screen
         }
