@@ -33,7 +33,7 @@ import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
 import de.happycarl.geotown.app.events.net.UsernameSetEvent;
 
 
-public class StartActivity extends SystemBarTintActivity {
+public class FirstStartActivity extends SystemBarTintActivity {
     //================================================================================
     // Constants
     //================================================================================
@@ -216,7 +216,7 @@ public class StartActivity extends SystemBarTintActivity {
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            StartActivity.this.accountChooserClicked();
+            FirstStartActivity.this.accountChooserClicked();
             return true;
         }
     };
@@ -225,7 +225,7 @@ public class StartActivity extends SystemBarTintActivity {
 
         @Override
         public boolean onKey(View view, int i, KeyEvent keyEvent) {
-            StartActivity.this.accountChooserClicked();
+            FirstStartActivity.this.accountChooserClicked();
             return true;
         }
     };
