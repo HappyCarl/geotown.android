@@ -40,16 +40,16 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
 
     @InjectView(R.id.detail_route_name)
-    private TextView routeName;
+    TextView routeName;
 
     @InjectView(R.id.detail_route_owner)
-    private TextView routeOwner;
+    TextView routeOwner;
 
     @InjectView(R.id.detail_route_waypoints)
-    private TextView routeWaypoints;
+    TextView routeWaypoints;
 
     @InjectView(R.id.play_route)
-    private Button playRoute;
+    Button playRoute;
 
     private MapFragment mMapFragment;
     private ShareActionProvider mShareActionProvider;

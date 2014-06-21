@@ -49,10 +49,10 @@ public class FirstStartActivity extends SystemBarTintActivity {
     private boolean requestedAccountPicker = false;
 
     @InjectView(R.id.account_chooser_spinner)
-    private Spinner accountChooser;
+    Spinner accountChooser;
 
     @InjectView(R.id.username_edit_text)
-    private EditText usernameEditText;
+    EditText usernameEditText;
 
     private ProgressDialog progressDialog;
 
