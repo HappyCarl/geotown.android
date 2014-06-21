@@ -1,6 +1,5 @@
 package de.happycarl.geotown.app.gui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
@@ -13,23 +12,26 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.otto.Subscribe;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.GetRouteWaypointsRequest;
+import de.happycarl.geotown.app.events.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.RouteWaypointsReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.otto.Subscribe;
-
 public class RouteDetail extends SystemBarTintActivity {
+
+    private static final int ROUTE_REQ_ID = 425694594;
 
     @InjectView(R.id.detail_route_name)
     TextView routeName;
@@ -47,6 +49,8 @@ public class RouteDetail extends SystemBarTintActivity {
 
     GeoTownRoute route;
 
+    boolean created = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,36 +59,53 @@ public class RouteDetail extends SystemBarTintActivity {
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
 
-        route = GeoTownRoute.getRoute(getIntent().getLongExtra("routeID",0L));
+        created = true;
+        GeoTownRoute.getRoute(getIntent().getLongExtra("routeID", 0L), ROUTE_REQ_ID);
+        updateRouteUI();
+    }
 
+    private void updateRouteUI() {
+        if (route == null || !created) return;
         routeName.setText(Html.fromHtml("<b>" + route.name + "</b>"));
-        routeOwner.setText(Html.fromHtml("<i>by "+route.owner + "</i>"));
+        routeOwner.setText(Html.fromHtml("<i>by " + route.owner + "</i>"));
 
         GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
         getRouteWaypointsRequest.execute(route.id);
 
-        if(GeotownApplication.getPreferences().getLong("current_route",0L) == route.id) {
+        if (GeotownApplication.getPreferences().getLong("current_route", 0L) == route.id) {
             playRoute.setText(R.string.currently_playing);
             playRoute.setEnabled(false);
         }
 
         FragmentManager fm = this.getFragmentManager();
-        map = (MapFragment)fm.findFragmentById(R.id.map);
+        map = (MapFragment) fm.findFragmentById(R.id.map);
         map.getMap().setMyLocationEnabled(false);
         map.getMap().setTrafficEnabled(false);
         map.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        map.getMap().moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(route.latitude,route.longitude) , 14.0f) );
-        map.getMap().addMarker(new MarkerOptions().position(new LatLng(route.latitude,route.longitude)).title(route.name).snippet(route.owner));
+        map.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(route.latitude, route.longitude), 14.0f));
+        map.getMap().addMarker(new MarkerOptions().position(new LatLng(route.latitude, route.longitude)).title(route.name).snippet(route.owner));
         map.getMap().getUiSettings().setAllGesturesEnabled(false);
+    }
 
+    @Subscribe
+    public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
+        if (event.id != ROUTE_REQ_ID) return;
+        route = event.route;
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateRouteUI();
+
+            }
+        });
 
     }
 
     @Subscribe
     public void onRouteWaypointsReceived(RouteWaypointsReceivedEvent event) {
-        Log.d("RouteDetail","Got waypoints");
+        Log.d("RouteDetail", "Got waypoints");
         int waypointCount = 0;
-        if(event.waypoints != null) {
+        if (event.waypoints != null) {
             waypointCount = event.waypoints.size();
         }
 
@@ -112,7 +133,7 @@ public class RouteDetail extends SystemBarTintActivity {
     public void playCurrentRoute() {
         SharedPreferences pref = GeotownApplication.getPreferences();
         final SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
-        if(pref.getLong("current_route", 0L) != 0L) { //User is currently playing a different route
+        if (pref.getLong("current_route", 0L) != 0L) { //User is currently playing a different route
 
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 
@@ -120,7 +141,7 @@ public class RouteDetail extends SystemBarTintActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
-                            editor.putLong("current_route",0L);
+                            editor.putLong("current_route", 0L);
                             editor.apply();
                             //deleted current Route, calling again
                             //Not nice, but simple
@@ -142,7 +163,7 @@ public class RouteDetail extends SystemBarTintActivity {
 
         } else { //No current Route
 
-            editor.putLong("current_route",route.id);
+            editor.putLong("current_route", route.id);
             editor.apply();
             finish(); //Back to Overview screen
         }
