@@ -48,7 +48,7 @@ import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
 public class RouteDetailActivity extends SystemBarTintActivity {
 
-    public static final int REQUEST_ROUTE_ID=876354;
+    public static final int REQUEST_ROUTE_ID = 876354;
 
     //================================================================================
     // Properties
@@ -111,13 +111,13 @@ public class RouteDetailActivity extends SystemBarTintActivity {
             }
         }
 
-        Log.d("RouteOverview","" + routeId);
-        if(routeId == -1L) {
+        Log.d("RouteOverview", "" + routeId);
+        if (routeId == -1L) {
             AlertDialog.Builder b = new AlertDialog.Builder(this);
             b.setCancelable(false);
             b.setTitle(R.string.not_found);
             b.setMessage(R.string.not_found_detail);
-            b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+            b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -150,7 +150,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     @Override
     protected void onResume() {
-        Log.d("OnResume","resumed");
+        Log.d("OnResume", "resumed");
 
 
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
@@ -216,7 +216,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         routeOwner.setText(Html.fromHtml("<i>by " + mRoute.getOwner().getUsername() + "</i>"));
 
 
-        if (GeotownApplication.getPreferences().getLong("current_route", 0L) == mRoute.getId()) {
+        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) == mRoute.getId()) {
             playRoute.setText(R.string.currently_playing);
             playRoute.setEnabled(false);
         }
@@ -254,12 +254,12 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     }
 
     private void updateAndroidBeamPayload() {
-        if(mNfcAdapter != null) {
-            NdefRecord[] records = new NdefRecord[] {NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + AppConstants.SHARE_PATH_PREFIX + mRoute.getId()), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
+        if (mNfcAdapter != null) {
+            NdefRecord[] records = new NdefRecord[]{NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + AppConstants.SHARE_PATH_PREFIX + mRoute.getId()), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
 
             mNdefMessage = new NdefMessage(records);
 
-            mNfcAdapter.setNdefPushMessage(mNdefMessage,this);
+            mNfcAdapter.setNdefPushMessage(mNdefMessage, this);
         }
     }
 
@@ -268,7 +268,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     public void playCurrentRoute() {
         SharedPreferences pref = GeotownApplication.getPreferences();
         final SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
-        if (pref.getLong("current_route", 0L) != 0L) { //User is currently playing a different route
+        if (pref.getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) != 0L) { //User is currently playing a different route
 
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 
@@ -299,9 +299,9 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         } else { //No current Route
 
 
-            editor.putLong("current_route", mRoute.getId());
+            editor.putLong(AppConstants.PREF_CURRENT_ROUTE, mRoute.getId());
             editor.apply();
-            GeoTownRoute.update(mRoute,true);
+            GeoTownRoute.update(mRoute, true);
             GeoTownWaypoint.addWaypoints(mWaypoints);
 
         }
@@ -309,8 +309,8 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     @OnClick(R.id.star)
     public void starClicked() {
-        if(star.isChecked()) {
-            GeoTownRoute.update(mRoute,true);
+        if (star.isChecked()) {
+            GeoTownRoute.update(mRoute, true);
         } else {
             GeoTownRoute.deleteRoute(mRoute.getId());
         }
@@ -347,7 +347,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     @Subscribe
     public void onWaypointsAdded(GeoTownWaypointsAddedEvent event) {
-        if(event.success) {
+        if (event.success) {
             finish();
         }
     }
@@ -367,8 +367,8 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     @Subscribe
     public void onRouteReceived(GeoTownRouteRetrievedEvent event) {
-        if(event.id != REQUEST_ROUTE_ID) return;
-        if(event.route != null && event.route.mine == false) {
+        if (event.id != REQUEST_ROUTE_ID) return;
+        if (event.route != null && event.route.mine == false) {
             star.setChecked(true);
         }
     }
