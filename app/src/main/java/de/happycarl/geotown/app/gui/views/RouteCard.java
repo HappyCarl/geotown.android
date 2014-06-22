@@ -30,6 +30,7 @@ public class RouteCard extends Card implements Target {
     CardAdapter adapter;
     long routeID;
     String owner;
+    Location location;
 
     public RouteCard(Context context, CardAdapter adapter, Route route) {
         super(route.getName(), "");
@@ -37,10 +38,14 @@ public class RouteCard extends Card implements Target {
         this.adapter = adapter;
         routeID = route.getId();
         owner = route.getOwner().getUsername();
-        Location l = new Location(route.getLatitude(), route.getLongitude());
-        this.setContent(CACHE.get(l) + "");
+        location = new Location(route.getLatitude(), route.getLongitude());
+        updateContent();
         this.adapter.update(this, true);
-        new GeoCodingAsyncTask(context, l).execute();
+        new GeoCodingAsyncTask(context, location).execute();
+    }
+
+    private void updateContent() {
+        this.setContent(CACHE.get(location) + "\nby " + owner);
     }
 
     public RouteCard(Context context, CardAdapter adapter, GeoTownRoute route) {
@@ -49,10 +54,10 @@ public class RouteCard extends Card implements Target {
         this.adapter = adapter;
         routeID = route.id;
         owner = route.owner;
-        Location l = new Location(route.latitude, route.longitude);
-        this.setContent(CACHE.get(l) + "");
+        location = new Location(route.latitude, route.longitude);
+        updateContent();
         this.adapter.update(this, true);
-        new GeoCodingAsyncTask(context, l).execute();
+        new GeoCodingAsyncTask(context, location).execute();
     }
 
     public long getRouteID() {
@@ -138,7 +143,7 @@ public class RouteCard extends Card implements Target {
 
         @Override
         protected void onPostExecute(String location) {
-            RouteCard.this.setContent(location + "\n by " + owner);
+            updateContent();
             adapter.update(RouteCard.this, true);
         }
 
