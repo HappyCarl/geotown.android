@@ -46,7 +46,7 @@ public class NearRoutesRequest extends AsyncTask<NearRoutesRequest.NearRoutesPar
     @Override
     protected void onPostExecute(RouteCollection routeCollection) {
         List<Route> routes = new ArrayList<>();
-        if (routeCollection.getItems() != null) {
+        if (routeCollection != null && routeCollection.getItems() != null) {
             routes = routeCollection.getItems();
         }
         GeotownApplication.getEventBus().post(new NearRoutesDataReceivedEvent(routes));

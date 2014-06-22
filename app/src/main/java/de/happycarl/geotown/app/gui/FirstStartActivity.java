@@ -77,7 +77,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         Account[] list = credential.getAllAccounts();
         setAccountName(list[0].name);
 
-        String storedAccountName = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_NAME, "");
+        String storedAccountName = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "");
         if (!storedAccountName.isEmpty()) {
             setSelectedAccountName(storedAccountName);
 
@@ -186,7 +186,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     // setSelectedAccountName definition
     private void setSelectedAccountName(String accountName) {
         SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
-        editor.putString(AppConstants.PREF_ACCOUNT_NAME, accountName);
+        editor.putString(AppConstants.PREF_ACCOUNT_EMAIL, accountName);
         editor.commit();
         credential.setSelectedAccountName(accountName);
         this.accountName = accountName;
@@ -202,6 +202,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
 
     @Subscribe
     public void onUsernameSet(UsernameSetEvent e) {
+        GeotownApplication.getPreferences().edit().putString(AppConstants.PREF_ACCOUNT_NAME,e.userData.getUsername()).apply();
         progressDialog.cancel();
         startOverview();
     }

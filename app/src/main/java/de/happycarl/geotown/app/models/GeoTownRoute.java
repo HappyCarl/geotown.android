@@ -1,6 +1,7 @@
 package de.happycarl.geotown.app.models;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
@@ -10,7 +11,10 @@ import com.appspot.drive_log.geotown.model.Route;
 
 import java.util.List;
 
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
+import de.happycarl.geotown.app.events.db.GeoTownForeignRoutesRetrievedEvent;
+import de.happycarl.geotown.app.events.db.GeoTownRouteDeletedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownRouteSavedEvent;
 
@@ -58,6 +62,63 @@ public class GeoTownRoute extends Model {
         new UpdateRouteAsyncTask().execute(p);
     }
 
+    public static void getForeignRoutes(int reqId) {
+        new ForeignRoutesAsyncTask().execute(reqId);
+    }
+
+    public static void deleteRoute(long id) {
+        new DeleteRouteAsyncTask().execute(id);
+    }
+
+    private static class DeleteRouteAsyncTask extends AsyncTask<Long, Void, Boolean> {
+
+        long id;
+
+        @Override
+        protected Boolean doInBackground(Long... params) {
+            try {
+                id = params[0];
+                GeoTownRoute route = new Select()
+                        .from(GeoTownRoute.class)
+                        .where("routeID = ?", id)
+                        .limit(1)
+                        .executeSingle();
+                route.delete();
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+
+        protected void onPostExecute(Boolean success) {
+            if(success) {
+                GeotownApplication.getEventBus().post(new GeoTownRouteDeletedEvent(id));
+            }
+        }
+
+    }
+
+
+    private static class ForeignRoutesAsyncTask extends AsyncTask<Integer, Void, List<GeoTownRoute>> {
+        private int reqId;
+
+        @Override
+        protected List<GeoTownRoute> doInBackground(Integer... params) {
+            reqId = params[0];
+            List<GeoTownRoute> routes = new Select()
+                    .from(GeoTownRoute.class)
+                    .where("mine = ?", false)
+                    .execute();
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<GeoTownRoute> routes) {
+            GeotownApplication.getEventBus().post(new GeoTownForeignRoutesRetrievedEvent(routes, reqId));
+        }
+    }
+
+
     private static class UpdateRouteAsyncTask extends AsyncTask<UpdateRouteAsyncTask.UpdateRouteParams, Void, GeoTownRoute> {
         public static class UpdateRouteParams {
             Route route;
@@ -83,7 +144,9 @@ public class GeoTownRoute extends Model {
             route.latitude = r.getLatitude();
             route.longitude = r.getLongitude();
             route.owner = r.getOwner().getUsername();
-            route.mine = true;
+            String user = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "");
+            route.mine = r.getOwner().getEmail().equals(user);
+            Log.d("Update", route.mine + " : " + route.owner + " : " + user + "  -  " + route.latitude + "/" + route.longitude);
             route.save();
             return route;
         }

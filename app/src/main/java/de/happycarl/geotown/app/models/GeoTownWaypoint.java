@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 @Table(name = "Waypoints")
-public class GeoTownWaypoint extends Model{
+public class GeoTownWaypoint extends Model {
 
 
     @Column(name = "name", index = true)

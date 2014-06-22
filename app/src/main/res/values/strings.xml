@@ -23,7 +23,11 @@
     <string name="waypoints">Waypoints</string>
     <string name="cancel_current_route">Are you sure you want to cancel playing your current Route and start this one instead? \n(Progress will be saved)</string>
     <string name="currently_playing">Currently playing</string>
-    <string name="share_text">Hey, check this out epic GeoTown Route: %1$s.\nNot playing GeoTown yet? Get it now: %2$s</string>
+    <string name="share_text">Hey, check out this epic GeoTown Route: %1$s.\nNot playing GeoTown yet? Get it now: %2$s</string>
     <string name="route">Route</string>
+    <string name="local_routes">Saved Routes</string>
+    <string name="delete">Delete</string>
+    <string name="not_found">Route not found</string>
+    <string name="not_found_detail">Sorry, this route does not exist</string>
 
 </resources>

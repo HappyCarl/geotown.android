@@ -40,6 +40,11 @@ public class AllMyRoutesRequest extends AsyncTask<Void, Void, RouteCollection> {
         if (routeCollection != null && routeCollection.getItems() != null) {
             routes = routeCollection.getItems();
         }
+
+        Log.d("AllMyRoutesRequest", "Got routes:");
+        for (Route r : routes) {
+            Log.d("AllMyRoutesRequest", "Route: " + r.getName() + " : " + r.getOwner());
+        }
         GeotownApplication.getEventBus().post(new MyRoutesDataReceivedEvent(routes));
 
     }
