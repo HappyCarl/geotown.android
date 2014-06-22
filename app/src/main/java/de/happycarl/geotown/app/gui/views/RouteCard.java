@@ -28,11 +28,13 @@ public class RouteCard extends Card implements Target {
 
     Context con;
     CardAdapter adapter;
+    long routeID;
 
     public RouteCard(Context context, CardAdapter adapter, Route route) {
         super(route.getName(), "");
         con = context;
         this.adapter = adapter;
+        routeID = route.getId();
         Location l = new Location(route.getLatitude(), route.getLongitude());
         this.setContent(CACHE.get(l) + "");
         this.adapter.update(this, true);
@@ -43,10 +45,15 @@ public class RouteCard extends Card implements Target {
         super(route.name, "");
         con = context;
         this.adapter = adapter;
-        Location l = new Location(route.latitude, route.latitude);
+        routeID = route.id;
+        Location l = new Location(route.latitude, route.longitude);
         this.setContent(CACHE.get(l) + "");
         this.adapter.update(this, true);
         new GeoCodingAsyncTask(context, l).execute();
+    }
+
+    public long getRouteID() {
+        return routeID;
     }
 
     @Override
