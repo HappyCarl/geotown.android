@@ -29,7 +29,6 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.GoogleUtils;
 import de.happycarl.geotown.app.R;
@@ -201,8 +200,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private void updateCardsUI() {
         adapter.clear();
 
-        if(currentRoute != null) {
-            ProgressCard progressCard = new ProgressCard(this, adapter,currentRoute);
+        if (currentRoute != null) {
+            ProgressCard progressCard = new ProgressCard(this, adapter, currentRoute);
             progressCard.setThumbnail(getResources().getDrawable(R.drawable.ic_launcher));
         }
 
@@ -298,9 +297,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
     //================================================================================
 
     private void loadCurrentRoute() {
-        long currentRouteId = GeotownApplication.getPreferences().getLong("current_route",0L);
-        if(currentRouteId != 0) {
-            GeoTownRoute.getRoute(currentRouteId,GET_CURRENT_ROUTE );
+        long currentRouteId = GeotownApplication.getPreferences().getLong("current_route", 0L);
+        if (currentRouteId != 0) {
+            GeoTownRoute.getRoute(currentRouteId, GET_CURRENT_ROUTE);
         }
 
     }
