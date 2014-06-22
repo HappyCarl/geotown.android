@@ -6,9 +6,11 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.view.View;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
+import com.afollestad.cardsui.CardBase;
 import com.appspot.drive_log.geotown.model.Route;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -70,6 +72,7 @@ public class RouteCard extends Card implements Target {
         adapter.update(this, true);
 
     }
+
 
     @Override
     public void onBitmapFailed(Drawable drawable) {

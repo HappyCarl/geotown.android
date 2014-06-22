@@ -20,12 +20,16 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import com.appspot.drive_log.geotown.model.Route;
+import com.appspot.drive_log.geotown.model.Waypoint;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -35,11 +39,16 @@ import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.GetRouteWaypointsRequest;
 import de.happycarl.geotown.app.api.requests.RouteRequest;
+import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
+import de.happycarl.geotown.app.events.db.GeoTownWaypointsAddedEvent;
 import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
+import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
 public class RouteDetailActivity extends SystemBarTintActivity {
+
+    public static final int REQUEST_ROUTE_ID=876354;
 
     //================================================================================
     // Properties
@@ -66,6 +75,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     private long routeId = -1;
     private Route mRoute;
+    private List<Waypoint> mWaypoints = new ArrayList<>();
 
     private NfcAdapter mNfcAdapter;
     private NdefMessage mNdefMessage;
@@ -234,7 +244,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         routeIntent.putExtra("routeID", routeId);
 
 
-        String routeShare = AppConstants.SHARE_DOMAIN_NAME +"/"/*+ AppConstants.SHARE_PATH_PREFIX*/ + routeId;
+        String routeShare = AppConstants.SHARE_DOMAIN_NAME + AppConstants.SHARE_PATH_PREFIX + routeId;
         String shareTextRaw = getResources().getString(R.string.share_text);
         String shareText = String.format(shareTextRaw, routeShare, "(Not yet in store)");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
@@ -245,7 +255,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     private void updateAndroidBeamPayload() {
         if(mNfcAdapter != null) {
-            NdefRecord[] records = new NdefRecord[] {NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + "/"/*+ AppConstants.SHARE_PATH_PREFIX*/ + mRoute.getId()), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
+            NdefRecord[] records = new NdefRecord[] {NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + AppConstants.SHARE_PATH_PREFIX + mRoute.getId()), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
 
             mNdefMessage = new NdefMessage(records);
 
@@ -291,7 +301,9 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
             editor.putLong("current_route", mRoute.getId());
             editor.apply();
-            finish(); //Back to Overview screen
+            GeoTownRoute.update(mRoute,true);
+            GeoTownWaypoint.addWaypoints(mWaypoints);
+
         }
     }
 
@@ -329,7 +341,15 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
             }
         });
+        GeoTownRoute.getRoute(mRoute.getId(), REQUEST_ROUTE_ID);
         loadWaypoints();
+    }
+
+    @Subscribe
+    public void onWaypointsAdded(GeoTownWaypointsAddedEvent event) {
+        if(event.success) {
+            finish();
+        }
     }
 
 
@@ -339,9 +359,18 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         int waypointCount = 0;
         if (event.waypoints != null) {
             waypointCount = event.waypoints.size();
+            mWaypoints = event.waypoints;
         }
 
         routeWaypoints.setText(waypointCount + " " + getResources().getString(R.string.waypoints));
+    }
+
+    @Subscribe
+    public void onRouteReceived(GeoTownRouteRetrievedEvent event) {
+        if(event.id != REQUEST_ROUTE_ID) return;
+        if(event.route != null && event.route.mine == false) {
+            star.setChecked(true);
+        }
     }
 
 }

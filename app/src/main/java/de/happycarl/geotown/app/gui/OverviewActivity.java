@@ -29,6 +29,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.GoogleUtils;
 import de.happycarl.geotown.app.R;
@@ -40,6 +41,7 @@ import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.views.LoadingCard;
+import de.happycarl.geotown.app.gui.views.ProgressCard;
 import de.happycarl.geotown.app.gui.views.RouteCard;
 import de.happycarl.geotown.app.gui.views.RouteCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
@@ -58,6 +60,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
     private static final int GET_ROUTE_BY_NAME_DETAIL_REQUEST = 425498458;
     private static final int GET_FOREIGN_ROUTES_REQUEST = 6875358;
+    private static final int GET_CURRENT_ROUTE = 98635446;
 
     private static final int DEFAULT_NEAR_ROUTES_SEARCH_RADIUS = 1000000; // in m (afaik :) )
 
@@ -84,6 +87,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private List<Route> myRoutes = new ArrayList<Route>();
     private List<Route> nearRoutes = new ArrayList<Route>();
     private List<GeoTownRoute> localRoutes = new ArrayList<>();
+    private GeoTownRoute currentRoute;
     boolean loadingMyRoutes = false;
     boolean loadingNearRoutes = true;
     boolean loadingLocalRoutes = false;
@@ -197,6 +201,12 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private void updateCardsUI() {
         adapter.clear();
 
+        if(currentRoute != null) {
+            ProgressCard progressCard = new ProgressCard(this, adapter,currentRoute);
+            progressCard.setThumbnail(getResources().getDrawable(R.drawable.ic_launcher));
+        }
+
+
         // Near Routes
         CardHeader header = new CardHeader(getResources().getString(R.string.near_routes));
         header.setClickable(true);
@@ -278,6 +288,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private void refreshRoutes() {
         loadMyRoutes();
         loadLocalRoutes();
+        loadCurrentRoute();
         updateCardsUI();
         locationUpdateReceived = false;
     }
@@ -285,6 +296,14 @@ public class OverviewActivity extends SystemBarTintActivity implements
     //================================================================================
     // Network & Database
     //================================================================================
+
+    private void loadCurrentRoute() {
+        long currentRouteId = GeotownApplication.getPreferences().getLong("current_route",0L);
+        if(currentRouteId != 0) {
+            GeoTownRoute.getRoute(currentRouteId,GET_CURRENT_ROUTE );
+        }
+
+    }
 
     private void loadMyRoutes() {
         AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
@@ -327,6 +346,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
             Intent intent = new Intent(this, RouteDetailActivity.class);
             intent.putExtra("routeID", event.route.id);
             startActivity(intent);
+        } else if (event.id == GET_CURRENT_ROUTE) {
+            currentRoute = event.route;
+            updateCardsUI();
         }
     }
 

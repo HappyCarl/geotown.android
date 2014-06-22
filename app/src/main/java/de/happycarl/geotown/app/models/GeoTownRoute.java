@@ -6,8 +6,10 @@ import android.util.Log;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.appspot.drive_log.geotown.model.Route;
+import com.appspot.drive_log.geotown.model.Waypoint;
 
 import java.util.List;
 
@@ -83,6 +85,7 @@ public class GeoTownRoute extends Model {
                         .where("routeID = ?", id)
                         .limit(1)
                         .executeSingle();
+                new Delete().from(GeoTownWaypoint.class).where("route = ?",route).execute();
                 route.delete();
             } catch (Exception e) {
                 return false;
