@@ -22,7 +22,6 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.squareup.otto.Subscribe;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
 import de.happycarl.geotown.app.api.requests.NearRoutesRequest;
@@ -227,7 +225,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
             for (Route r : nearRoutes) {
                 if (i >= 3) break;
                 RouteCard c = new RouteCard(this, adapter, r);
-                Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
                 i++;
             }
         }
@@ -244,7 +241,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
             for (GeoTownRoute r : localRoutes) {
                 if (!r.mine) {
                     RouteCard c = new RouteCard(this, adapter, r);
-                    Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.latitude, r.longitude, 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
                     c.setPopupMenu(R.menu.local_card_popup, new Card.CardMenuListener<Card>() {
                         @Override
                         public void onMenuItemClick(Card card, MenuItem menuItem) {
@@ -271,7 +267,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
         } else if (myRoutes != null) {
             for (Route r : myRoutes) {
                 RouteCard c = new RouteCard(this, adapter, r);
-                Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
 
             }
         }

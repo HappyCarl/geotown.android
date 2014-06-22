@@ -10,15 +10,13 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ShareActionProvider;
-import android.widget.TextView;
 
+import com.afollestad.cardsui.CardAdapter;
+import com.afollestad.cardsui.CardListView;
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.Waypoint;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,7 +31,6 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
@@ -43,6 +40,8 @@ import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownWaypointsAddedEvent;
 import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
+import de.happycarl.geotown.app.gui.views.RouteDetailCard;
+import de.happycarl.geotown.app.gui.views.RouteDetailCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
@@ -55,7 +54,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     //================================================================================
 
 
-    @InjectView(R.id.detail_route_name)
+    /*@InjectView(R.id.detail_route_name)
     TextView routeName;
 
     @InjectView(R.id.detail_route_owner)
@@ -68,10 +67,15 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     Button playRoute;
 
     @InjectView(R.id.star)
-    CheckBox star;
+    CheckBox star;*/
+
+    @InjectView(R.id.route_detail_card_list)
+    CardListView cardsList;
 
     private MapFragment mMapFragment;
     private ShareActionProvider mShareActionProvider;
+    private CardAdapter mCardAdapter;
+    private RouteDetailCard mRouteDetailCard;
 
     private long routeId = -1;
     private Route mRoute;
@@ -132,6 +136,9 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
             mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         }
+
+        mCardAdapter = new RouteDetailCardAdapter(this, R.color.primary_color, mRoute);
+        cardsList.setAdapter(mCardAdapter);
 
     }
 
@@ -212,14 +219,14 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         FragmentManager fm = this.getFragmentManager();
         mMapFragment = (MapFragment) fm.findFragmentById(R.id.map);
 
-        routeName.setText(Html.fromHtml("<b>" + mRoute.getName() + "</b>"));
+        /*routeName.setText(Html.fromHtml("<b>" + mRoute.getName() + "</b>"));
         routeOwner.setText(Html.fromHtml("<i>by " + mRoute.getOwner().getUsername() + "</i>"));
 
 
         if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) == mRoute.getId()) {
             playRoute.setText(R.string.currently_playing);
             playRoute.setEnabled(false);
-        }
+        }*/
 
 
         mMapFragment.getMap().setMyLocationEnabled(false);
@@ -231,6 +238,15 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
         updateShareIntent();
         updateAndroidBeamPayload();
+        updateCardsList();
+    }
+
+    private void updateCardsList() {
+        mCardAdapter.clear();
+
+        if (mRoute != null) {
+            mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
+        }
     }
 
 
@@ -264,7 +280,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     }
 
 
-    @OnClick(R.id.play_route)
+    //@OnClick(R.id.play_route)
     public void playCurrentRoute() {
         SharedPreferences pref = GeotownApplication.getPreferences();
         final SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
@@ -307,13 +323,13 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         }
     }
 
-    @OnClick(R.id.star)
+    //@OnClick(R.id.star)
     public void starClicked() {
-        if (star.isChecked()) {
+        /*if (star.isChecked()) {
             GeoTownRoute.update(mRoute, true);
         } else {
             GeoTownRoute.deleteRoute(mRoute.getId());
-        }
+        }*/
 
     }
 
@@ -359,17 +375,19 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         int waypointCount = 0;
         if (event.waypoints != null) {
             waypointCount = event.waypoints.size();
+            mRouteDetailCard.setWaypointAmount(waypointCount);
+
             mWaypoints = event.waypoints;
         }
 
-        routeWaypoints.setText(waypointCount + " " + getResources().getString(R.string.waypoints));
+        //routeWaypoints.setText(waypointCount + " " + getResources().getString(R.string.waypoints));
     }
 
     @Subscribe
     public void onRouteReceived(GeoTownRouteRetrievedEvent event) {
         if (event.id != REQUEST_ROUTE_ID) return;
         if (event.route != null && event.route.mine == false) {
-            star.setChecked(true);
+            //star.setChecked(true);
         }
     }
 

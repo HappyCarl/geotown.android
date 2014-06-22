@@ -1,89 +1,80 @@
 package de.happycarl.geotown.app.gui.views;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.TextView;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
 import com.appspot.drive_log.geotown.model.Route;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.happycarl.geotown.app.GoogleUtils;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.happycarl.geotown.app.R;
-import de.happycarl.geotown.app.models.GeoTownRoute;
 
 /**
- * Created by ole on 19.06.14.
+ * Created by jhbruhn on 22.06.14.
  */
-public class RouteCard extends Card implements Target {
+public class RouteDetailCard extends Card {
     private static final Map<Location, String> CACHE = new HashMap<>();
 
-    Context con;
-    CardAdapter adapter;
-    long routeID;
-    String owner;
-    Location location;
+    private Route mRoute;
+    private Context mContext;
+    private CardAdapter mAdapter;
+    private int mWaypointAmount = 0;
+    private Location mLocation;
+    private String mLocationString;
 
-    public RouteCard(Context context, CardAdapter adapter, Route route) {
-        super(route.getName(), "");
-        con = context;
-        this.adapter = adapter;
-        routeID = route.getId();
-        owner = route.getOwner().getUsername();
-        location = new Location(route.getLatitude(), route.getLongitude());
-        updateContent();
-        this.adapter.update(this, true);
-        new GeoCodingAsyncTask(context, location).execute();
-        Picasso.with(context).load(GoogleUtils.getStaticMapUrl(route.getLatitude(), route.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(this);
+    @InjectView(R.id.card_route_detail_location_text)
+    TextView mLocationTextView;
+    @InjectView(R.id.card_route_detail_owner_text)
+    TextView mOwnerTextView;
+    @InjectView(R.id.card_route_detail_waypoint_amount)
+    TextView mWaypointAmountTextView;
 
-    }
-
-    private void updateContent() {
-        this.setContent(CACHE.get(location) + "\nby " + owner);
-    }
-
-    public RouteCard(Context context, CardAdapter adapter, GeoTownRoute route) {
-        super(route.name, "");
-        con = context;
-        this.adapter = adapter;
-        routeID = route.id;
-        owner = route.owner;
-        location = new Location(route.latitude, route.longitude);
-        updateContent();
-        this.adapter.update(this, true);
-        new GeoCodingAsyncTask(context, location).execute();
-        Picasso.with(context).load(GoogleUtils.getStaticMapUrl(route.latitude, route.longitude, 8, 128)).placeholder(R.drawable.ic_launcher).into(this);
-    }
-
-    public long getRouteID() {
-        return routeID;
-    }
-
-    @Override
-    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
-        setThumbnail(con, bitmap);
-        adapter.update(this, true);
+    public RouteDetailCard(Context ctx, CardAdapter cardAdapter, Route route) {
+        super("");
+        this.mAdapter = cardAdapter;
+        this.mContext = ctx;
+        this.mRoute = route;
+        this.mLocation = new Location(mRoute.getLatitude(), mRoute.getLongitude());
+        this.mAdapter.update(this, true);
+        new GeoCodingAsyncTask(this.mContext, mLocation).execute();
 
     }
 
-
-    @Override
-    public void onBitmapFailed(Drawable drawable) {
-
+    public void setWaypointAmount(int i) {
+        mWaypointAmount = i;
     }
 
-    @Override
-    public void onPrepareLoad(Drawable drawable) {
+    public void updateView(View view) {
+        ButterKnife.inject(this, view);
 
+        updateUi();
+    }
+
+    private void updateUi() {
+        if (mLocationTextView != null) {
+            mLocationTextView.setText(mLocationString);
+        }
+        if (mOwnerTextView != null) {
+            mOwnerTextView.setText("by " + mRoute.getOwner().getUsername());
+        }
+        if (mWaypointAmountTextView != null) {
+            mWaypointAmountTextView.setText("" + mWaypointAmount);
+        }
+        mAdapter.update(this, true);
+    }
+
+    public int getLayout() {
+        return R.layout.card_route_detail;
     }
 
     private class Location {
@@ -148,8 +139,8 @@ public class RouteCard extends Card implements Target {
 
         @Override
         protected void onPostExecute(String location) {
-            updateContent();
-            adapter.update(RouteCard.this, true);
+            mLocationString = location;
+            updateUi();
         }
 
 
