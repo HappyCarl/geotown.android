@@ -12,9 +12,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        >
-
+        android:layout_centerHorizontal="true">
 
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,7 +21,7 @@
             android:layout_height="0dp"
             android:layout_weight=".50"
             android:name="com.google.android.gms.maps.MapFragment"
-            android:clickable="false"/>
+            android:clickable="false" />
 
         <RelativeLayout
             android:orientation="horizontal"
@@ -59,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:id="@+id/detail_route_owner"
-                android:layout_alignParentLeft="true"/>
+                android:layout_alignParentLeft="true" />
 
             <TextView
                 android:text="@string/waypoints"
@@ -67,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:id="@+id/detail_route_waypoints"
-                android:layout_alignParentRight="true"/>
-            </RelativeLayout>
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
 
 
         <Space
@@ -83,6 +81,6 @@
             android:id="@+id/play_route"
             android:layout_gravity="center_horizontal" />
 
-        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
