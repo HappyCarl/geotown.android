@@ -225,13 +225,12 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         //local Routes
 
-        CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
-        adapter.add(localHeader);
 
-        if(localRoutes == null || localRoutes.isEmpty()) {
-            CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_routes));
-            adapter.add(empty);
-        } else {
+
+        if(localRoutes != null && !localRoutes.isEmpty()) {
+            CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
+            adapter.add(localHeader);
+
             for (GeoTownRoute r : localRoutes) {
                 if(!r.mine) {
                     RouteCard c = new RouteCard(this,adapter,r);

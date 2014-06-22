@@ -25,13 +25,27 @@
             android:name="com.google.android.gms.maps.MapFragment"
             android:clickable="false"/>
 
-        <TextView
-            android:text="@string/route"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="40sp"
-            android:id="@+id/detail_route_name" />
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
+            <TextView
+                android:text="@string/route"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="40sp"
+                android:id="@+id/detail_route_name" />
+
+
+            <CheckBox
+                android:id="@+id/star"
+                style="?android:attr/starStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
 
 
         <RelativeLayout

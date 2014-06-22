@@ -29,12 +29,14 @@ public class RouteCard extends Card implements Target {
     Context con;
     CardAdapter adapter;
     long routeID;
+    String owner;
 
     public RouteCard(Context context, CardAdapter adapter, Route route) {
         super(route.getName(), "");
         con = context;
         this.adapter = adapter;
         routeID = route.getId();
+        owner = route.getOwner().getUsername();
         Location l = new Location(route.getLatitude(), route.getLongitude());
         this.setContent(CACHE.get(l) + "");
         this.adapter.update(this, true);
@@ -46,6 +48,7 @@ public class RouteCard extends Card implements Target {
         con = context;
         this.adapter = adapter;
         routeID = route.id;
+        owner = route.owner;
         Location l = new Location(route.latitude, route.longitude);
         this.setContent(CACHE.get(l) + "");
         this.adapter.update(this, true);
@@ -135,7 +138,7 @@ public class RouteCard extends Card implements Target {
 
         @Override
         protected void onPostExecute(String location) {
-            RouteCard.this.setContent(location);
+            RouteCard.this.setContent(location + "\n by " + owner);
             adapter.update(RouteCard.this, true);
         }
 

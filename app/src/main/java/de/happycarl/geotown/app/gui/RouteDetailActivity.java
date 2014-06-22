@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
@@ -57,6 +58,9 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     @InjectView(R.id.play_route)
     Button playRoute;
 
+    @InjectView(R.id.star)
+    CheckBox star;
+
     private MapFragment mMapFragment;
     private ShareActionProvider mShareActionProvider;
 
@@ -97,11 +101,27 @@ public class RouteDetailActivity extends SystemBarTintActivity {
             }
         }
 
-        loadRoute();
+        Log.d("RouteOverview","" + routeId);
+        if(routeId == -1L) {
+            AlertDialog.Builder b = new AlertDialog.Builder(this);
+            b.setCancelable(false);
+            b.setTitle(R.string.not_found);
+            b.setMessage(R.string.not_found_detail);
+            b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
 
-        updateRouteUI();
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            b.show();
+        } else {
+            loadRoute();
 
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+            updateRouteUI();
+
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        }
 
     }
 
@@ -214,7 +234,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         routeIntent.putExtra("routeID", routeId);
 
 
-        String routeShare = AppConstants.SHARE_DOMAIN_NAME + routeId;
+        String routeShare = AppConstants.SHARE_DOMAIN_NAME +"/"/*+ AppConstants.SHARE_PATH_PREFIX*/ + routeId;
         String shareTextRaw = getResources().getString(R.string.share_text);
         String shareText = String.format(shareTextRaw, routeShare, "(Not yet in store)");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
@@ -225,7 +245,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
     private void updateAndroidBeamPayload() {
         if(mNfcAdapter != null) {
-            NdefRecord[] records = new NdefRecord[] {NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + mRoute.getId()), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
+            NdefRecord[] records = new NdefRecord[] {NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + "/"/*+ AppConstants.SHARE_PATH_PREFIX*/ + mRoute.getId()), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
 
             mNdefMessage = new NdefMessage(records);
 
@@ -275,6 +295,16 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         }
     }
 
+    @OnClick(R.id.star)
+    public void starClicked() {
+        if(star.isChecked()) {
+            GeoTownRoute.update(mRoute,true);
+        } else {
+            GeoTownRoute.deleteRoute(mRoute.getId());
+        }
+
+    }
+
 
     //================================================================================
     // Network
@@ -292,7 +322,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     @Subscribe
     public void onRouteReceived(RouteDataReceivedEvent event) {
         mRoute = event.route;
-        GeoTownRoute.update(mRoute,true);
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
