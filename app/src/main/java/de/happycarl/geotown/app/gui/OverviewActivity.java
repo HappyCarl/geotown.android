@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
@@ -40,7 +39,9 @@ import de.happycarl.geotown.app.events.db.GeoTownRouteDeletedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
+import de.happycarl.geotown.app.gui.views.LoadingCard;
 import de.happycarl.geotown.app.gui.views.RouteCard;
+import de.happycarl.geotown.app.gui.views.RouteCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
@@ -75,9 +76,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
     @InjectView(R.id.route_view)
     CardListView cardListView;
 
-    @InjectView(R.id.overview_loading_layout)
-    LinearLayout loadingLayout;
-
     @InjectView(R.id.overview_card_ptr_layout)
     PullToRefreshLayout cardUILayout;
 
@@ -88,6 +86,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private List<GeoTownRoute> localRoutes = new ArrayList<>();
     boolean loadingMyRoutes = false;
     boolean loadingNearRoutes = true;
+    boolean loadingLocalRoutes = false;
 
     private LocationClient locationClient;
     private LocationRequest locationRequest;
@@ -111,7 +110,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 .listener(this)
                 .setup(cardUILayout);
 
-        adapter = new CardAdapter(this, R.color.primary_color);
+        adapter = new RouteCardAdapter(this, R.color.primary_color);
         cardListView.setAdapter(adapter);
 
         locationClient = new LocationClient(this, this, this);
@@ -159,7 +158,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     public void onCardClick(int index, CardBase item, View view) {
         Card c = (Card) item;
         RouteCard rc = (RouteCard) c;
-        Log.d("Clicked",rc.getRouteID() + "");
+        Log.d("Clicked", rc.getRouteID() + "");
 
         Intent intent = new Intent(this, RouteDetailActivity.class);
         intent.putExtra("routeID", rc.getRouteID());
@@ -225,46 +224,47 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         //local Routes
 
-
-
-        if(localRoutes != null && !localRoutes.isEmpty()) {
+        if (localRoutes != null && loadingLocalRoutes) {
             CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
             adapter.add(localHeader);
-
+            adapter.add(new LoadingCard());
+        } else if (localRoutes != null && !localRoutes.isEmpty()) {
+            CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
+            adapter.add(localHeader);
             for (GeoTownRoute r : localRoutes) {
-                if(!r.mine) {
-                    RouteCard c = new RouteCard(this,adapter,r);
+                if (!r.mine) {
+                    RouteCard c = new RouteCard(this, adapter, r);
                     Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.latitude, r.longitude, 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
                     c.setPopupMenu(R.menu.local_card_popup, new Card.CardMenuListener<Card>() {
                         @Override
                         public void onMenuItemClick(Card card, MenuItem menuItem) {
                             RouteCard c = (RouteCard) card;
-                            Log.d("Delete","Delete route " + c.getRouteID());
+                            Log.d("Delete", "Delete route " + c.getRouteID());
                             GeoTownRoute.deleteRoute(c.getRouteID());
                         }
                     });
                 }
             }
+        } else {
+
         }
 
         // My Routes
         CardHeader header2 = new CardHeader(getResources().getString(R.string.my_routes));
         adapter.add(header2);
 
-        if (myRoutes == null || myRoutes.size() == 0) {
+        if (myRoutes == null || loadingMyRoutes) {
+            adapter.add(new LoadingCard());
+        } else if (myRoutes.size() == 0) {
             CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_routes));
             adapter.add(empty);
-        }
-
-        if (myRoutes != null) {
+        } else if (myRoutes != null) {
             for (Route r : myRoutes) {
                 RouteCard c = new RouteCard(this, adapter, r);
                 Picasso.with(this).load(GoogleUtils.getStaticMapUrl(r.getLatitude(), r.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(c);
 
             }
         }
-        loadingLayout.setVisibility(View.GONE);
-        cardUILayout.setVisibility(View.VISIBLE);
 
         this.cardUILayout.setRefreshComplete();
 
@@ -276,11 +276,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     private void refreshRoutes() {
-        loadingLayout.setVisibility(View.VISIBLE);
-        cardUILayout.setVisibility(View.GONE);
-
         loadMyRoutes();
         loadLocalRoutes();
+        updateCardsUI();
         locationUpdateReceived = false;
     }
 
@@ -302,21 +300,23 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     private void loadLocalRoutes() {
-        Log.d("LocalRoutes","Loading local routes");
+        Log.d("LocalRoutes", "Loading local routes");
         GeoTownRoute.getForeignRoutes(GET_FOREIGN_ROUTES_REQUEST);
+        loadingLocalRoutes = true;
     }
 
     @Subscribe
     public void onRouteDeleted(GeoTownRouteDeletedEvent event) {
-        Log.d("Delete","Now reloading...");
+        Log.d("Delete", "Now reloading...");
         loadLocalRoutes();
     }
 
     @Subscribe
     public void onGeoTownForeignRoutesReceived(GeoTownForeignRoutesRetrievedEvent event) {
-        if(event.reqId != GET_FOREIGN_ROUTES_REQUEST)
+        if (event.reqId != GET_FOREIGN_ROUTES_REQUEST)
             return;
         localRoutes = event.routes;
+        loadingLocalRoutes = false;
         updateCardsUI();
 
     }
@@ -337,9 +337,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         /**
          * Only put route into database on user click
-        for(Route r : nearRoutes) {
-            GeoTownRoute.update(r, true);
-        }**/
+         for(Route r : nearRoutes) {
+         GeoTownRoute.update(r, true);
+         }**/
 
         if (!loadingMyRoutes)
             updateCardsUI();
@@ -350,7 +350,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
         myRoutes = event.routes;
         loadingMyRoutes = false;
 
-        for(Route r : myRoutes) {
+        for (Route r : myRoutes) {
             Log.d("Update", "My routes: " + r.getOwner().getUsername());
             GeoTownRoute.update(r, true);
         }

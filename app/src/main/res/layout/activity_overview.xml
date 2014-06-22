@@ -6,20 +6,6 @@
     tools:context="de.happycarl.geotown.app.gui.OverviewActivity"
     android:padding="0dp">
 
-    <LinearLayout
-        android:id="@+id/overview_loading_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <ProgressBar
-            android:id="@+id/overview_loading_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
     <uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout
         android:id="@+id/overview_card_ptr_layout"
         android:orientation="vertical"
