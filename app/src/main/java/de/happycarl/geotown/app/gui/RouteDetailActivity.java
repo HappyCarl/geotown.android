@@ -276,7 +276,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
-                            editor.putLong("current_route", 0L);
+                            editor.putLong(AppConstants.PREF_CURRENT_ROUTE, 0L);
                             editor.apply();
                             //deleted current Route, calling again
                             //Not nice, but simple
