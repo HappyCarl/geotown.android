@@ -74,6 +74,7 @@ public class RouteActionsCard extends Card {
     }
 
     private void updateUI() {
+        if(this.mPlayButton == null) return;
         if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) == mRoute.getId()) {
             this.mPlayButton.setImageResource(R.drawable.ic_play);
         } else {

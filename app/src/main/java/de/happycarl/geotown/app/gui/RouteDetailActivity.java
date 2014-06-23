@@ -227,6 +227,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         if (mRoute != null) {
             mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
             mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
+            mCardAdapter.add(mRouteActionsCard);
         } else {
             mCardAdapter.add(new LoadingCard());
         }
