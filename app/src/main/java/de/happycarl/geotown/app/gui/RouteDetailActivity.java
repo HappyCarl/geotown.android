@@ -40,6 +40,8 @@ import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownWaypointsAddedEvent;
 import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
+import de.happycarl.geotown.app.gui.views.LoadingCard;
+import de.happycarl.geotown.app.gui.views.ProgressCard;
 import de.happycarl.geotown.app.gui.views.RouteDetailCard;
 import de.happycarl.geotown.app.gui.views.RouteDetailCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
@@ -208,6 +210,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
 
     private void updateRouteUI() {
+        updateCardsList();
         if (mRoute == null) {
             return;
         }
@@ -238,7 +241,6 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
         updateShareIntent();
         updateAndroidBeamPayload();
-        updateCardsList();
     }
 
     private void updateCardsList() {
@@ -246,7 +248,10 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
         if (mRoute != null) {
             mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
+        } else{
+            mCardAdapter.add(new LoadingCard());
         }
+
     }
 
 

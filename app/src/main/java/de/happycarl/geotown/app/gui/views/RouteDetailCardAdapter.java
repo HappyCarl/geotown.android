@@ -20,6 +20,7 @@ public class RouteDetailCardAdapter extends CardAdapter {
         super(context, accentColorRes);
         this.mRoute = mRoute;
 
+        registerLayout(R.layout.card_progress);
         registerLayout(R.layout.card_route_detail);
     }
 
