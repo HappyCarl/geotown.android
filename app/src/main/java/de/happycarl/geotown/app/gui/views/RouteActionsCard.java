@@ -40,7 +40,7 @@ public class RouteActionsCard extends Card {
 
     public RouteActionsCard(Context ctx, RouteActionsCardListener l, Route route) {
         super("");
-        this.mListener = mListener;
+        this.mListener = l;
         this.mRoute = route;
     }
 
