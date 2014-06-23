@@ -22,6 +22,7 @@ public class RouteDetailCardAdapter extends CardAdapter {
 
         registerLayout(R.layout.card_progress);
         registerLayout(R.layout.card_route_detail);
+        registerLayout(R.layout.card_route_actions);
     }
 
     @Override
