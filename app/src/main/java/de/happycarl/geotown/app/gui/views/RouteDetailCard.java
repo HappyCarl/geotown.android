@@ -51,7 +51,10 @@ public class RouteDetailCard extends Card {
     }
 
     public void setWaypointAmount(int i) {
+
         mWaypointAmount = i;
+        updateUi();
+   
     }
 
     public void updateView(View view) {
