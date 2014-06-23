@@ -84,6 +84,10 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
 
+
+        mCardAdapter = new RouteDetailCardAdapter(this, R.color.primary_color, mRoute);
+        cardsList.setAdapter(mCardAdapter);
+
         String path = "";
         if (getIntent().getData() != null && getIntent().getData().getPath() != null)
             path = getIntent().getData().getPath().replaceAll("[^\\d]", "");
@@ -124,8 +128,6 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         }
 
-        mCardAdapter = new RouteDetailCardAdapter(this, R.color.primary_color, mRoute);
-        cardsList.setAdapter(mCardAdapter);
 
     }
 
