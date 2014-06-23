@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
@@ -224,20 +225,20 @@ public class OverviewActivity extends SystemBarTintActivity implements
             int i = 0; // Only show 3 near routes.
             for (Route r : nearRoutes) {
                 if (i >= 3) break;
-                RouteCard c = new RouteCard(this, adapter, r);
+                new RouteCard(this, adapter, r);
                 i++;
             }
         }
 
         //local Routes
+        if (localRoutes != null && (loadingLocalRoutes || !localRoutes.isEmpty())) {
+            CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
+            adapter.add(localHeader);
+        }
 
         if (localRoutes != null && loadingLocalRoutes) {
-            CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
-            adapter.add(localHeader);
             adapter.add(new LoadingCard());
         } else if (localRoutes != null && !localRoutes.isEmpty()) {
-            CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
-            adapter.add(localHeader);
             for (GeoTownRoute r : localRoutes) {
                 if (!r.mine) {
                     RouteCard c = new RouteCard(this, adapter, r);
@@ -251,8 +252,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
                     });
                 }
             }
-        } else {
-
         }
 
         // My Routes
@@ -266,11 +265,15 @@ public class OverviewActivity extends SystemBarTintActivity implements
             adapter.add(empty);
         } else if (myRoutes != null) {
             for (Route r : myRoutes) {
-                RouteCard c = new RouteCard(this, adapter, r);
-
+                new RouteCard(this, adapter, r);
             }
         }
 
+        cardListView.destroyDrawingCache();
+        cardListView.setVisibility(ListView.INVISIBLE);
+        cardListView.setVisibility(ListView.VISIBLE);
+        adapter.notifyDataSetChanged();
+        
         this.cardUILayout.setRefreshComplete();
 
     }
@@ -329,10 +332,15 @@ public class OverviewActivity extends SystemBarTintActivity implements
     public void onGeoTownForeignRoutesReceived(GeoTownForeignRoutesRetrievedEvent event) {
         if (event.reqId != GET_FOREIGN_ROUTES_REQUEST)
             return;
-        localRoutes = event.routes;
-        loadingLocalRoutes = false;
-        updateCardsUI();
 
+        if (event.routes != null)
+            localRoutes = event.routes;
+        else
+            localRoutes = new ArrayList<>();
+
+        loadingLocalRoutes = false;
+
+        updateCardsUI();
     }
 
     @Subscribe
