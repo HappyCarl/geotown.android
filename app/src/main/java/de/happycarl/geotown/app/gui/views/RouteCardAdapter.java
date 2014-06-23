@@ -27,15 +27,7 @@ public class RouteCardAdapter extends CardAdapter {
 
         if (item instanceof ProgressCard) {
             ProgressCard pc = (ProgressCard) item;
-            ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-            if (progressBar != null) {
-                pc.setProgressBar(progressBar);
-
-            }
-            TextView textView = (TextView) view.findViewById(R.id.progress_text);
-            if (textView != null) {
-                pc.setProgressText(textView);
-            }
+            pc.updateView(view);
         }
         return view;
     }

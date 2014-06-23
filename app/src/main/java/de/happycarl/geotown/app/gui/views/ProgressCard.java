@@ -1,11 +1,14 @@
 package de.happycarl.geotown.app.gui.views;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.afollestad.cardsui.CardAdapter;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
@@ -17,9 +20,15 @@ public class ProgressCard extends RouteCard {
 
     GeoTownRoute geoTownRoute;
 
+    @InjectView(R.id.progress)
     ProgressBar progress;
+
+    @InjectView(R.id.progress_text)
     TextView progressText;
+
     Context c;
+    View view;
+
 
     int waypointCount = -1, finishedCount = -1;
 
@@ -36,16 +45,27 @@ public class ProgressCard extends RouteCard {
 
     }
 
-    public void setProgressBar(ProgressBar progressBar) {
-        progress = progressBar;
+    public void updateView(View view) {
+        ButterKnife.inject(this, view);
+        this.view = view;
+        updateUI();
+    }
+
+    public void updateUI() {
+        setProgressBar();
+        setProgressText();
+    }
+
+    private void setProgressBar() {
+        if(progress == null) return;
         if(geoTownRoute != null) {
             progress.setMax(getWaypointCount()+1);
             progress.setProgress(getFinishedWaypointCount()+1);
         }
     }
 
-    public void setProgressText(TextView text) {
-        progressText = text;
+    private void setProgressText() {
+        if(progressText == null) return;
         progressText.setText(getFinishedWaypointCount() + "/" + getWaypointCount() + " " + c.getResources().getString(R.string.waypoints));
     }
 

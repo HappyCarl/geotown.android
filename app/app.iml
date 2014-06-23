@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" external.system.module.group="geotown.android" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+<module external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" external.system.module.group="GeoTown" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
@@ -56,8 +56,22 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/rs" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/build/apk" />
+      <excludeFolder url="file://$MODULE_DIR$/build/assets" />
+      <excludeFolder url="file://$MODULE_DIR$/build/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/build/dependency-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/build/dex" />
+      <excludeFolder url="file://$MODULE_DIR$/build/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates" />
+      <excludeFolder url="file://$MODULE_DIR$/build/libs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/manifests" />
+      <excludeFolder url="file://$MODULE_DIR$/build/ndk" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/pre-dexed" />
+      <excludeFolder url="file://$MODULE_DIR$/build/res" />
+      <excludeFolder url="file://$MODULE_DIR$/build/rs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/source" />
+      <excludeFolder url="file://$MODULE_DIR$/build/symbols" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -69,7 +83,6 @@
     <orderEntry type="library" exported="" name="systembartint-1.0.3" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-android-1.18.0-rc" level="project" />
     <orderEntry type="library" exported="" name="google-oauth-client-1.18.0-rc" level="project" />
-    <orderEntry type="library" exported="" name="httpclientandroidlib-1.1.2" level="project" />
     <orderEntry type="library" exported="" name="guava-14.0.1" level="project" />
     <orderEntry type="library" exported="" name="okio-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="geotown-0.2.2-SNAPSHOT" level="project" />
@@ -83,7 +96,6 @@
     <orderEntry type="library" exported="" name="butterknife-5.1.0" level="project" />
     <orderEntry type="library" exported="" name="library-0.4.0" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.0.0" level="project" />
-    <orderEntry type="library" exported="" name="android-support-v13" level="project" />
   </component>
 </module>
 
