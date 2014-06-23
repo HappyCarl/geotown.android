@@ -196,8 +196,17 @@ public class OverviewActivity extends SystemBarTintActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("rawtypes unchecked")
     private void updateCardsUI() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                reallyUpdateCardsUI();
+            }
+        });
+    }
+
+    @SuppressWarnings("rawtypes unchecked")
+    private void reallyUpdateCardsUI() {
         adapter.clear();
 
         if (currentRoute != null) {
@@ -273,7 +282,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
         cardListView.setVisibility(ListView.INVISIBLE);
         cardListView.setVisibility(ListView.VISIBLE);
         adapter.notifyDataSetChanged();
-        
+
         this.cardUILayout.setRefreshComplete();
 
     }
