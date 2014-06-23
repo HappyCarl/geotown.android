@@ -29,6 +29,8 @@ public class RouteDetailCardAdapter extends CardAdapter {
         View view = super.onViewCreated(index, recycled, item);
         if (item instanceof RouteDetailCard) {
             ((RouteDetailCard) item).updateView(view);
+        } else if (item instanceof RouteActionsCard) {
+            ((RouteActionsCard) item).buildView(view);
         }
         return view;
     }

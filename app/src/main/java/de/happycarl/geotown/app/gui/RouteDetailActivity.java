@@ -41,13 +41,13 @@ import de.happycarl.geotown.app.events.db.GeoTownWaypointsAddedEvent;
 import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
 import de.happycarl.geotown.app.gui.views.LoadingCard;
-import de.happycarl.geotown.app.gui.views.ProgressCard;
+import de.happycarl.geotown.app.gui.views.RouteActionsCard;
 import de.happycarl.geotown.app.gui.views.RouteDetailCard;
 import de.happycarl.geotown.app.gui.views.RouteDetailCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
-public class RouteDetailActivity extends SystemBarTintActivity {
+public class RouteDetailActivity extends SystemBarTintActivity implements RouteActionsCard.RouteActionsCardListener {
 
     public static final int REQUEST_ROUTE_ID = 876354;
 
@@ -78,6 +78,7 @@ public class RouteDetailActivity extends SystemBarTintActivity {
     private ShareActionProvider mShareActionProvider;
     private CardAdapter mCardAdapter;
     private RouteDetailCard mRouteDetailCard;
+    private RouteActionsCard mRouteActionsCard;
 
     private long routeId = -1;
     private Route mRoute;
@@ -248,7 +249,8 @@ public class RouteDetailActivity extends SystemBarTintActivity {
 
         if (mRoute != null) {
             mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
-        } else{
+            mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
+        } else {
             mCardAdapter.add(new LoadingCard());
         }
 
@@ -393,7 +395,17 @@ public class RouteDetailActivity extends SystemBarTintActivity {
         if (event.id != REQUEST_ROUTE_ID) return;
         if (event.route != null && event.route.mine == false) {
             //star.setChecked(true);
+            mRouteActionsCard.setSaved(true);
         }
     }
 
+    @Override
+    public void onCheckBoxClicked(boolean status) {
+
+    }
+
+    @Override
+    public void onPlayButtonClicked() {
+
+    }
 }
