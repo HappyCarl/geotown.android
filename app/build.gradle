@@ -56,7 +56,7 @@ android {
 
 configurations.all {
 
-    resolutionStrategy.cacheChangingModulesFor(0,'seconds')
+    resolutionStrategy.cacheChangingModulesFor(1,'hours')
 }
 
 configurations {

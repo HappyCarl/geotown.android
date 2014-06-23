@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/card_outer_frame">
+
+    <LinearLayout
+        android:id="@android:id/widget_frame"
+        style="@style/card_inner_frame"
+        android:layout_height="75dp"
+        android:divider="@drawable/vertical_divider"
+        android:weightSum="6">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="75dp"
+            android:layout_weight="3">
+
+            <ImageButton
+                android:id="@+id/card_route_actions_play_button"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_play_inactive" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="75dp"
+            android:layout_weight="3">
+
+            <CheckBox
+                android:id="@+id/card_route_actions_star_checkbox"
+                style="?android:attr/starStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:scaleX="1.5"
+                android:scaleY="1.5" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -23,19 +23,11 @@ public class RouteCardAdapter extends CardAdapter {
 
     @Override
     public View onViewCreated(int index, View recycled, CardBase item) {
-        View view = super.onViewCreated(index,recycled,item);
+        View view = super.onViewCreated(index, recycled, item);
 
-        if(item instanceof ProgressCard) {
+        if (item instanceof ProgressCard) {
             ProgressCard pc = (ProgressCard) item;
-            ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-            if(progressBar != null) {
-                pc.setProgressBar(progressBar);
-
-            }
-            TextView textView = (TextView) view.findViewById(R.id.progress_text);
-            if (textView != null) {
-                pc.setProgressText(textView);
-            }
+            pc.updateView(view);
         }
         return view;
     }
