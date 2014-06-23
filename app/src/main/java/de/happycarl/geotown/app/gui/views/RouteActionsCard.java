@@ -51,6 +51,7 @@ public class RouteActionsCard extends Card {
 
     public void buildView(View view) {
         ButterKnife.inject(this, view);
+        updateUI();
     }
 
     public boolean isSaved() {

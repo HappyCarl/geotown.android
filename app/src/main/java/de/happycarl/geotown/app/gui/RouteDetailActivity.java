@@ -55,22 +55,6 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     // Properties
     //================================================================================
 
-
-    /*@InjectView(R.id.detail_route_name)
-    TextView routeName;
-
-    @InjectView(R.id.detail_route_owner)
-    TextView routeOwner;
-
-    @InjectView(R.id.detail_route_waypoints)
-    TextView routeWaypoints;
-
-    @InjectView(R.id.play_route)
-    Button playRoute;
-
-    @InjectView(R.id.star)
-    CheckBox star;*/
-
     @InjectView(R.id.route_detail_card_list)
     CardListView cardsList;
 
@@ -223,15 +207,6 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         FragmentManager fm = this.getFragmentManager();
         mMapFragment = (MapFragment) fm.findFragmentById(R.id.map);
 
-        /*routeName.setText(Html.fromHtml("<b>" + mRoute.getName() + "</b>"));
-        routeOwner.setText(Html.fromHtml("<i>by " + mRoute.getOwner().getUsername() + "</i>"));
-
-
-        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) == mRoute.getId()) {
-            playRoute.setText(R.string.currently_playing);
-            playRoute.setEnabled(false);
-        }*/
-
 
         mMapFragment.getMap().setMyLocationEnabled(false);
         mMapFragment.getMap().setTrafficEnabled(false);
@@ -287,8 +262,17 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     }
 
 
-    //@OnClick(R.id.play_route)
-    public void playCurrentRoute() {
+    @Override
+    public void onCheckBoxClicked(boolean status) {
+        if (status) {
+            GeoTownRoute.update(mRoute, true);
+        } else {
+            GeoTownRoute.deleteRoute(mRoute.getId());
+        }
+    }
+
+    @Override
+    public void onPlayButtonClicked() {
         SharedPreferences pref = GeotownApplication.getPreferences();
         final SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
         if (pref.getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) != 0L) { //User is currently playing a different route
@@ -302,8 +286,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
                             editor.putLong(AppConstants.PREF_CURRENT_ROUTE, 0L);
                             editor.apply();
                             //deleted current Route, calling again
-                            //Not nice, but simple
-                            playCurrentRoute();
+                            //Not nice, but simple #olaf
+                            onPlayButtonClicked();
                             break;
                         case DialogInterface.BUTTON_NEGATIVE:
                             //Do nothing, user cancelled
@@ -329,17 +313,6 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
         }
     }
-
-    //@OnClick(R.id.star)
-    public void starClicked() {
-        /*if (star.isChecked()) {
-            GeoTownRoute.update(mRoute, true);
-        } else {
-            GeoTownRoute.deleteRoute(mRoute.getId());
-        }*/
-
-    }
-
 
     //================================================================================
     // Network
@@ -399,13 +372,4 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         }
     }
 
-    @Override
-    public void onCheckBoxClicked(boolean status) {
-
-    }
-
-    @Override
-    public void onPlayButtonClicked() {
-
-    }
 }
