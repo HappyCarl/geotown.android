@@ -40,13 +40,14 @@ public class GeotownApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        ActiveAndroid.initialize(this);
+
         mEventBus = new Bus(ThreadEnforcer.ANY);
         mPreferences = getSharedPreferences(AppConstants.PREF_NAME, 0);
         mGeotown = ApiUtils.getApiServiceHandle(null);
 
         mEventBus.post(new ApplicationStartedEvent(this));
 
-        ActiveAndroid.initialize(this);
     }
 
     @Override
