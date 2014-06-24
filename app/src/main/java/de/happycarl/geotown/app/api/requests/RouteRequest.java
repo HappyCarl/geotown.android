@@ -10,7 +10,7 @@ import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 /**
  * Created by ole on 19.06.14.
  */
-public class RouteRequest extends Job { //AsyncTask<Long, Void, Route> {
+public class RouteRequest extends Job {
     private long routeId;
 
     public RouteRequest(long id) {

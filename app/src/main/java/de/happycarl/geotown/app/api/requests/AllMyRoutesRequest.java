@@ -1,7 +1,5 @@
 package de.happycarl.geotown.app.api.requests;
 
-import android.util.Log;
-
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
 import com.path.android.jobqueue.Job;
@@ -17,14 +15,16 @@ import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 /**
  * Created by ole on 18.06.14.
  */
-public class AllMyRoutesRequest extends Job {// AsyncTask<Void, Void, RouteCollection> {
+public class AllMyRoutesRequest extends Job {
     private static final AtomicInteger jobCounter = new AtomicInteger(0);
 
     private final int id;
+
     public AllMyRoutesRequest() {
         super(new Params(1).requireNetwork().groupBy("fetch-my-routes"));
         id = jobCounter.incrementAndGet();
     }
+
     @Override
     public void onAdded() {
 
@@ -32,7 +32,7 @@ public class AllMyRoutesRequest extends Job {// AsyncTask<Void, Void, RouteColle
 
     @Override
     public void onRun() throws Throwable {
-        if(id != jobCounter.get()) {
+        if (id != jobCounter.get()) {
             return;
         }
 

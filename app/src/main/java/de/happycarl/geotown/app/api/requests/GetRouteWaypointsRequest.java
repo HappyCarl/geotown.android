@@ -14,7 +14,7 @@ import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
 /**
  * Created by ole on 20.06.14.
  */
-public class GetRouteWaypointsRequest extends Job {//} extends AsyncTask<Long, Void, WaypointCollection> {
+public class GetRouteWaypointsRequest extends Job {
 
     private long routeId;
 
