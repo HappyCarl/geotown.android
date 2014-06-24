@@ -43,21 +43,55 @@ public class FirstStartActivity extends SystemBarTintActivity {
     //================================================================================
     // Properties
     //================================================================================
-
+    @InjectView(R.id.account_chooser_spinner)
+    Spinner accountChooser;
+    @InjectView(R.id.username_edit_text)
+    EditText usernameEditText;
     private GoogleAccountCredential credential;
     private String accountName;
     private boolean requestedAccountPicker = false;
-
-    @InjectView(R.id.account_chooser_spinner)
-    Spinner accountChooser;
-
-    @InjectView(R.id.username_edit_text)
-    EditText usernameEditText;
-
     private ProgressDialog progressDialog;
 
     //================================================================================
     // Activity Lifecycle
+    //================================================================================
+    private View.OnTouchListener spinnerTouchListener = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            FirstStartActivity.this.accountChooserClicked();
+            return true;
+        }
+    };
+    private View.OnKeyListener spinnerKeyListener = new View.OnKeyListener() {
+
+        @Override
+        public boolean onKey(View view, int i, KeyEvent keyEvent) {
+            FirstStartActivity.this.accountChooserClicked();
+            return true;
+        }
+    };
+    private TextWatcher usernameEditTextListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (usernameEditText.getText().toString().length() <= 0)
+                usernameEditText.setError(getString(R.string.error_no_username));
+        }
+    };
+
+
+    //================================================================================
+    // UI
     //================================================================================
 
     @Override
@@ -111,11 +145,6 @@ public class FirstStartActivity extends SystemBarTintActivity {
         }
     }
 
-
-    //================================================================================
-    // UI
-    //================================================================================
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Nobody needs a menu on the start screen
@@ -131,8 +160,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     private void startOverview() {
         //Already signed in
         Log.d("Login", "Successfully logged in");
-        CurrentUserDataRequest req = new CurrentUserDataRequest();
-        req.execute((Void) null);
+        GeotownApplication.getJobManager().addJob(new CurrentUserDataRequest());
 
         Intent overviewScreen = new Intent(this, OverviewActivity.class);
         startActivity(overviewScreen);
@@ -149,6 +177,10 @@ public class FirstStartActivity extends SystemBarTintActivity {
         this.updateAccountChooserValue(accountName);
         credential.setSelectedAccountName(accountName);
     }
+
+    //================================================================================
+    // Networking
+    //================================================================================
 
     @OnClick(R.id.start_button)
     protected void loginGoogle() {
@@ -182,7 +214,6 @@ public class FirstStartActivity extends SystemBarTintActivity {
                 REQUEST_ACCOUNT_PICKER);
     }
 
-
     // setSelectedAccountName definition
     private void setSelectedAccountName(String accountName) {
         SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
@@ -192,61 +223,19 @@ public class FirstStartActivity extends SystemBarTintActivity {
         this.accountName = accountName;
     }
 
-    //================================================================================
-    // Networking
-    //================================================================================
-
     private void startSetUsernameRequest(String name) {
-        new SetUsernameRequest().execute(name);
+        GeotownApplication.getJobManager().addJob(new SetUsernameRequest(name));
     }
 
     @Subscribe
     public void onUsernameSet(UsernameSetEvent e) {
-        GeotownApplication.getPreferences().edit().putString(AppConstants.PREF_ACCOUNT_NAME,e.userData.getUsername()).apply();
+        GeotownApplication.getPreferences().edit().putString(AppConstants.PREF_ACCOUNT_NAME, e.userData.getUsername()).apply();
         progressDialog.cancel();
         startOverview();
     }
 
-
     private void accountChooserClicked() {
         chooseAccount();
     }
-
-
-    private View.OnTouchListener spinnerTouchListener = new View.OnTouchListener() {
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            FirstStartActivity.this.accountChooserClicked();
-            return true;
-        }
-    };
-
-    private View.OnKeyListener spinnerKeyListener = new View.OnKeyListener() {
-
-        @Override
-        public boolean onKey(View view, int i, KeyEvent keyEvent) {
-            FirstStartActivity.this.accountChooserClicked();
-            return true;
-        }
-    };
-
-    private TextWatcher usernameEditTextListener = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            if (usernameEditText.getText().toString().length() <= 0)
-                usernameEditText.setError(getString(R.string.error_no_username));
-        }
-    };
 
 }

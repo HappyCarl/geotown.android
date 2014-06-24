@@ -24,20 +24,18 @@ import de.happycarl.geotown.app.R;
  */
 public class RouteDetailCard extends Card {
     private static final Map<Location, String> CACHE = new HashMap<>();
-
-    private Route mRoute;
-    private Context mContext;
-    private CardAdapter mAdapter;
-    private int mWaypointAmount = 0;
-    private Location mLocation;
-    private String mLocationString;
-
     @InjectView(R.id.card_route_detail_location_text)
     TextView mLocationTextView;
     @InjectView(R.id.card_route_detail_owner_text)
     TextView mOwnerTextView;
     @InjectView(R.id.card_route_detail_waypoint_amount)
     TextView mWaypointAmountTextView;
+    private Route mRoute;
+    private Context mContext;
+    private CardAdapter mAdapter;
+    private int mWaypointAmount = 0;
+    private Location mLocation;
+    private String mLocationString;
 
     public RouteDetailCard(Context ctx, CardAdapter cardAdapter, Route route) {
         super("");
@@ -53,8 +51,12 @@ public class RouteDetailCard extends Card {
     public void setWaypointAmount(int i) {
 
         mWaypointAmount = i;
-        updateUi();
-
+        this.mWaypointAmountTextView.post(new Runnable() {
+            @Override
+            public void run() {
+                updateUi();
+            }
+        });
     }
 
     public void updateView(View view) {

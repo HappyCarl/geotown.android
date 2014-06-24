@@ -1,10 +1,10 @@
 package de.happycarl.geotown.app.api.requests;
 
-import android.os.AsyncTask;
-
 import com.appspot.drive_log.geotown.model.UserData;
+import com.path.android.jobqueue.Job;
+import com.path.android.jobqueue.Params;
 
-import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.events.net.CurrentUserDataReceivedEvent;
@@ -12,22 +12,39 @@ import de.happycarl.geotown.app.events.net.CurrentUserDataReceivedEvent;
 /**
  * Created by ole on 19.06.14.
  */
-public class CurrentUserDataRequest extends AsyncTask<Void, Void, UserData> {
+public class CurrentUserDataRequest extends Job { // AsyncTask<Void, Void, UserData> {
+    private static final AtomicInteger jobCounter = new AtomicInteger(0);
 
-    @Override
-    protected UserData doInBackground(Void... params) {
-        UserData userData = null;
+    private final int id;
 
-        try {
-            userData = GeotownApplication.getGeotown().userdata().get().execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return userData;
+    public CurrentUserDataRequest() {
+        super(new Params(1).requireNetwork().groupBy("fetch-user-data"));
+        id = jobCounter.incrementAndGet();
     }
 
     @Override
-    protected void onPostExecute(UserData userData) {
+    public void onAdded() {
+
+    }
+
+    @Override
+    public void onRun() throws Throwable {
+        if (id != jobCounter.get()) {
+            return;
+        }
+
+        UserData userData = GeotownApplication.getGeotown().userdata().get().execute();
+
         GeotownApplication.getEventBus().post(new CurrentUserDataReceivedEvent(userData));
+    }
+
+    @Override
+    protected void onCancel() {
+
+    }
+
+    @Override
+    protected boolean shouldReRunOnThrowable(Throwable throwable) {
+        return false;
     }
 }

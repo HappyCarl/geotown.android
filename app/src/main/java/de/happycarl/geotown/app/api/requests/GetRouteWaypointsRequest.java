@@ -1,12 +1,10 @@
 package de.happycarl.geotown.app.api.requests;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import com.appspot.drive_log.geotown.model.Waypoint;
 import com.appspot.drive_log.geotown.model.WaypointCollection;
+import com.path.android.jobqueue.Job;
+import com.path.android.jobqueue.Params;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,32 +14,39 @@ import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
 /**
  * Created by ole on 20.06.14.
  */
-public class GetRouteWaypointsRequest extends AsyncTask<Long, Void, WaypointCollection> {
+public class GetRouteWaypointsRequest extends Job {//} extends AsyncTask<Long, Void, WaypointCollection> {
 
-    @Override
-    protected WaypointCollection doInBackground(Long... params) {
-        WaypointCollection wc = null;
+    private long routeId;
 
-        Log.d("WaypointRequest", "Getting waypoints for route" + params[0]);
-        try {
-            wc = GeotownApplication.getGeotown().waypoints().list(params[0]).execute();
-
-        } catch (IOException e) {
-
-            Log.d("GetRouteWaypointsRequest", "ERROR:" + e.toString());
-
-        }
-
-        return wc;
+    public GetRouteWaypointsRequest(long routeId) {
+        super(new Params(3).requireNetwork().groupBy("fetch-waypoints"));
+        this.routeId = routeId;
     }
 
     @Override
-    protected void onPostExecute(WaypointCollection list) {
+    public void onAdded() {
+
+    }
+
+    @Override
+    public void onRun() throws Throwable {
+        WaypointCollection wc = GeotownApplication.getGeotown().waypoints().list(routeId).execute();
+
         List<Waypoint> waypoints = new ArrayList<>();
-        if (list != null && list.getItems() != null) {
-            waypoints = list.getItems();
+        if (wc != null && wc.getItems() != null) {
+            waypoints = wc.getItems();
         }
 
         GeotownApplication.getEventBus().post(new RouteWaypointsReceivedEvent(waypoints));
+    }
+
+    @Override
+    protected void onCancel() {
+
+    }
+
+    @Override
+    protected boolean shouldReRunOnThrowable(Throwable throwable) {
+        return false;
     }
 }

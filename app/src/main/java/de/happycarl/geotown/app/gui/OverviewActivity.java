@@ -56,15 +56,13 @@ public class OverviewActivity extends SystemBarTintActivity implements
     // Constants
     //================================================================================
 
+    public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
     private static final int GET_ROUTE_BY_NAME_DETAIL_REQUEST = 425498458;
     private static final int GET_FOREIGN_ROUTES_REQUEST = 6875358;
     private static final int GET_CURRENT_ROUTE = 98635446;
-
     private static final int DEFAULT_NEAR_ROUTES_SEARCH_RADIUS = 1000000; // in m (afaik :) )
-
     private static final int MILLISECONDS_PER_SECOND = 1000;
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
     private static final long UPDATE_INTERVAL =
             MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
     private static final int FASTEST_INTERVAL_IN_SECONDS = 1;
@@ -80,17 +78,14 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @InjectView(R.id.overview_card_ptr_layout)
     PullToRefreshLayout cardUILayout;
-
+    boolean loadingMyRoutes = false;
+    boolean loadingNearRoutes = true;
+    boolean loadingLocalRoutes = false;
     private CardAdapter adapter;
-
     private List<Route> myRoutes = new ArrayList<Route>();
     private List<Route> nearRoutes = new ArrayList<Route>();
     private List<GeoTownRoute> localRoutes = new ArrayList<>();
     private GeoTownRoute currentRoute;
-    boolean loadingMyRoutes = false;
-    boolean loadingNearRoutes = true;
-    boolean loadingLocalRoutes = false;
-
     private LocationClient locationClient;
     private LocationRequest locationRequest;
 
@@ -99,6 +94,13 @@ public class OverviewActivity extends SystemBarTintActivity implements
     //================================================================================
     // Activity Lifecycle
     //================================================================================
+    private CardHeader.ActionListener nearRoutesActionListener = new CardHeader.ActionListener() {
+
+        @Override
+        public void onHeaderActionClick(CardHeader cardHeader) {
+            // TODO: Show "NearRoutesActivity" here.
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +144,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     }
 
+    //================================================================================
+    // UI
+    //================================================================================
+
     @Override
     protected void onStop() {
         if (locationClient.isConnected()) {
@@ -152,10 +158,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
         locationClient.disconnect();
         super.onStop();
     }
-
-    //================================================================================
-    // UI
-    //================================================================================
 
     @Override
     public void onCardClick(int index, CardBase item, View view) {
@@ -292,6 +294,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
         this.refreshRoutes();
     }
 
+    //================================================================================
+    // Network & Database
+    //================================================================================
+
     private void refreshRoutes() {
         loadMyRoutes();
         loadLocalRoutes();
@@ -299,10 +305,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
         updateCardsUI();
         locationUpdateReceived = false;
     }
-
-    //================================================================================
-    // Network & Database
-    //================================================================================
 
     private void loadCurrentRoute() {
         long currentRouteId = GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L);
@@ -314,14 +316,14 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     private void loadMyRoutes() {
         AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
-        routesRequest.execute((Void) null);
+        GeotownApplication.getJobManager().addJob(new AllMyRoutesRequest());
+        //routesRequest.execute((Void) null);
         loadingMyRoutes = true;
     }
 
     private void loadNearRoutes(Location currentLocation) {
         Log.d("OverviewActivity", locationClient.isConnected() + "");
-        NearRoutesRequest nearRoutesRequest = new NearRoutesRequest();
-        nearRoutesRequest.execute(new NearRoutesRequest.NearRoutesParams(currentLocation.getLatitude(), currentLocation.getLongitude(), DEFAULT_NEAR_ROUTES_SEARCH_RADIUS));
+        GeotownApplication.getJobManager().addJob(new NearRoutesRequest(currentLocation.getLatitude(), currentLocation.getLongitude(), DEFAULT_NEAR_ROUTES_SEARCH_RADIUS));
         loadingNearRoutes = true;
     }
 
@@ -379,25 +381,19 @@ public class OverviewActivity extends SystemBarTintActivity implements
             updateCardsUI();
     }
 
-    @Subscribe
-    public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
-        myRoutes = event.routes;
-        loadingMyRoutes = false;
-
-        for (Route r : myRoutes) {
-            Log.d("Update", "My routes: " + r.getOwner().getUsername());
-            GeoTownRoute.update(r, true);
-        }
-
-        if (!loadingNearRoutes)
-            updateCardsUI();
-    }
-
 
     //================================================================================
     // GeoLocation Services
     //================================================================================
 
+    @Subscribe
+    public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
+        myRoutes = event.routes;
+        loadingMyRoutes = false;
+
+        if (!loadingNearRoutes)
+            updateCardsUI();
+    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -444,13 +440,5 @@ public class OverviewActivity extends SystemBarTintActivity implements
             Log.e("OverviewActivity", "Couldn't connect to location client: " + connectionResult.getErrorCode());
         }
     }
-
-    private CardHeader.ActionListener nearRoutesActionListener = new CardHeader.ActionListener() {
-
-        @Override
-        public void onHeaderActionClick(CardHeader cardHeader) {
-            // TODO: Show "NearRoutesActivity" here.
-        }
-    };
 
 }

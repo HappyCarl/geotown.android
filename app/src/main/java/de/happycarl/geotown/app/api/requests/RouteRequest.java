@@ -1,10 +1,8 @@
 package de.happycarl.geotown.app.api.requests;
 
-import android.os.AsyncTask;
-
 import com.appspot.drive_log.geotown.model.Route;
-
-import java.io.IOException;
+import com.path.android.jobqueue.Job;
+import com.path.android.jobqueue.Params;
 
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
@@ -12,25 +10,35 @@ import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 /**
  * Created by ole on 19.06.14.
  */
-public class RouteRequest extends AsyncTask<Long, Void, Route> {
+public class RouteRequest extends Job { //AsyncTask<Long, Void, Route> {
+    private long routeId;
 
-    @Override
-    protected Route doInBackground(Long... ids) {
-        Route route = null;
-        if (ids[0] == null) {
-            return null;
-        }
-        try {
-            route = GeotownApplication.getGeotown().routes().get(ids[0]).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public RouteRequest(long id) {
+        super(new Params(3).requireNetwork().groupBy("fetch-route"));
 
-        return route;
+        this.routeId = id;
     }
 
     @Override
-    protected void onPostExecute(Route route) {
+    public void onAdded() {
+
+    }
+
+    @Override
+    public void onRun() throws Throwable {
+        Route route = GeotownApplication.getGeotown().routes().get(routeId).execute();
+
         GeotownApplication.getEventBus().post(new RouteDataReceivedEvent(route));
+
+    }
+
+    @Override
+    protected void onCancel() {
+
+    }
+
+    @Override
+    protected boolean shouldReRunOnThrowable(Throwable throwable) {
+        return false;
     }
 }

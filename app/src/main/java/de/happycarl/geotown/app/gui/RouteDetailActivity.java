@@ -322,12 +322,11 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     //================================================================================
 
     private void loadRoute() {
-        new RouteRequest().execute(routeId);
+        GeotownApplication.getJobManager().addJob(new RouteRequest(routeId));
     }
 
     private void loadWaypoints() {
-        GetRouteWaypointsRequest getRouteWaypointsRequest = new GetRouteWaypointsRequest();
-        getRouteWaypointsRequest.execute(routeId);
+        GeotownApplication.getJobManager().addJob(new GetRouteWaypointsRequest(routeId));
     }
 
     @Subscribe

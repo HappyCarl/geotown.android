@@ -1,14 +1,15 @@
 package de.happycarl.geotown.app.api.requests;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
+import com.path.android.jobqueue.Job;
+import com.path.android.jobqueue.Params;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
@@ -16,36 +17,44 @@ import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 /**
  * Created by ole on 18.06.14.
  */
-public class AllMyRoutesRequest extends AsyncTask<Void, Void, RouteCollection> {
+public class AllMyRoutesRequest extends Job {// AsyncTask<Void, Void, RouteCollection> {
+    private static final AtomicInteger jobCounter = new AtomicInteger(0);
 
+    private final int id;
+    public AllMyRoutesRequest() {
+        super(new Params(1).requireNetwork().groupBy("fetch-my-routes"));
+        id = jobCounter.incrementAndGet();
+    }
     @Override
-    protected RouteCollection doInBackground(Void... params) {
-        RouteCollection rc = null;
+    public void onAdded() {
 
-        try {
-            rc = GeotownApplication.getGeotown().routes().listMine().execute();
-
-        } catch (IOException e) {
-
-            Log.d("AllMyRoutesRequest", "ERROR:" + e.toString());
-
-        }
-
-        return rc;
     }
 
     @Override
-    protected void onPostExecute(RouteCollection routeCollection) {
-        List<Route> routes = new ArrayList<>();
-        if (routeCollection != null && routeCollection.getItems() != null) {
-            routes = routeCollection.getItems();
+    public void onRun() throws Throwable {
+        if(id != jobCounter.get()) {
+            return;
         }
 
-        Log.d("AllMyRoutesRequest", "Got routes:");
-        for (Route r : routes) {
-            Log.d("AllMyRoutesRequest", "Route: " + r.getName() + " : " + r.getOwner());
+        RouteCollection rc = null;
+        rc = GeotownApplication.getGeotown().routes().listMine().execute();
+
+        List<Route> routes = new ArrayList<>();
+        if (rc != null && rc.getItems() != null) {
+            routes = rc.getItems();
         }
+
         GeotownApplication.getEventBus().post(new MyRoutesDataReceivedEvent(routes));
 
+    }
+
+    @Override
+    protected void onCancel() {
+
+    }
+
+    @Override
+    protected boolean shouldReRunOnThrowable(Throwable throwable) {
+        return false;
     }
 }
