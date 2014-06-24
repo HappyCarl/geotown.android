@@ -19,19 +19,15 @@ import de.happycarl.geotown.app.events.ApplicationStartedEvent;
  */
 public class GeotownApplication extends Application {
     private static Bus mEventBus;
+    private static SharedPreferences mPreferences;
+    private static Geotown mGeotown;
 
     public static Bus getEventBus() {
         return mEventBus;
     }
-
-    private static SharedPreferences mPreferences;
-
     public static SharedPreferences getPreferences() {
         return mPreferences;
     }
-
-    private static Geotown mGeotown;
-
     public static Geotown getGeotown() {
         return mGeotown;
     }
