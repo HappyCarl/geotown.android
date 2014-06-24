@@ -132,6 +132,12 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        this.refreshRoutes();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         GeotownApplication.getEventBus().unregister(this);
@@ -141,12 +147,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
     protected void onStart() {
         super.onStart();
         locationClient.connect();
-
+        this.refreshRoutes();
     }
-
-    //================================================================================
-    // UI
-    //================================================================================
 
     @Override
     protected void onStop() {
@@ -158,6 +160,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
         locationClient.disconnect();
         super.onStop();
     }
+    //================================================================================
+    // UI
+    //================================================================================
+
 
     @Override
     public void onCardClick(int index, CardBase item, View view) {
