@@ -68,7 +68,7 @@ public class GeotownApplication extends Application {
 
                     @Override
                     public boolean isDebugEnabled() {
-                        return BuildConfig.DEBUG;
+                        return false;
                     }
 
                     @Override
