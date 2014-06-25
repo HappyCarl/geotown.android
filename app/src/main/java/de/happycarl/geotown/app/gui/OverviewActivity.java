@@ -248,7 +248,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
         }
 
         //local Routes
-        if (localRoutes != null && (loadingLocalRoutes || !localRoutes.isEmpty())) {
+        if (localRoutes != null && (!localRoutes.isEmpty())) {
             CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
             adapter.add(localHeader);
         }
@@ -383,8 +383,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
          GeoTownRoute.update(r, true);
          }**/
 
-        if (!loadingMyRoutes)
-            updateCardsUI();
+         updateCardsUI();
     }
 
 
@@ -397,8 +396,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
         myRoutes = event.routes;
         loadingMyRoutes = false;
 
-        if (!loadingNearRoutes)
-            updateCardsUI();
+        updateCardsUI();
     }
 
     @Override
