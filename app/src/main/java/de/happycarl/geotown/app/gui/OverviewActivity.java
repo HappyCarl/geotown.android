@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,13 +45,10 @@ import de.happycarl.geotown.app.gui.views.ProgressCard;
 import de.happycarl.geotown.app.gui.views.RouteCard;
 import de.happycarl.geotown.app.gui.views.RouteCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnRefreshListener, CardListView.CardClickListener {
+        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, CardListView.CardClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     //================================================================================
     // Constants
@@ -77,7 +75,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     CardListView cardListView;
 
     @InjectView(R.id.overview_card_ptr_layout)
-    PullToRefreshLayout cardUILayout;
+    SwipeRefreshLayout cardUILayout;
     boolean loadingMyRoutes = false;
     boolean loadingNearRoutes = true;
     boolean loadingLocalRoutes = false;
@@ -110,10 +108,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
 
-        ActionBarPullToRefresh.from(this)
-                .allChildrenArePullable()
-                .listener(this)
-                .setup(cardUILayout);
+        cardUILayout.setOnRefreshListener(this);
+        cardUILayout.setColorScheme(android.R.color.holo_blue_light, R.color.primary_color, android.R.color.holo_blue_light, R.color.primary_color);
 
         adapter = new RouteCardAdapter(this, R.color.primary_color);
         cardListView.setAdapter(adapter);
@@ -291,12 +287,13 @@ public class OverviewActivity extends SystemBarTintActivity implements
         cardListView.setVisibility(ListView.VISIBLE);
         adapter.notifyDataSetChanged();
 
-        this.cardUILayout.setRefreshComplete();
+        this.cardUILayout.setRefreshing(false);
 
     }
 
+
     @Override
-    public void onRefreshStarted(View view) {
+    public void onRefresh() {
         this.refreshRoutes();
     }
 

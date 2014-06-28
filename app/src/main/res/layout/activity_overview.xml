@@ -6,7 +6,7 @@
     android:clipToPadding="false"
     tools:context="de.happycarl.geotown.app.gui.OverviewActivity">
 
-    <uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout
+    <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/overview_card_ptr_layout"
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -19,6 +19,6 @@
             android:id="@+id/route_view"
             android:layout_width="fill_parent"
             android:layout_height="match_parent" />
-    </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>
