@@ -5,6 +5,7 @@ android:
   - extra-google-google_play_services
   - extra-google-m2repository
   - extra-android-m2repository
+  - extra-android-support
   licenses:
   - android-sdk-license-5be876d5 # new license!
 before_script:
