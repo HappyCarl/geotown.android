@@ -5,6 +5,8 @@ android:
   - extra-google-google_play_services
   - extra-google-m2repository
   - extra-android-m2repository
+  licenses:
+  - android-sdk-license-5be876d5 # new license!
 before_script:
 - openssl aes-256-cbc -k "$KEYSTORE_FILE_PASSWORD" -in release.keystore.enc -d -a
   -out release.keystore
