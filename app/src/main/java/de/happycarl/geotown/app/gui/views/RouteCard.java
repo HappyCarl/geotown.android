@@ -33,20 +33,6 @@ public class RouteCard extends Card implements Target {
     String owner;
     Location location;
 
-    public RouteCard(Context context, CardAdapter adapter, Route route) {
-        super(route.getName(), "");
-        con = context;
-        this.adapter = adapter;
-        routeID = route.getId();
-        owner = route.getOwner().getUsername();
-        location = new Location(route.getLatitude(), route.getLongitude());
-        updateContent();
-        this.adapter.update(this, true);
-        new GeoCodingAsyncTask(context, location).execute();
-        Picasso.with(context).load(GoogleUtils.getStaticMapUrl(route.getLatitude(), route.getLongitude(), 8, 128)).placeholder(R.drawable.ic_launcher).into(this);
-
-    }
-
     private void updateContent() {
         this.setContent(CACHE.get(location) + "\nby " + owner);
     }
@@ -59,7 +45,7 @@ public class RouteCard extends Card implements Target {
         owner = route.owner;
         location = new Location(route.latitude, route.longitude);
         updateContent();
-        this.adapter.update(this, true);
+        this.adapter.update(this, false);
         new GeoCodingAsyncTask(context, location).execute();
         Picasso.with(context).load(GoogleUtils.getStaticMapUrl(route.latitude, route.longitude, 8, 128)).placeholder(R.drawable.ic_launcher).into(this);
     }
@@ -71,7 +57,7 @@ public class RouteCard extends Card implements Target {
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
         setThumbnail(con, bitmap);
-        adapter.update(this, true);
+        adapter.update(this, false);
 
     }
 
@@ -149,7 +135,10 @@ public class RouteCard extends Card implements Target {
         @Override
         protected void onPostExecute(String location) {
             updateContent();
-            adapter.update(RouteCard.this, true);
+            if(RouteCard.this instanceof ProgressCard)
+                adapter.update((ProgressCard)RouteCard.this, false);
+            else
+                adapter.update(RouteCard.this, false);
         }
 
 

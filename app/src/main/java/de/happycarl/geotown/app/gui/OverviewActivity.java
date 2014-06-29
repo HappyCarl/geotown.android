@@ -40,6 +40,7 @@ import de.happycarl.geotown.app.events.db.GeoTownRouteDeletedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
+import de.happycarl.geotown.app.gui.data.OverviewCardsAdapter;
 import de.happycarl.geotown.app.gui.views.LoadingCard;
 import de.happycarl.geotown.app.gui.views.ProgressCard;
 import de.happycarl.geotown.app.gui.views.RouteCard;
@@ -58,7 +59,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 421;
     private static final int GET_ROUTE_BY_NAME_DETAIL_REQUEST = 425498458;
     private static final int GET_FOREIGN_ROUTES_REQUEST = 6875358;
-    private static final int GET_CURRENT_ROUTE = 98635446;
     private static final int DEFAULT_NEAR_ROUTES_SEARCH_RADIUS = 1000000; // in m (afaik :) )
     private static final int MILLISECONDS_PER_SECOND = 1000;
     private static final long UPDATE_INTERVAL =
@@ -76,14 +76,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @InjectView(R.id.overview_card_ptr_layout)
     SwipeRefreshLayout cardUILayout;
-    boolean loadingMyRoutes = false;
-    boolean loadingNearRoutes = true;
-    boolean loadingLocalRoutes = false;
-    private CardAdapter adapter;
-    private List<Route> myRoutes = new ArrayList<Route>();
-    private List<Route> nearRoutes = new ArrayList<Route>();
-    private List<GeoTownRoute> localRoutes = new ArrayList<>();
-    private GeoTownRoute currentRoute;
+    private OverviewCardsAdapter adapter;
     private LocationClient locationClient;
     private LocationRequest locationRequest;
 
@@ -102,6 +95,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
 
@@ -109,9 +103,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
         GeotownApplication.getEventBus().register(this);
 
         cardUILayout.setOnRefreshListener(this);
-        cardUILayout.setColorScheme(android.R.color.holo_blue_light, R.color.primary_color, android.R.color.holo_blue_light, R.color.primary_color);
+        cardUILayout.setColorScheme(R.color.primary_color, android.R.color.holo_blue_light, R.color.primary_color, android.R.color.holo_blue_light);
 
-        adapter = new RouteCardAdapter(this, R.color.primary_color);
+        adapter = new OverviewCardsAdapter(this);
         cardListView.setAdapter(adapter);
 
         locationClient = new LocationClient(this, this, this);
@@ -211,84 +205,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @SuppressWarnings("rawtypes unchecked")
     private void reallyUpdateCardsUI() {
-        adapter.clear();
-
-        if (currentRoute != null) {
-            ProgressCard progressCard = new ProgressCard(this, adapter, currentRoute);
-            progressCard.setThumbnail(getResources().getDrawable(R.drawable.ic_launcher));
-        }
-
-
-        // Near Routes
-        CardHeader header = new CardHeader(getResources().getString(R.string.near_routes));
-        header.setClickable(true);
-        header.setAction(getResources().getString(R.string.see_more), nearRoutesActionListener);
-        adapter.add(header);
-
-        if (nearRoutes == null || nearRoutes.size() == 0) {
-            CardCenteredHeader empty = null;
-            if (locationUpdateReceived)
-                empty = new CardCenteredHeader(getResources().getString(R.string.no_near_routes));
-            else
-                empty = new CardCenteredHeader(getString(R.string.near_routes_no_location));
-            adapter.add(empty);
-        }
-
-        if (nearRoutes != null) {
-            int i = 0; // Only show 3 near routes.
-            for (Route r : nearRoutes) {
-                if (i >= 3) break;
-                new RouteCard(this, adapter, r);
-                i++;
-            }
-        }
-
-        //local Routes
-        if (localRoutes != null && (!localRoutes.isEmpty())) {
-            CardHeader localHeader = new CardHeader(getResources().getString(R.string.local_routes));
-            adapter.add(localHeader);
-        }
-
-        if (localRoutes != null && loadingLocalRoutes) {
-            adapter.add(new LoadingCard());
-        } else if (localRoutes != null && !localRoutes.isEmpty()) {
-            for (GeoTownRoute r : localRoutes) {
-                if (!r.mine) {
-                    RouteCard c = new RouteCard(this, adapter, r);
-                    c.setPopupMenu(R.menu.local_card_popup, new Card.CardMenuListener<Card>() {
-                        @Override
-                        public void onMenuItemClick(Card card, MenuItem menuItem) {
-                            RouteCard c = (RouteCard) card;
-                            Log.d("Delete", "Delete route " + c.getRouteID());
-                            GeoTownRoute.deleteRoute(c.getRouteID());
-                        }
-                    });
-                }
-            }
-        }
-
-        // My Routes
-        CardHeader header2 = new CardHeader(getResources().getString(R.string.my_routes));
-        adapter.add(header2);
-
-        if (myRoutes == null || loadingMyRoutes) {
-            adapter.add(new LoadingCard());
-        } else if (myRoutes.size() == 0) {
-            CardCenteredHeader empty = new CardCenteredHeader(getResources().getString(R.string.no_routes));
-            adapter.add(empty);
-        } else if (myRoutes != null) {
-            for (Route r : myRoutes) {
-                new RouteCard(this, adapter, r);
-            }
-        }
-
-        cardListView.destroyDrawingCache();
-        cardListView.setVisibility(ListView.INVISIBLE);
-        cardListView.setVisibility(ListView.VISIBLE);
         adapter.notifyDataSetChanged();
 
         this.cardUILayout.setRefreshing(false);
-
     }
 
 
@@ -303,58 +222,27 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     private void refreshRoutes() {
         loadMyRoutes();
-        loadLocalRoutes();
         loadCurrentRoute();
-        updateCardsUI();
         locationUpdateReceived = false;
     }
 
     private void loadCurrentRoute() {
-        long currentRouteId = GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L);
-        if (currentRouteId != 0) {
-            GeoTownRoute.getRoute(currentRouteId, GET_CURRENT_ROUTE);
-        }
+        this.adapter.startRefreshCurrentRoute();
 
     }
 
     private void loadMyRoutes() {
-        AllMyRoutesRequest routesRequest = new AllMyRoutesRequest();
         GeotownApplication.getJobManager().addJob(new AllMyRoutesRequest());
-        //routesRequest.execute((Void) null);
-        loadingMyRoutes = true;
     }
 
     private void loadNearRoutes(Location currentLocation) {
         Log.d("OverviewActivity", locationClient.isConnected() + "");
         GeotownApplication.getJobManager().addJob(new NearRoutesRequest(currentLocation.getLatitude(), currentLocation.getLongitude(), DEFAULT_NEAR_ROUTES_SEARCH_RADIUS));
-        loadingNearRoutes = true;
-    }
-
-    private void loadLocalRoutes() {
-        Log.d("LocalRoutes", "Loading local routes");
-        GeoTownRoute.getForeignRoutes(GET_FOREIGN_ROUTES_REQUEST);
-        loadingLocalRoutes = true;
     }
 
     @Subscribe
     public void onRouteDeleted(GeoTownRouteDeletedEvent event) {
-        Log.d("Delete", "Now reloading...");
-        loadLocalRoutes();
-    }
-
-    @Subscribe
-    public void onGeoTownForeignRoutesReceived(GeoTownForeignRoutesRetrievedEvent event) {
-        if (event.reqId != GET_FOREIGN_ROUTES_REQUEST)
-            return;
-
-        if (event.routes != null)
-            localRoutes = event.routes;
-        else
-            localRoutes = new ArrayList<>();
-
-        loadingLocalRoutes = false;
-
-        updateCardsUI();
+        adapter.startRefreshSavedRoutes();
     }
 
     @Subscribe
@@ -363,38 +251,23 @@ public class OverviewActivity extends SystemBarTintActivity implements
             Intent intent = new Intent(this, RouteDetailActivity.class);
             intent.putExtra("routeID", event.route.id);
             startActivity(intent);
-        } else if (event.id == GET_CURRENT_ROUTE) {
-            currentRoute = event.route;
-            updateCardsUI();
         }
     }
 
     @Subscribe
     public void onNearRoutesDataReceived(NearRoutesDataReceivedEvent event) {
-        this.nearRoutes = event.routes;
-        loadingNearRoutes = false;
-
-        /**
-         * Only put route into database on user click
-         for(Route r : nearRoutes) {
-         GeoTownRoute.update(r, true);
-         }**/
-
-         updateCardsUI();
+        adapter.startRefreshNearRoutes();
     }
 
+    @Subscribe
+    public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
+        adapter.startRefreshMyRoutes();
+    }
 
     //================================================================================
     // GeoLocation Services
     //================================================================================
 
-    @Subscribe
-    public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
-        myRoutes = event.routes;
-        loadingMyRoutes = false;
-
-        updateCardsUI();
-    }
 
     @Override
     public void onConnected(Bundle bundle) {

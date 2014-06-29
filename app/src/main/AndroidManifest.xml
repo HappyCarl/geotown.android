@@ -64,6 +64,9 @@
             android:name="AA_DB_NAME"
             android:value="local.db" />
         <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="3" />
+        <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAm9SW_x-8kOKI4QzGBmaPj3ObVNY3SEAo" />
 

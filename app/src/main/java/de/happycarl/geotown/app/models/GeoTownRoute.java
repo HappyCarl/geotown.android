@@ -42,12 +42,18 @@ public class GeoTownRoute extends Model {
     @Column(name = "long")
     public double longitude;
 
+    @Column(name = "mine")
+    public boolean mine;
+
+    @Column(name = "nearIndex")
+    public int nearIndex;
+
+    @Column(name = "starred")
+    public boolean starred;
+
     public List<GeoTownWaypoint> waypoints() {
         return getMany(GeoTownWaypoint.class, "route");
     }
-
-    @Column(name = "mine")
-    public boolean mine;
 
     public static void getRoute(long id, int reqId) {
         new GetRouteByIdAsyncTask(reqId).execute(id);
@@ -57,11 +63,27 @@ public class GeoTownRoute extends Model {
         new GetRouteByNameAsyncTask(reqId).execute(name);
     }
 
-    public static void update(Route r, boolean createIfNotExist) {
+    public static void update(Route r, int nearIndex, boolean createIfNotExist, boolean sync) {
         UpdateRouteAsyncTask.UpdateRouteParams p = new UpdateRouteAsyncTask.UpdateRouteParams();
         p.route = r;
+        p.nearIndex = nearIndex;
         p.createIfNotExist = createIfNotExist;
+        if(sync)
+            new UpdateRouteAsyncTask().doInBackground(p);
+        else
+            new UpdateRouteAsyncTask().execute(p);
+    }
+
+    public static void starRoute(Route r, boolean star) {
+        UpdateRouteAsyncTask.UpdateRouteParams p = new UpdateRouteAsyncTask.UpdateRouteParams();
+        p.route = r;
+        p.star = star;
+        p.updateStar = true;
         new UpdateRouteAsyncTask().execute(p);
+    }
+
+    public static void update(Route r, boolean createIfNotExist) {
+        update(r, -1, createIfNotExist, false);
     }
 
     public static void getForeignRoutes(int reqId) {
@@ -126,6 +148,9 @@ public class GeoTownRoute extends Model {
         public static class UpdateRouteParams {
             Route route;
             boolean createIfNotExist;
+            int nearIndex;
+            boolean star;
+            boolean updateStar;
         }
 
         @Override
@@ -143,10 +168,13 @@ public class GeoTownRoute extends Model {
                 route = new GeoTownRoute();
             }
             route.id = r.getId();
+            route.nearIndex = p.nearIndex;
             route.name = r.getName();
             route.latitude = r.getLatitude();
             route.longitude = r.getLongitude();
             route.owner = r.getOwner().getUsername();
+            if(p.updateStar)
+                route.starred = p.star;
             String user = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "");
             route.mine = r.getOwner().getEmail().equals(user);
             Log.d("Update", route.mine + " : " + route.owner + " : " + user + "  -  " + route.latitude + "/" + route.longitude);

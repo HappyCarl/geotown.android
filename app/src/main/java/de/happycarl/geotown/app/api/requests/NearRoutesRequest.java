@@ -1,5 +1,7 @@
 package de.happycarl.geotown.app.api.requests;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Select;
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
 import com.path.android.jobqueue.Job;
@@ -10,6 +12,7 @@ import java.util.List;
 
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
+import de.happycarl.geotown.app.models.GeoTownRoute;
 
 /**
  * Created by jhbruhn on 20.06.14.
@@ -37,6 +40,20 @@ public class NearRoutesRequest extends Job {
         List<Route> routes = new ArrayList<>();
         if (rc != null && rc.getItems() != null) {
             routes = rc.getItems();
+        }
+
+        ActiveAndroid.beginTransaction();
+
+        List<GeoTownRoute> localRoutes = new Select().from(GeoTownRoute.class).execute();
+        for(GeoTownRoute r : localRoutes) {
+            r.nearIndex = -1;
+            r.save();
+        }
+        ActiveAndroid.endTransaction();
+
+        int i = 0;
+        for(Route r : routes) {
+            GeoTownRoute.update(r, i++, true, true);
         }
 
         GeotownApplication.getEventBus().post(new NearRoutesDataReceivedEvent(routes));

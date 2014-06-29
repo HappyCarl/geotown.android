@@ -59,6 +59,7 @@ public class GeoTownWaypoint extends Model {
                     geoTownWaypoint.id = w.getId();
                     geoTownWaypoint.question = w.getQuestion();
                     String ans = "";
+                    if(w!= null && w.getAnswers() != null)
                     for (String s : w.getAnswers()) {
                         ans += s + ">|<";
                     }

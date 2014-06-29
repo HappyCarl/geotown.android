@@ -81,6 +81,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_detail);
 
+
         ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
 
@@ -267,11 +268,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     @Override
     public void onCheckBoxClicked(boolean status) {
-        if (status) {
-            GeoTownRoute.update(mRoute, true);
-        } else {
-            GeoTownRoute.deleteRoute(mRoute.getId());
-        }
+        GeoTownRoute.starRoute(mRoute, status);
     }
 
     @Override
