@@ -8,6 +8,7 @@ android:
   - extra-android-support
   licenses:
   - android-sdk-license-5be876d5 # new license!
+  - android-sdk-license-598b93a6
 before_script:
 - openssl aes-256-cbc -k "$KEYSTORE_FILE_PASSWORD" -in release.keystore.enc -d -a
   -out release.keystore
