@@ -24,12 +24,16 @@ import de.happycarl.geotown.app.R;
  */
 public class RouteDetailCard extends Card {
     private static final Map<Location, String> CACHE = new HashMap<>();
+
     @InjectView(R.id.card_route_detail_location_text)
     TextView mLocationTextView;
+
     @InjectView(R.id.card_route_detail_owner_text)
     TextView mOwnerTextView;
+
     @InjectView(R.id.card_route_detail_waypoint_amount)
     TextView mWaypointAmountTextView;
+
     private Route mRoute;
     private Context mContext;
     private CardAdapter mAdapter;

@@ -59,10 +59,8 @@ public class GeoTownRoute extends Model {
         new GetRouteByIdAsyncTask(reqId).execute(id);
     }
 
-    public static void getRoute(String name, int reqId) {
-        new GetRouteByNameAsyncTask(reqId).execute(name);
-    }
 
+    // TODO: Clean this mess up.
     public static void update(Route r, int nearIndex, boolean createIfNotExist, boolean sync) {
         UpdateRouteAsyncTask.UpdateRouteParams p = new UpdateRouteAsyncTask.UpdateRouteParams();
         p.route = r;
@@ -84,63 +82,6 @@ public class GeoTownRoute extends Model {
 
     public static void update(Route r, boolean createIfNotExist) {
         update(r, -1, createIfNotExist, false);
-    }
-
-    public static void getForeignRoutes(int reqId) {
-        new ForeignRoutesAsyncTask().execute(reqId);
-    }
-
-    public static void deleteRoute(long id) {
-        new DeleteRouteAsyncTask().execute(id);
-    }
-
-    private static class DeleteRouteAsyncTask extends AsyncTask<Long, Void, Boolean> {
-
-        long id;
-
-        @Override
-        protected Boolean doInBackground(Long... params) {
-            try {
-                id = params[0];
-                GeoTownRoute route = new Select()
-                        .from(GeoTownRoute.class)
-                        .where("routeID = ?", id)
-                        .limit(1)
-                        .executeSingle();
-                new Delete().from(GeoTownWaypoint.class).where("route = ?",route).execute();
-                route.delete();
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
-        }
-
-        protected void onPostExecute(Boolean success) {
-            if(success) {
-                GeotownApplication.getEventBus().post(new GeoTownRouteDeletedEvent(id));
-            }
-        }
-
-    }
-
-
-    private static class ForeignRoutesAsyncTask extends AsyncTask<Integer, Void, List<GeoTownRoute>> {
-        private int reqId;
-
-        @Override
-        protected List<GeoTownRoute> doInBackground(Integer... params) {
-            reqId = params[0];
-            List<GeoTownRoute> routes = new Select()
-                    .from(GeoTownRoute.class)
-                    .where("mine = ?", false)
-                    .execute();
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<GeoTownRoute> routes) {
-            GeotownApplication.getEventBus().post(new GeoTownForeignRoutesRetrievedEvent(routes, reqId));
-        }
     }
 
 
