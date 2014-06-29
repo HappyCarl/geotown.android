@@ -2,11 +2,11 @@ package de.happycarl.geotown.app.gui.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
 import com.activeandroid.query.Select;
-import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardCenteredHeader;
@@ -42,11 +42,15 @@ public class OverviewCardsAdapter extends CardAdapter {
 
     private ProgressCard progressCard;
 
+    private Handler handler;
+
     public OverviewCardsAdapter(Context context) {
         super(context, R.color.primary_color);
 
         registerLayout(R.layout.card_loading);
         registerLayout(R.layout.card_progress);
+
+        handler = new Handler();
 
         this.add(nearRoutesHeader);
         this.add(localRoutesHeader);
@@ -61,7 +65,6 @@ public class OverviewCardsAdapter extends CardAdapter {
     @Override
     public View onViewCreated(int index, View recycled, CardBase item) {
         View view = super.onViewCreated(index, recycled, item);
-
         if (item instanceof ProgressCard) {
             ProgressCard pc = (ProgressCard) item;
             pc.updateView(view);
@@ -70,39 +73,40 @@ public class OverviewCardsAdapter extends CardAdapter {
     }
 
     private void updateCurrentRoute() {
-        if(currentRoute != null) {
+        Log.d("View", currentRoute + " " + progressCard);
+        if (currentRoute != null) {
+            progressCard = new ProgressCard(this.getContext(), this, currentRoute);
 
-            if(progressCard == null)
-                progressCard = new ProgressCard(this.getContext(), this, currentRoute);
+            if(this.getItem(0) instanceof ProgressCard)
+                this.remove(0);
 
-            if(this.getItems().contains(progressCard)){
-                this.update(progressCard, false);
-            } else {
-                this.add(0, progressCard);
-            }
+            this.add(0, progressCard);
+
         } else {
-            if(progressCard != null)
+            if (progressCard != null) {
                 this.remove(progressCard);
+                progressCard = null;
+            }
         }
     }
 
     private void updateNearRoutes() {
         int nearRoutesIndex = this.getItems().indexOf(nearRoutesHeader) + 1;
 
-        while(!(getItem(nearRoutesIndex) instanceof CardHeader) && getItem(nearRoutesIndex) != null) {
+        while (!(getItem(nearRoutesIndex) instanceof CardHeader) && getItem(nearRoutesIndex) != null) {
             this.remove(nearRoutesIndex);
         }
 
-        if(nearRoutes == null ||nearRoutes.size() == 0) {
+        if (nearRoutes == null || nearRoutes.size() == 0) {
             this.add(nearRoutesIndex, noNearRoutesHeader);
             return;
         } else {
             int noNearRoutesIndex = this.getItems().indexOf(noNearRoutesHeader);
-            if(noNearRoutesIndex >= 0)
+            if (noNearRoutesIndex >= 0)
                 this.remove(noNearRoutesIndex);
         }
 
-        for(GeoTownRoute r : Lists.reverse(nearRoutes)) {
+        for (GeoTownRoute r : Lists.reverse(nearRoutes)) {
             this.add(nearRoutesIndex, new RouteCard(this.getContext(), this, r));
         }
     }
@@ -110,60 +114,64 @@ public class OverviewCardsAdapter extends CardAdapter {
     private void updateLocalRoutes() {
         int localRoutesIndex = this.getItems().indexOf(localRoutesHeader) + 1;
 
-        while(!(getItem(localRoutesIndex) instanceof CardHeader) && getItem(localRoutesIndex) != null) {
+        while (!(getItem(localRoutesIndex) instanceof CardHeader) && getItem(localRoutesIndex) != null) {
             this.remove(localRoutesIndex);
         }
-        if(localRoutes == null || localRoutes.size() == 0) {
+        if (localRoutes == null || localRoutes.size() == 0) {
             this.add(localRoutesIndex, noOwnRoutesHeader);
             return;
         } else {
             int noLocalRoutesIndex = this.getItems().indexOf(noLocalRoutesHeader);
-            if(noLocalRoutesIndex >= 0)
+            if (noLocalRoutesIndex >= 0)
                 this.remove(noLocalRoutesIndex);
         }
 
-        for(GeoTownRoute r : localRoutes)
+        for (GeoTownRoute r : localRoutes)
             this.add(localRoutesIndex++, new RouteCard(this.getContext(), this, r));
     }
 
     private void updateMyRoutes() {
         int myRoutesIndex = this.getItems().indexOf(myRoutesHeader) + 1;
 
-        while(myRoutesIndex < getItems().size() && !(getItem(myRoutesIndex) instanceof CardHeader) && getItem(myRoutesIndex) != null) {
+        while (myRoutesIndex < getItems().size() && !(getItem(myRoutesIndex) instanceof CardHeader) && getItem(myRoutesIndex) != null) {
             this.remove(myRoutesIndex);
         }
 
-        if(myRoutes == null || myRoutes.size() == 0) {
+        if (myRoutes == null || myRoutes.size() == 0) {
             this.add(myRoutesIndex, noOwnRoutesHeader);
             return;
         } else {
             int noOwnRoutesIndex = this.getItems().indexOf(noOwnRoutesHeader);
-            if(noOwnRoutesIndex >= 0)
+            if (noOwnRoutesIndex >= 0)
                 this.remove(noOwnRoutesIndex);
         }
 
-        for(GeoTownRoute r : myRoutes) {
+        for (GeoTownRoute r : myRoutes) {
             this.add(myRoutesIndex++, new RouteCard(this.getContext(), this, r));
         }
     }
 
     public void setLocalRoutes(List<GeoTownRoute> localRoutes) {
         this.localRoutes = localRoutes;
-        updateLocalRoutes();
+        this.updateLocalRoutes();
+        this.updateCurrentRoute();
     }
 
     private void setNearRoutes(List<GeoTownRoute> nearRoutes) {
         this.nearRoutes = nearRoutes;
         this.updateNearRoutes();
+        this.updateCurrentRoute();
     }
 
     public void setMyRoutes(List<GeoTownRoute> myRoutes) {
         this.myRoutes = myRoutes;
         this.updateMyRoutes();
+        this.updateCurrentRoute();
     }
 
-    public void setCurrentRoute(GeoTownRoute route) {
+    private void setCurrentRoute(GeoTownRoute route) {
         this.currentRoute = route;
+        this.updateCurrentRoute();
         this.updateCurrentRoute();
     }
 
@@ -195,8 +203,13 @@ public class OverviewCardsAdapter extends CardAdapter {
         }
 
         @Override
-        protected void onPostExecute(List<GeoTownRoute> geoTownRoutes) {
-            OverviewCardsAdapter.this.setNearRoutes(geoTownRoutes);
+        protected void onPostExecute(final List<GeoTownRoute> geoTownRoutes) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    OverviewCardsAdapter.this.setNearRoutes(geoTownRoutes);
+                }
+            });
         }
     }
 
@@ -212,8 +225,13 @@ public class OverviewCardsAdapter extends CardAdapter {
         }
 
         @Override
-        protected void onPostExecute(List<GeoTownRoute> geoTownRoutes) {
-            OverviewCardsAdapter.this.setLocalRoutes(geoTownRoutes);
+        protected void onPostExecute(final List<GeoTownRoute> geoTownRoutes) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    OverviewCardsAdapter.this.setLocalRoutes(geoTownRoutes);
+                }
+            });
         }
     }
 
@@ -228,8 +246,14 @@ public class OverviewCardsAdapter extends CardAdapter {
         }
 
         @Override
-        protected void onPostExecute(List<GeoTownRoute> geoTownRoutes) {
-            OverviewCardsAdapter.this.setMyRoutes(geoTownRoutes);
+        protected void onPostExecute(final List<GeoTownRoute> geoTownRoutes) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    OverviewCardsAdapter.this.setMyRoutes(geoTownRoutes);
+                }
+            });
+
         }
     }
 
@@ -249,9 +273,14 @@ public class OverviewCardsAdapter extends CardAdapter {
         }
 
         @Override
-        protected void onPostExecute(GeoTownRoute route) {
+        protected void onPostExecute(final GeoTownRoute route) {
             Log.d("Ulf", route + "");
-            OverviewCardsAdapter.this.setCurrentRoute(route);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    OverviewCardsAdapter.this.setCurrentRoute(route);
+                }
+            });
         }
     }
 }

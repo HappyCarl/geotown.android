@@ -39,14 +39,17 @@ public class RouteCard extends Card implements Target {
 
     public RouteCard(Context context, CardAdapter adapter, GeoTownRoute route) {
         super(route.name, "");
+
         con = context;
         this.adapter = adapter;
+
         routeID = route.id;
         owner = route.owner;
         location = new Location(route.latitude, route.longitude);
         updateContent();
-        this.adapter.update(this, false);
+
         new GeoCodingAsyncTask(context, location).execute();
+
         Picasso.with(context).load(GoogleUtils.getStaticMapUrl(route.latitude, route.longitude, 8, 128)).placeholder(R.drawable.ic_launcher).into(this);
     }
 
@@ -58,9 +61,7 @@ public class RouteCard extends Card implements Target {
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
         setThumbnail(con, bitmap);
         adapter.update(this, false);
-
     }
-
 
     @Override
     public void onBitmapFailed(Drawable drawable) {
@@ -135,10 +136,7 @@ public class RouteCard extends Card implements Target {
         @Override
         protected void onPostExecute(String location) {
             updateContent();
-            if(RouteCard.this instanceof ProgressCard)
-                adapter.update((ProgressCard)RouteCard.this, false);
-            else
-                adapter.update(RouteCard.this, false);
+            adapter.update(RouteCard.this, false);
         }
 
 

@@ -44,7 +44,6 @@ import de.happycarl.geotown.app.gui.data.OverviewCardsAdapter;
 import de.happycarl.geotown.app.gui.views.LoadingCard;
 import de.happycarl.geotown.app.gui.views.ProgressCard;
 import de.happycarl.geotown.app.gui.views.RouteCard;
-import de.happycarl.geotown.app.gui.views.RouteCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
 public class OverviewActivity extends SystemBarTintActivity implements
@@ -194,23 +193,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateCardsUI() {
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                reallyUpdateCardsUI();
-            }
-        });
-    }
-
-    @SuppressWarnings("rawtypes unchecked")
-    private void reallyUpdateCardsUI() {
-        adapter.notifyDataSetChanged();
-
-        this.cardUILayout.setRefreshing(false);
-    }
-
-
     @Override
     public void onRefresh() {
         this.refreshRoutes();
@@ -228,7 +210,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     private void loadCurrentRoute() {
         this.adapter.startRefreshCurrentRoute();
-
     }
 
     private void loadMyRoutes() {
@@ -257,6 +238,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     @Subscribe
     public void onNearRoutesDataReceived(NearRoutesDataReceivedEvent event) {
         adapter.startRefreshNearRoutes();
+        this.cardUILayout.setRefreshing(false);
     }
 
     @Subscribe
@@ -282,8 +264,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        updateCardsUI();
-
         if (!locationUpdateReceived)
             loadNearRoutes(location);
 

@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
 
 import butterknife.ButterKnife;
@@ -32,13 +33,14 @@ public class ProgressCard extends RouteCard {
 
     int waypointCount = -1, finishedCount = -1;
 
-    public ProgressCard(Context c, CardAdapter cardAdapter, GeoTownRoute r) {
-        super(c,cardAdapter,r);
+    public ProgressCard(Context c, CardAdapter adapter, GeoTownRoute r) {
+        super(c, adapter, r);
         geoTownRoute = r;
         this.c = c;
 
     }
 
+    @Override
     public int getLayout() {
         // Replace with your layout
         return R.layout.card_progress;

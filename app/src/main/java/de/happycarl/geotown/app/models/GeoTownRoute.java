@@ -177,7 +177,6 @@ public class GeoTownRoute extends Model {
                 route.starred = p.star;
             String user = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "");
             route.mine = r.getOwner().getEmail().equals(user);
-            Log.d("Update", route.mine + " : " + route.owner + " : " + user + "  -  " + route.latitude + "/" + route.longitude);
             route.save();
             return route;
         }
