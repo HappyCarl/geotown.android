@@ -4,8 +4,8 @@ android:
     - android-sdk-license-5be876d5 # new license!
     - android-sdk-license-598b93a6
 before_script:
-- echo -e "y\n" | android update sdk --filter platform-tools,tools --no-ui --force
-- echo -e "y\n" | android update sdk --filter build-tools-20.0.0,android-20,extra-google-m2repository,extra-android-m2repository,extra-android-support,extra-google-google_play_services --no-ui --force
+- echo -e "y" | android update sdk --filter platform-tools,tools --no-ui --force
+- echo -e "y" | android update sdk --filter build-tools-20.0.0,android-20,extra-google-m2repository,extra-android-m2repository,extra-android-support,extra-google-google_play_services --no-ui --force
 - openssl aes-256-cbc -k "$KEYSTORE_FILE_PASSWORD" -in release.keystore.enc -d -a
   -out release.keystore
 script:
