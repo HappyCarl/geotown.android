@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -15,9 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
 
+import com.activeandroid.query.Select;
 import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardListView;
-import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.Waypoint;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -65,7 +66,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     private RouteActionsCard mRouteActionsCard;
 
     private long routeId = -1;
-    private Route mRoute;
+    private GeoTownRoute mRoute;
     private List<Waypoint> mWaypoints = new ArrayList<>();
 
     private NfcAdapter mNfcAdapter;
@@ -129,6 +130,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         }
 
+        new LoadRouteTask().execute(routeId);
 
     }
 
@@ -204,7 +206,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         }
 
         if (getActionBar() != null) {
-            getActionBar().setTitle(mRoute.getName());
+            getActionBar().setTitle(mRoute.name);
         }
 
         FragmentManager fm = this.getFragmentManager();
@@ -214,8 +216,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         mMapFragment.getMap().setMyLocationEnabled(false);
         mMapFragment.getMap().setTrafficEnabled(false);
         mMapFragment.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        mMapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mRoute.getLatitude(), mRoute.getLongitude()), 14.0f));
-        mMapFragment.getMap().addMarker(new MarkerOptions().position(new LatLng(mRoute.getLatitude(), mRoute.getLongitude())).title(mRoute.getName()).snippet(mRoute.getOwner().getUsername()));
+        mMapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mRoute.latitude, mRoute.longitude), 14.0f));
+        mMapFragment.getMap().addMarker(new MarkerOptions().position(new LatLng(mRoute.latitude, mRoute.longitude)).title(mRoute.name).snippet(mRoute.owner));
         mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
 
         updateShareIntent();
@@ -228,6 +230,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         if (mRoute != null) {
             mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
             mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
+
             mCardAdapter.add(mRouteActionsCard);
         } else {
             mCardAdapter.add(new LoadingCard());
@@ -257,7 +260,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     private void updateAndroidBeamPayload() {
         if (mNfcAdapter != null) {
-            NdefRecord[] records = new NdefRecord[]{NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + AppConstants.SHARE_PATH_PREFIX + mRoute.getId()), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
+            NdefRecord[] records = new NdefRecord[]{NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + AppConstants.SHARE_PATH_PREFIX + mRoute.id), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
 
             mNdefMessage = new NdefMessage(records);
 
@@ -268,7 +271,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     @Override
     public void onCheckBoxClicked(boolean status) {
-        GeoTownRoute.starRoute(mRoute, status);
+        mRoute.starred = status;
+        mRoute.save();
     }
 
     @Override
@@ -304,14 +308,11 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
                     .setNegativeButton(android.R.string.no, dialogClickListener).show();
 
         } else { //No current Route
-
-
-            editor.putLong(AppConstants.PREF_CURRENT_ROUTE, mRoute.getId());
+            editor.putLong(AppConstants.PREF_CURRENT_ROUTE, mRoute.id);
             editor.apply();
-            GeoTownRoute.update(mRoute, true);
-            GeoTownWaypoint.addWaypoints(mWaypoints);
-
         }
+
+        updateRouteUI();
     }
 
     //================================================================================
@@ -322,52 +323,21 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         GeotownApplication.getJobManager().addJob(new RouteRequest(routeId));
     }
 
-    private void loadWaypoints() {
-        GeotownApplication.getJobManager().addJob(new GetRouteWaypointsRequest(routeId));
-    }
+    private class LoadRouteTask extends AsyncTask<Long, Void, GeoTownRoute> {
 
-    @Subscribe
-    public void onRouteReceived(RouteDataReceivedEvent event) {
-        mRoute = event.route;
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateRouteUI();
-
-            }
-        });
-        GeoTownRoute.getRoute(mRoute.getId(), REQUEST_ROUTE_ID);
-        loadWaypoints();
-    }
-
-    @Subscribe
-    public void onWaypointsAdded(GeoTownWaypointsAddedEvent event) {
-        if (event.success) {
-            finish();
-        }
-    }
-
-
-    @Subscribe
-    public void onRouteWaypointsReceived(RouteWaypointsReceivedEvent event) {
-        Log.d("Routes", "Waypoints Event received" + event);
-        int waypointCount = 0;
-        if (event.waypoints != null) {
-            waypointCount = event.waypoints.size();
-            mRouteDetailCard.setWaypointAmount(waypointCount);
-
-            mWaypoints = event.waypoints;
+        @Override
+        protected void onPostExecute(GeoTownRoute geoTownRoute) {
+            mRoute = geoTownRoute;
+            updateRouteUI();
         }
 
-        //routeWaypoints.setText(waypointCount + " " + getResources().getString(R.string.waypoints));
-    }
-
-    @Subscribe
-    public void onRouteReceived(GeoTownRouteRetrievedEvent event) {
-        if (event.id != REQUEST_ROUTE_ID) return;
-        if (event.route != null && event.route.mine == false) {
-            //star.setChecked(true);
-            mRouteActionsCard.setSaved(true);
+        @Override
+        protected GeoTownRoute doInBackground(Long... longs) {
+            return new Select()
+                    .from(GeoTownRoute.class)
+                    .where("routeID = ?", longs[0])
+                    .limit(1)
+                    .executeSingle();
         }
     }
 

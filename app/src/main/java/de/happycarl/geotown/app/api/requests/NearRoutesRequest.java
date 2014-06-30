@@ -10,6 +10,7 @@ import com.path.android.jobqueue.Params;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
@@ -53,7 +54,18 @@ public class NearRoutesRequest extends Job {
 
         int i = 0;
         for(Route r : routes) {
-            GeoTownRoute.update(r, i++, true, true);
+            GeoTownRoute route = new Select().from(GeoTownRoute.class).where("routeID = ?", r.getId()).executeSingle();
+            if(route == null)
+                route = new GeoTownRoute();
+            route.id = r.getId();
+            route.nearIndex = i++;
+            route.name = r.getName();
+            route.latitude = r.getLatitude();
+            route.longitude = r.getLongitude();
+            route.owner = r.getOwner().getUsername();
+            String user = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "");
+            route.mine = r.getOwner().getEmail().equals(user);
+            route.save();
         }
 
         GeotownApplication.getEventBus().post(new NearRoutesDataReceivedEvent(routes));

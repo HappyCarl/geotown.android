@@ -18,6 +18,7 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.models.GeoTownRoute;
 
 /**
  * Created by jhbruhn on 22.06.14.
@@ -34,33 +35,22 @@ public class RouteDetailCard extends Card {
     @InjectView(R.id.card_route_detail_waypoint_amount)
     TextView mWaypointAmountTextView;
 
-    private Route mRoute;
+    private GeoTownRoute mRoute;
     private Context mContext;
     private CardAdapter mAdapter;
     private int mWaypointAmount = 0;
     private Location mLocation;
     private String mLocationString;
 
-    public RouteDetailCard(Context ctx, CardAdapter cardAdapter, Route route) {
+    public RouteDetailCard(Context ctx, CardAdapter cardAdapter, GeoTownRoute route) {
         super("");
         this.mAdapter = cardAdapter;
         this.mContext = ctx;
         this.mRoute = route;
-        this.mLocation = new Location(mRoute.getLatitude(), mRoute.getLongitude());
+        this.mLocation = new Location(mRoute.latitude, mRoute.longitude);
         this.mAdapter.update(this, true);
         new GeoCodingAsyncTask(this.mContext, mLocation).execute();
 
-    }
-
-    public void setWaypointAmount(int i) {
-
-        mWaypointAmount = i;
-        this.mWaypointAmountTextView.post(new Runnable() {
-            @Override
-            public void run() {
-                updateUi();
-            }
-        });
     }
 
     public void updateView(View view) {
@@ -74,10 +64,10 @@ public class RouteDetailCard extends Card {
             mLocationTextView.setText(mLocationString);
         }
         if (mOwnerTextView != null) {
-            mOwnerTextView.setText("by " + mRoute.getOwner().getUsername());
+            mOwnerTextView.setText("by " + mRoute.owner);
         }
         if (mWaypointAmountTextView != null) {
-            mWaypointAmountTextView.setText("" + mWaypointAmount);
+            mWaypointAmountTextView.setText(mRoute.waypoints().size() + "");
         }
         mAdapter.update(this, true);
     }

@@ -73,7 +73,6 @@ public class OverviewCardsAdapter extends CardAdapter {
     }
 
     private void updateCurrentRoute() {
-        Log.d("View", currentRoute + " " + progressCard);
         if (currentRoute != null) {
             progressCard = new ProgressCard(this.getContext(), this, currentRoute);
 
@@ -118,7 +117,7 @@ public class OverviewCardsAdapter extends CardAdapter {
             this.remove(localRoutesIndex);
         }
         if (localRoutes == null || localRoutes.size() == 0) {
-            this.add(localRoutesIndex, noOwnRoutesHeader);
+            this.add(localRoutesIndex, noLocalRoutesHeader);
             return;
         } else {
             int noLocalRoutesIndex = this.getItems().indexOf(noLocalRoutesHeader);
@@ -138,7 +137,7 @@ public class OverviewCardsAdapter extends CardAdapter {
         }
 
         if (myRoutes == null || myRoutes.size() == 0) {
-            this.add(myRoutesIndex, noOwnRoutesHeader);
+            this.add(myRoutesIndex++, noOwnRoutesHeader);
             return;
         } else {
             int noOwnRoutesIndex = this.getItems().indexOf(noOwnRoutesHeader);
@@ -219,7 +218,6 @@ public class OverviewCardsAdapter extends CardAdapter {
         protected List<GeoTownRoute> doInBackground(Void... peda) {
             return new Select()
                     .from(GeoTownRoute.class)
-                    .where("mine = ?", false)
                     .where("starred = ?", true)
                     .execute();
         }

@@ -14,6 +14,7 @@ import butterknife.OnClick;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.models.GeoTownRoute;
 
 /**
  * Created by jhbruhn on 22.06.14.
@@ -32,13 +33,11 @@ public class RouteActionsCard extends Card {
     @InjectView(R.id.card_route_actions_star_checkbox)
     CheckBox mCheckBox;
 
-    private Route mRoute;
-
-    private boolean mSaved = false;
+    private GeoTownRoute mRoute;
 
     private RouteActionsCardListener mListener;
 
-    public RouteActionsCard(Context ctx, RouteActionsCardListener l, Route route) {
+    public RouteActionsCard(Context ctx, RouteActionsCardListener l, GeoTownRoute route) {
         super("");
         this.mListener = l;
         this.mRoute = route;
@@ -54,15 +53,6 @@ public class RouteActionsCard extends Card {
         updateUI();
     }
 
-    public boolean isSaved() {
-        return mSaved;
-    }
-
-    public void setSaved(boolean mSaved) {
-        this.mSaved = mSaved;
-        updateUI();
-    }
-
     @OnClick(R.id.card_route_actions_star_checkbox)
     void onStarCheckboxClicked() {
         mListener.onCheckBoxClicked(mCheckBox.isChecked());
@@ -75,12 +65,12 @@ public class RouteActionsCard extends Card {
 
     private void updateUI() {
         if(this.mPlayButton == null) return;
-        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) == mRoute.getId()) {
+        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) == mRoute.id) {
             this.mPlayButton.setImageResource(R.drawable.ic_play);
         } else {
             this.mPlayButton.setImageResource(R.drawable.ic_play_inactive);
         }
-        mCheckBox.setChecked(mSaved);
+        mCheckBox.setChecked(mRoute.starred);
 
     }
 }

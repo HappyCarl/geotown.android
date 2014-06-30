@@ -124,6 +124,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     protected void onResume() {
         super.onResume();
         this.refreshRoutes();
+        this.adapter.startRefreshSavedRoutes();
     }
 
     @Override
@@ -243,6 +244,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Subscribe
     public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
+        Log.d("Update", "Received my Routes.");
         adapter.startRefreshMyRoutes();
     }
 

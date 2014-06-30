@@ -8,15 +8,16 @@ import com.afollestad.cardsui.CardBase;
 import com.appspot.drive_log.geotown.model.Route;
 
 import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.models.GeoTownRoute;
 
 /**
  * Created by jhbruhn on 22.06.14.
  */
 public class RouteDetailCardAdapter extends CardAdapter {
 
-    private Route mRoute;
+    private GeoTownRoute mRoute;
 
-    public RouteDetailCardAdapter(Context context, int accentColorRes, Route mRoute) {
+    public RouteDetailCardAdapter(Context context, int accentColorRes, GeoTownRoute mRoute) {
         super(context, accentColorRes);
         this.mRoute = mRoute;
 
