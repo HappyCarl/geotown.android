@@ -65,7 +65,12 @@ text = File.open(ARGV[0]).read
 text.gsub!(/\r\n?/, "\n")
 previous_line = ""
 text.each_line do |line|
-  if line.start_with?("#") and previous_line.start_with?("\n") then
+  if previous_line.start_with?("#") and line.start_with?("\n") then
+    s = final.split("\n")
+    s.delete(previous_line.chomp)
+    s.delete(line)
+    final = s.join("\n")
+  elsif line.start_with?("#") and previous_line.start_with?("\n") then
     final += "#{previous_line}#{line}"
   elsif line.start_with?("#") or line.start_with?(" *") then
     final += "#{line}"
