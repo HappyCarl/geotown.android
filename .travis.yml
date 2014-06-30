@@ -23,6 +23,7 @@ before_script:
 - openssl aes-256-cbc -k "$KEYSTORE_FILE_PASSWORD" -in release.keystore.enc -d -a
   -out release.keystore
 script:
+- katip
 - scripts/processChangelog CHANGELOG.md > app/src/main/res/xml/changelog_master.xml
 - "./gradlew build assembleRelease"
 - if [ "$TRAVIS_BRANCH" = "develop" ]; then ./testfairy-upload.sh app/build/outputs/apk/app-release.apk; fi;
