@@ -30,6 +30,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.cketti.library.changelog.ChangeLog;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
@@ -118,6 +119,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
         locationRequest.setFastestInterval(FASTEST_INTERVAL);
 
         refreshRoutes();
+
+        ChangeLog cl = new ChangeLog(this);
+        if (cl.isFirstRun()) {
+            cl.getFullLogDialog().show();
+        }
     }
 
     @Override
