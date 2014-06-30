@@ -3,11 +3,9 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url 'https://www.testfairy.com/maven' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.11.+'
-        classpath 'com.testfairy.plugins.gradle:testfairy:1.+'
+        classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
 
@@ -17,5 +15,12 @@ allprojects {
         maven {
             url "https://raw.github.com/HappyCarl/mvn-repo/master/snapshots"
         }
+        maven {
+            url 'http://google-api-client-libraries.appspot.com/mavenrepo'
+        }
+        flatDir {
+            dirs 'aars'
+        }
+
     }
 }

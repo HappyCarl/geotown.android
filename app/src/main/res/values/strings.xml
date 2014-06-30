@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">GeoTown</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="action_close">Close</string>
+    <string name="start_button">Log In</string>
+    <string name="title_activity_overview">Overview</string>
+    <string name="my_routes">My Routes</string>
+    <string name="no_routes">You have no routes</string>
+    <string name="unknown_place">Unknown Place</string>
+    <string name="unknown_town">Unknown Town</string>
+    <string name="unknown_country">Unknown Country</string>
+    <string name="action_about">About</string>
+    <string name="intro_text">Welcome! Please sign in to proceed.</string>
+    <string name="username">Username</string>
+    <string name="error_no_username">Please enter a username.</string>
+    <string name="loading">Doing awesome shit…</string>
+    <string name="near_routes">Near Routes</string>
+    <string name="no_near_routes">No near routes :(</string>
+    <string name="near_routes_no_location">Waiting for GPS…</string>
+    <string name="see_more">See More</string>
+    <string name="title_activity_route_detail">Look at the Route</string>
+    <string name="play">Play Route</string>
+    <string name="waypoints">Waypoints</string>
+    <string name="cancel_current_route">Are you sure you want to cancel playing your current Route and start this one instead? \n(Progress will be saved)</string>
+    <string name="currently_playing">Currently playing</string>
+    <string name="share_text">Hey, check out this epic GeoTown Route: %1$s.\nNot playing GeoTown yet? Get it now: %2$s</string>
+    <string name="route">Route</string>
+    <string name="local_routes">Saved Routes</string>
+    <string name="delete">Delete</string>
+    <string name="not_found">Route not found</string>
+    <string name="not_found_detail">Sorry, this route does not exist</string>
+
 </resources>

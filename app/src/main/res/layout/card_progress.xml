@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/card_outer_frame">
+
+    <RelativeLayout
+        android:id="@android:id/widget_frame"
+        style="@style/card_inner_frame"
+        android:layout_marginTop="12dp"
+        android:layout_height="120dp">
+
+        <ImageView
+            android:id="@android:id/icon"
+            style="@style/card_thumbnail" />
+
+        <RelativeLayout
+            android:id="@+id/titleFrame"
+            style="@style/card_title_frame">
+
+            <TextView
+                android:id="@android:id/title"
+                style="@style/card_title" />
+
+            <ImageButton
+                android:id="@android:id/button1"
+                style="@style/card_popup_anchor" />
+        </RelativeLayout>
+
+        <com.afollestad.silk.views.text.SilkTextView
+            android:id="@android:id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/card_content" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:max="100"
+            android:progress="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@android:id/icon"
+            style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp" />
+
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progress"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+</LinearLayout>
