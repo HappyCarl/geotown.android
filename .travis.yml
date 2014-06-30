@@ -17,6 +17,7 @@ before_install:
   - "android-update-sdk --components='build-tools-20.0.0' --accept-licenses='.+'"
   - "android-update-sdk --components='android-20,android-19' --accept-licenses='.+'"
   - "android-update-sdk --components='extra-android-m2repository,extra-google-m2repository' --accept-licenses='.+'"
+  - export PATH=${PATH}:${ANDROID_HOME}/build-tools/20.0.0
   - gem install katip
   - gem install redcarpet
 before_script:
