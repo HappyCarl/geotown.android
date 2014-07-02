@@ -2,30 +2,30 @@
 require 'redcarpet'
 
 class Changelog < Redcarpet::Render::HTML
-  
+
   def initialize
     super()
     @i = 0
   end
-  
+
   def doc_header()
-    "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+    "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n
 <changelog>"
   end
-  
+
   def doc_footer()
     "</changelog>"
   end
-  
+
   def header(text, header_level)
     @i -= 1
     "\t<release version=\"#{text}\" versioncode=\"#{@i}\">\n"
   end
-  
+
   def list(contents, list_type)
     contents + "\n\t</release>\n"
   end
-  
+
   def list_item(text, list_type)
     if text.strip.empty?
       return ""
@@ -33,27 +33,27 @@ class Changelog < Redcarpet::Render::HTML
     peda = text.strip[1..text.length].strip
     "\t\t<change>#{peda}</change>\n"
   end
-  
+
   def triple_emphasis(text)
     nil
   end
-  
+
   def emphasis(text)
     nil
   end
-  
+
   def highlight(text)
     nil
   end
-  
+
   def double_emphasis(text)
     ""
   end
-  
+
   def paragraph(a)
     ""
   end
-  
+
   def link(link, title, content)
     ""
   end
