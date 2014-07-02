@@ -122,7 +122,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         ChangeLog cl = new ChangeLog(this);
         if (cl.isFirstRun()) {
-            cl.getFullLogDialog().show();
+            cl.getLogDialog().show();
         }
     }
 
