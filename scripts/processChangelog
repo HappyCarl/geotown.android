@@ -11,6 +11,9 @@ currentVersion = "Beta"
 beta = true
 lastVersion = ""
 lastCommit = builds[0]['commit']
+first = true
+
+puts "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<changelog>"
 
 builds.each do |b|
   begin
@@ -21,18 +24,20 @@ builds.each do |b|
   if beta
     currentVersion = "Beta ##{b['number']}"
   end
-  puts currentVersion if currentVersion != lastVersion
+  
+  puts "\t</release>" if currentVersion != lastVersion and not first
+  puts "\t<release version=\"#{currentVersion}\" versioncode=\"#{b['number']}\">" if currentVersion != lastVersion
+  
   commit = b['commit']
   
-  if commit == lastCommit
-    puts g.object(commit).message
-  else
-    g.log.between(commit, lastCommit).each do |c|
-      puts c.message
-    end
-  end
+  puts "\t\t<change>#{g.object(commit).message}</change>"
   
   
   lastVersion = currentVersion
   lastCommit = commit
+  first = false
+
 end
+
+puts "\t</release>"
+puts "</changelog>"
