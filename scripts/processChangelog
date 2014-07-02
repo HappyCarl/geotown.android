@@ -1,84 +1,38 @@
 #!/usr/bin/env ruby
-require 'redcarpet'
+require 'open-uri'
+require 'json'
+require 'git'
 
-class Changelog < Redcarpet::Render::HTML
-  
-  def initialize
-    super()
-    @i = 0
+g = Git.open(ARGV[0])
+
+builds = JSON.parse(open("https://api.travis-ci.org/repos/HappyCarl/geotown.android/builds").read)
+
+currentVersion = "Beta"
+beta = true
+lastVersion = ""
+lastCommit = builds[0]['commit']
+
+builds.each do |b|
+  begin
+    currentVersion = g.tag(b['branch']).name
+    beta = false
+  rescue Git::GitTagNameDoesNotExist
   end
-  
-  def doc_header()
-    "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<changelog>"
+  if beta
+    currentVersion = "Beta ##{b['number']}"
   end
+  puts currentVersion if currentVersion != lastVersion
+  commit = b['commit']
   
-  def doc_footer()
-    "</changelog>"
-  end
-  
-  def header(text, header_level)
-    @i -= 1
-    "\t<release version=\"#{text}\" versioncode=\"#{@i}\">\n"
-  end
-  
-  def list(contents, list_type)
-    contents + "\n\t</release>\n"
-  end
-  
-  def list_item(text, list_type)
-    if text.strip.empty?
-      return ""
+  if commit == lastCommit
+    puts g.object(commit).message
+  else
+    g.log.between(commit, lastCommit).each do |c|
+      puts c.message
     end
-    peda = text.strip[1..text.length].strip
-    "\t\t<change>#{peda}</change>\n"
   end
   
-  def triple_emphasis(text)
-    nil
-  end
   
-  def emphasis(text)
-    nil
-  end
-  
-  def highlight(text)
-    nil
-  end
-  
-  def double_emphasis(text)
-    ""
-  end
-  
-  def paragraph(a)
-    ""
-  end
-  
-  def link(link, title, content)
-    ""
-  end
+  lastVersion = currentVersion
+  lastCommit = commit
 end
-
-line_num = 0
-final = ""
-text = File.open(ARGV[0]).read
-text.gsub!(/\r\n?/, "\n")
-previous_line = ""
-text.each_line do |line|
-  if previous_line.start_with?("#") and line.start_with?("\n") then
-    s = final.split("\n")
-    s.delete(previous_line.chomp)
-    s.delete(line)
-    final = s.join("\n")
-  elsif line.start_with?("#") and previous_line.start_with?("\n") then
-    final += "#{previous_line}#{line}"
-  elsif line.start_with?("#") or line.start_with?(" *") then
-    final += "#{line}"
-  end
-  previous_line = line
-end
-#puts final
-
-markdown = Redcarpet::Markdown.new(Changelog.new, extensions = {})
-
-puts markdown.render(final)
