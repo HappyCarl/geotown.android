@@ -1,33 +1,28 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:padding = "0dp"
+    android:orientation="vertical"
+    android:weightSum="10"
     tools:context="de.happycarl.geotown.app.gui.PlayingActivity">
 
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:max="1000"
-        android:progress="300"
-        android:indeterminate="false" />
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map_play"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:name="com.google.android.gms.maps.MapFragment" />
+
 
 
         <de.happycarl.geotown.app.gui.views.WaypointDistanceView
             android:id="@+id/distance_view"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/seekBar" />
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:layout_below="@+id/map_play" />
 
 
 
-</RelativeLayout>
+</LinearLayout>

@@ -47,34 +47,33 @@ public class WaypointDistanceView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        distance = attrs.getAttributeIntValue(R.styleable.WaypointDistanceView_distance, 0);
 
-        circlePaint = new Paint(0);
+        circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         circlePaint.setStyle(Paint.Style.STROKE);
         circlePaint.setColor(getResources().getColor(android.R.color.darker_gray));
         circlePaint.setStrokeWidth(10f);
 
-        circleHighlightPaint = new Paint(0);
+        circleHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         circleHighlightPaint.setStyle(Paint.Style.STROKE);
         circleHighlightPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
         circleHighlightPaint.setStrokeWidth(10f);
 
-        centerPaint = new Paint(0);
+        centerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         centerPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         centerPaint.setColor(getResources().getColor(android.R.color.darker_gray));
         centerPaint.setStrokeWidth(10f);
 
-        centerHighlightPaint = new Paint(0);
+        centerHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         centerHighlightPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         centerHighlightPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
         centerHighlightPaint.setStrokeWidth(10f);
 
-        textPaint = new Paint(0);
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(getResources().getColor(android.R.color.primary_text_light));
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(80);
 
-        boxPaint = new Paint(0);
+        boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boxPaint.setColor(getResources().getColor(android.R.color.background_light));
         boxPaint.setStyle(Paint.Style.FILL);
     }

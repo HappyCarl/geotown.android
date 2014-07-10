@@ -12,11 +12,8 @@ import butterknife.InjectView;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.gui.views.WaypointDistanceView;
 
-public class PlayingActivity extends Activity implements SeekBar.OnSeekBarChangeListener{
+public class PlayingActivity extends SystemBarTintActivity{
 
-
-    @InjectView(R.id.seekBar)
-    SeekBar bar;
 
     @InjectView(R.id.distance_view)
     WaypointDistanceView waypointDistanceView;
@@ -27,7 +24,7 @@ public class PlayingActivity extends Activity implements SeekBar.OnSeekBarChange
         setContentView(R.layout.activity_playing);
 
         ButterKnife.inject(this);
-        bar.setOnSeekBarChangeListener(this);
+
     }
 
 
@@ -50,16 +47,4 @@ public class PlayingActivity extends Activity implements SeekBar.OnSeekBarChange
         return super.onOptionsItemSelected(item);
     }
 
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        waypointDistanceView.setDistance(progress);
-        Log.d("Distance", "distance changed to " + progress);
-    }
-
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
-    }
 }
