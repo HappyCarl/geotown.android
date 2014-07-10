@@ -310,6 +310,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         } else { //No current Route
             editor.putLong(AppConstants.PREF_CURRENT_ROUTE, mRoute.id);
             editor.apply();
+
+            startActivity(new Intent(this, PlayingActivity.class));
         }
 
         updateRouteUI();
