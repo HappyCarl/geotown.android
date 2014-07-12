@@ -25,8 +25,11 @@ public class GeoTownWaypoint extends Model {
     @Column(name = "question")
     public String question;
 
-    @Column(name = "answers")
-    public String answers; //Seperated by >|<
+    @Column(name = "wrongAnswers")
+    public String wrongAnswers; //Seperated by >|<
+
+    @Column(name = "rigthAnswer")
+    public String rightAnswer;
 
     @Column(name = "route")
     public GeoTownRoute route;
@@ -34,17 +37,22 @@ public class GeoTownWaypoint extends Model {
     @Column(name = "done")
     public boolean done;
 
+    @Column(name = "imageURL")
+    public String imageURL;
+
     public GeoTownWaypoint(Waypoint w, GeoTownRoute r) {
         this.id = w.getId();
         this.question = w.getQuestion();
         String ans = "";
-        if (w != null && w.getAnswers() != null)
-            for (String s : w.getAnswers()) {
+        if (w != null && w.getWrongAnswers() != null)
+            for (String s : w.getWrongAnswers()) {
                 ans += s + ">|<";
             }
-        this.answers = ans;
+        this.wrongAnswers = ans;
+        this.rightAnswer = w.getRightAnswer();
         this.latitude = w.getLatitude();
         this.longitude = w.getLongitude();
+        this.imageURL = w.getImageUrl();
         this.route = r;
     }
 

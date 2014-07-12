@@ -124,6 +124,6 @@ dependencies {
     // This is used by the Google HTTP client library.
     compile(group: 'com.google.guava', name: 'guava', version: '14.0.1')
 
-    compile 'com.appspot.drive_log:geotown:0.2.2-SNAPSHOT'
+    compile 'com.appspot.drive_log:geotown:0.3.7-SNAPSHOT'
 
 }
