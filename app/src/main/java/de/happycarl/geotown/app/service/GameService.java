@@ -15,6 +15,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.activeandroid.query.Select;
 
@@ -132,9 +133,10 @@ public class GameService extends Service{
     public void onCreate() {
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        showStatusNotification();
+
 
         loadRoute();
+
         //Normally set to background, activity should set it to foreground
         setLocationListenMode(ListenMode.BACKGROUND);
 
@@ -200,18 +202,24 @@ public class GameService extends Service{
             reportError(ERROR_NO_ROUTE);
             stopSelf();
         } else {
-
+            loadCurrentWaypoint();
+            showStatusNotification();
         }
+
     }
 
     private void loadCurrentWaypoint() {
         long id = GeotownApplication.getPreferences()
                 .getLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L);
+        if (id == -1L) {
+            selectNewWaypoint();
+            return;
+        }
 
         for(GeoTownWaypoint w : currentRoute.waypoints()) {
             if(w.id == id) {
                 currentWaypoint = w;
-                if(w.done) {
+                if(currentWaypoint.done) {
                     selectNewWaypoint();
                     return;
                 }
@@ -249,19 +257,31 @@ public class GameService extends Service{
 //LOCATION HANDLING
 //--------------------------------------------------------------------------------------------------
     private void updateDistanceToTarget(Location location) {
+        if(location == null)
+            return;
         distanceToTarget = (int) currentTarget.distanceTo(location);
+        if(distanceToTarget <= AppConstants.WAYPOINT_RADIUS) {
+            sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
+            currentWaypoint.done = true;
+            currentWaypoint.save();
+
+            selectNewWaypoint();
+        }
         reportDistanceToTarget();
     }
 
     public void setLocationListenMode(ListenMode mode) {
         //First remove it
         locationManager.removeUpdates(locationListener);
+        Log.d("LocationService", "Disabled location updates");
         switch (mode) {
             case FOREGROUND:
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                Log.d("LocationService", "Set to GPS mode");
                 break;
             case BACKGROUND:
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30, 100, locationListener);
+                Log.d("LocationService", "Set to Network mode");
                 break;
             default:
         }
