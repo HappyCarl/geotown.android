@@ -7,16 +7,14 @@
     android:weightSum="10"
     tools:context="de.happycarl.geotown.app.gui.PlayingActivity">
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/map_play"
-        android:layout_width="match_parent"
+
+    <ImageView
+        android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="6"
-        android:name="com.google.android.gms.maps.MapFragment" />
+        android:id="@+id/waypointImage"
+        android:layout_weight="6" />
 
-
-
-        <de.happycarl.geotown.app.gui.views.WaypointDistanceView
+    <de.happycarl.geotown.app.gui.views.WaypointDistanceView
             android:id="@+id/distance_view"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
