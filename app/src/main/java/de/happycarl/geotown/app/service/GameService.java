@@ -164,7 +164,7 @@ public class GameService extends Service{
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mMessenger.getBinder();
     }
 
     private void sendMessage(int messageCode, int arg1, int arg2) {
