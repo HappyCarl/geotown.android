@@ -1,5 +1,7 @@
 package de.happycarl.geotown.app.service;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,6 +16,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -55,6 +58,10 @@ public class GameService extends Service{
     public static final int MSG_TARGET_WAYPOINT_REACHED = 0x4;
     public static final int MSG_NEW_WAYPOINT = 0x5;
 
+    public static final int MSG_SET_LOCATION_MODE = 0x6;
+
+    public static final int MSG_QUESTION_ANSWERED = 0x7;
+
     public static final int MSG_ERROR = 0x99;;
         public static final int ERROR_NO_ROUTE = 0x1;
 
@@ -69,6 +76,7 @@ public class GameService extends Service{
 
         @Override
         public void handleMessage(Message msg) {
+            Log.d("ServerReceiver" , "Received " + msg.what + " (" + msg.arg1 + ";" + msg.arg2 + ")");
             switch (msg.what) {
                 case MSG_REGISTER_CLIENT:
                     mClients.add(msg.replyTo);
@@ -79,11 +87,25 @@ public class GameService extends Service{
                 case MSG_DISTANCE_TO_TARGET:
                     reportDistanceToTarget();
                     break;
+                case MSG_SET_LOCATION_MODE:
+                    if(msg.arg1 == ListenMode.BACKGROUND.ordinal()) {
+                        setLocationListenMode(ListenMode.BACKGROUND);
+                    } else if(msg.arg1 == ListenMode.FOREGROUND.ordinal()){
+                        setLocationListenMode(ListenMode.FOREGROUND);
+                    } else {
+                        setLocationListenMode(ListenMode.NONE);
+                    }
+                    break;
+                case MSG_QUESTION_ANSWERED:
+                    questionAswered();
+                    break;
                 default:
                     super.handleMessage(msg);
             }
         }
     }
+
+
 
     //Location stuff
     LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -148,6 +170,8 @@ public class GameService extends Service{
 
         locationManager.removeUpdates(locationListener);
     }
+
+
     private void showStatusNotification() {
         CharSequence text = getText(R.string.currently_playing);
 
@@ -168,6 +192,7 @@ public class GameService extends Service{
     }
 
     private void sendMessage(int messageCode, int arg1, int arg2) {
+        Log.d("ServerMessenger", "Sending :" + messageCode + " (" + arg1 + ";"+arg2+")");
         for(int i = mClients.size(); i >= 0; i--) {
             try {
                 mClients.get(i).send(Message.obtain(null,messageCode, arg1, arg2));
@@ -202,18 +227,21 @@ public class GameService extends Service{
             reportError(ERROR_NO_ROUTE);
             stopSelf();
         } else {
-            loadCurrentWaypoint();
+            if(!loadCurrentWaypoint()) { //Old waypoint loaded, so report it to app
+                int[] routeid = GeotownApplication.longToInts(currentWaypoint.id);
+                sendMessage(MSG_NEW_WAYPOINT, routeid[0], routeid[1]);
+            };
             showStatusNotification();
         }
 
     }
 
-    private void loadCurrentWaypoint() {
+    private boolean loadCurrentWaypoint() {
         long id = GeotownApplication.getPreferences()
                 .getLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L);
         if (id == -1L) {
             selectNewWaypoint();
-            return;
+            return true;
         }
 
         for(GeoTownWaypoint w : currentRoute.waypoints()) {
@@ -221,11 +249,12 @@ public class GameService extends Service{
                 currentWaypoint = w;
                 if(currentWaypoint.done) {
                     selectNewWaypoint();
-                    return;
+                    return true;
                 }
                 setLocationToWaypoint();
             }
         }
+        return false;
     }
 
     private void setLocationToWaypoint() {
@@ -241,6 +270,14 @@ public class GameService extends Service{
                     .where("done = ?", false)
                     .orderBy("RANDOM()")
                     .executeSingle();
+            if(currentWaypoint == null) {
+                //we finished the route
+                GeotownApplication.getPreferences().edit()
+                        .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L);
+                int[] id = GeotownApplication.longToInts(-2L);
+                sendMessage(MSG_NEW_WAYPOINT, id[0], id[1]);
+
+            }
             GeotownApplication.getPreferences().edit()
                     .putLong(AppConstants.PREF_CURRENT_WAYPOINT, currentWaypoint.id);
             setLocationToWaypoint();
@@ -250,7 +287,11 @@ public class GameService extends Service{
         }
     }
 
-
+    private void questionAswered() {
+        currentWaypoint.done = true;
+        currentWaypoint.save();
+        selectNewWaypoint();
+    }
 
 
 //--------------------------------------------------------------------------------------------------
@@ -262,10 +303,7 @@ public class GameService extends Service{
         distanceToTarget = (int) currentTarget.distanceTo(location);
         if(distanceToTarget <= AppConstants.WAYPOINT_RADIUS) {
             sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
-            currentWaypoint.done = true;
-            currentWaypoint.save();
 
-            selectNewWaypoint();
         }
         reportDistanceToTarget();
     }
@@ -286,9 +324,6 @@ public class GameService extends Service{
             default:
         }
     }
-
-
-
 
 
 }
