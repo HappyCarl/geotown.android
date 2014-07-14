@@ -33,9 +33,14 @@ public class CurrentUserDataRequest extends Job {
             return;
         }
 
-        UserData userData = GeotownApplication.getGeotown().userdata().get().execute();
+        final UserData userData = GeotownApplication.getGeotown().userdata().get().execute();
 
-        GeotownApplication.getEventBus().post(new CurrentUserDataReceivedEvent(userData));
+        GeotownApplication.mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                GeotownApplication.getEventBus().post(new CurrentUserDataReceivedEvent(userData));
+            }
+        });
     }
 
     @Override

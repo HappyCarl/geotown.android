@@ -30,6 +30,7 @@ import de.happycarl.geotown.app.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.CurrentUserDataRequest;
 import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
+import de.happycarl.geotown.app.events.google.GoogleClientConnectedEvent;
 import de.happycarl.geotown.app.events.net.UsernameSetEvent;
 
 
@@ -47,6 +48,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     Spinner accountChooser;
     @InjectView(R.id.username_edit_text)
     EditText usernameEditText;
+
     private GoogleAccountCredential credential;
     private String accountName;
     private boolean requestedAccountPicker = false;
@@ -116,16 +118,8 @@ public class FirstStartActivity extends SystemBarTintActivity {
         if (!storedAccountName.isEmpty()) {
             setSelectedAccountName(storedAccountName);
 
-            GeotownApplication.login(credential);
-
-            if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, -1L) != -1) {
-                Intent playingActivity = new Intent(this, PlayingActivity.class);
-                startActivity(playingActivity);
-                finish();
-            } else {
-                startOverview();
-            }
-
+            ((GeotownApplication) getApplication()).login(credential);
+            ((GeotownApplication) getApplication()).googleLogin(this);
         }
     }
 
@@ -139,6 +133,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        ((GeotownApplication) getApplication()).getGameHelper().onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_ACCOUNT_PICKER:
                 if (data != null && data.getExtras() != null) {
@@ -201,7 +196,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         }
         setSelectedAccountName(accountName);
 
-        GeotownApplication.login(credential);
+        ((GeotownApplication) getApplication()).login(credential);
 
 
         if (credential.getSelectedAccountName() != null) {
@@ -240,7 +235,19 @@ public class FirstStartActivity extends SystemBarTintActivity {
     public void onUsernameSet(UsernameSetEvent e) {
         GeotownApplication.getPreferences().edit().putString(AppConstants.PREF_ACCOUNT_NAME, e.userData.getUsername()).apply();
         progressDialog.cancel();
-        startOverview();
+        ((GeotownApplication) getApplication()).googleLogin(this);
+    }
+
+    @Subscribe
+    public void onGoogleClientConnected(GoogleClientConnectedEvent e) {
+        Log.i("PEDAB", "Sign In Arrived");
+        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, -1L) != -1) {
+            Intent playingActivity = new Intent(this, PlayingActivity.class);
+            startActivity(playingActivity);
+            finish();
+        } else {
+            startOverview();
+        }
     }
 
     private void accountChooserClicked() {

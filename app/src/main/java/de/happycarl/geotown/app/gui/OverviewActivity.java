@@ -9,43 +9,32 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 
 import com.afollestad.cardsui.Card;
-import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardBase;
-import com.afollestad.cardsui.CardCenteredHeader;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
-import com.appspot.drive_log.geotown.model.Route;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.cketti.library.changelog.ChangeLog;
-import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
 import de.happycarl.geotown.app.api.requests.NearRoutesRequest;
-import de.happycarl.geotown.app.events.db.GeoTownForeignRoutesRetrievedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownRouteDeletedEvent;
 import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
 import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.data.OverviewCardsAdapter;
-import de.happycarl.geotown.app.gui.views.LoadingCard;
-import de.happycarl.geotown.app.gui.views.ProgressCard;
 import de.happycarl.geotown.app.gui.views.RouteCard;
-import de.happycarl.geotown.app.models.GeoTownRoute;
 
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -194,6 +183,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 return true;
             case R.id.action_about:
 
+                break;
+            case R.id.action_achievemnts:
+                startActivityForResult(Games.Achievements.getAchievementsIntent(GeotownApplication.getGameHelper().getApiClient()), 42);
                 break;
 
         }

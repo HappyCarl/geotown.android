@@ -15,6 +15,11 @@
         android:showAsAction="never" />
         -->
 
+    <item android:id="@+id/action_achievemnts"
+        android:title="@string/action_achievements"
+        android:orderInCategory="200"
+        android:showAsAction="never"/>
+
     <item android:id="@+id/action_about"
         android:title="@string/action_about"
         android:orderInCategory="150"

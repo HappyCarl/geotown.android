@@ -37,7 +37,13 @@ public class GetRouteWaypointsRequest extends Job {
             waypoints = wc.getItems();
         }
 
-        GeotownApplication.getEventBus().post(new RouteWaypointsReceivedEvent(waypoints));
+        final List<Waypoint> pedaB = waypoints;
+        GeotownApplication.mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                GeotownApplication.getEventBus().post(new RouteWaypointsReceivedEvent(pedaB));
+            }
+        });
     }
 
     @Override

@@ -44,7 +44,14 @@ public class AllMyRoutesRequest extends Job {
             routes = rc.getItems();
         }
 
-        GeotownApplication.getEventBus().post(new MyRoutesDataReceivedEvent(routes));
+        final List<Route> pedaB = routes;
+
+        GeotownApplication.mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                GeotownApplication.getEventBus().post(new MyRoutesDataReceivedEvent(pedaB));
+            }
+        });
 
     }
 

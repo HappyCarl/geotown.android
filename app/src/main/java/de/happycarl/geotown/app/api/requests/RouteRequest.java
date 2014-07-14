@@ -65,7 +65,13 @@ public class RouteRequest extends Job {
 
         route.save();
 
-        GeotownApplication.getEventBus().post(new RouteDataReceivedEvent(r));
+        final Route pedaB = r;
+        GeotownApplication.mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                GeotownApplication.getEventBus().post(new RouteDataReceivedEvent(pedaB));
+            }
+        });
 
     }
 

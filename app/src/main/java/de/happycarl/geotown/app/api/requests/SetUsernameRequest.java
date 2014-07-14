@@ -25,9 +25,13 @@ public class SetUsernameRequest extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        UserData data = GeotownApplication.getGeotown().userdata().setUsername(name).execute();
-
-        GeotownApplication.getEventBus().post(new UsernameSetEvent(data));
+        final UserData data = GeotownApplication.getGeotown().userdata().setUsername(name).execute();
+        GeotownApplication.mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                GeotownApplication.getEventBus().post(new UsernameSetEvent(data));
+            }
+        });
     }
 
     @Override

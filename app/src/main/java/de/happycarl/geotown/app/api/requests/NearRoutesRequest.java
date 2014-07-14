@@ -2,6 +2,7 @@ package de.happycarl.geotown.app.api.requests;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
+import com.appspot.drive_log.geotown.Geotown;
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
 import com.path.android.jobqueue.Job;
@@ -68,7 +69,14 @@ public class NearRoutesRequest extends Job {
             route.save();
         }
 
-        GeotownApplication.getEventBus().post(new NearRoutesDataReceivedEvent(routes));
+        final List<Route> pedaB = routes;
+
+        GeotownApplication.mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                GeotownApplication.getEventBus().post(new NearRoutesDataReceivedEvent(pedaB));
+            }
+        });
     }
 
     @Override

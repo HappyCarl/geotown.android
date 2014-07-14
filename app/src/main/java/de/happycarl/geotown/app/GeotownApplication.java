@@ -1,7 +1,9 @@
 package de.happycarl.geotown.app;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
@@ -14,16 +16,24 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
 import de.happycarl.geotown.app.api.ApiUtils;
+import de.happycarl.geotown.app.api.GameHelper;
 import de.happycarl.geotown.app.events.ApplicationStartedEvent;
+import de.happycarl.geotown.app.events.google.GoogleClientConnectedEvent;
+import de.happycarl.geotown.app.events.google.GoogleClientConnectionFailedEvent;
 
 /**
  * Created by jhbruhn on 19.06.14.
  */
-public class GeotownApplication extends Application {
+public class GeotownApplication extends Application implements GameHelper.GameHelperListener {
+
+    public static Handler mHandler = new Handler();
+
     private static Bus mEventBus;
     private static SharedPreferences mPreferences;
     private static Geotown mGeotown;
     private static JobManager mJobManager;
+    private static GameHelper mGameHelper;
+
 
     public static Bus getEventBus() {
         return mEventBus;
@@ -41,8 +51,21 @@ public class GeotownApplication extends Application {
         return mJobManager;
     }
 
-    public static void login(GoogleAccountCredential cred) {
+    public static GameHelper getGameHelper() {
+        return mGameHelper;
+    }
+
+    public void login(GoogleAccountCredential cred) {
         mGeotown = ApiUtils.getApiServiceHandle(cred);
+    }
+
+    public void googleLogin(Activity a) {
+        Log.i("PEDAB", "Logging in...");
+        mGameHelper = new GameHelper(a, GameHelper.CLIENT_GAMES);
+        mGameHelper.setConnectOnStart(true);
+        mGameHelper.enableDebugLog(true);
+        mGameHelper.setup(this);
+        mGameHelper.onStart(a);
     }
 
     public static long intsToLong(int part1, int part2) {
@@ -62,7 +85,7 @@ public class GeotownApplication extends Application {
 
         ActiveAndroid.initialize(this);
 
-        mEventBus = new Bus(ThreadEnforcer.ANY);
+        mEventBus = new Bus(ThreadEnforcer.MAIN);
         mPreferences = getSharedPreferences(AppConstants.PREF_NAME, 0);
         mGeotown = ApiUtils.getApiServiceHandle(null);
 
@@ -109,5 +132,17 @@ public class GeotownApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
         ActiveAndroid.dispose();
+    }
+
+    @Override
+    public void onSignInFailed() {
+        Log.i("PEDAB", "Sign In Failed");
+        mEventBus.post(new GoogleClientConnectionFailedEvent());
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+        Log.i("PEDAB", "Sign In Succeeded");
+        mEventBus.post(new GoogleClientConnectedEvent());
     }
 }
