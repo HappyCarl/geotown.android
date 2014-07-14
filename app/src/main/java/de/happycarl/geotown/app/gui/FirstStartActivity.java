@@ -111,12 +111,21 @@ public class FirstStartActivity extends SystemBarTintActivity {
         Account[] list = credential.getAllAccounts();
         setAccountName(list[0].name);
 
+
         String storedAccountName = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "");
         if (!storedAccountName.isEmpty()) {
             setSelectedAccountName(storedAccountName);
 
             GeotownApplication.login(credential);
-            startOverview();
+
+            if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, -1L) != -1) {
+                Intent playingActivity = new Intent(this, PlayingActivity.class);
+                startActivity(playingActivity);
+                finish();
+            } else {
+                startOverview();
+            }
+
         }
     }
 

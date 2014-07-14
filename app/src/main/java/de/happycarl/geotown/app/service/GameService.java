@@ -138,12 +138,16 @@ public class GameService extends Service{
         FOREGROUND, BACKGROUND, NONE
     }
 
+    private ListenMode currentListenMode;
+
+    NotificationCompat.Builder notificationBuilder;
+
 
 
 //--------------------------------------------------------------------------------------------------
 //GAME LOGIC VARIABLES
 //--------------------------------------------------------------------------------------------------
-    private int distanceToTarget = 0;
+    private int distanceToTarget = -1;
     private GeoTownRoute currentRoute;
     private GeoTownWaypoint currentWaypoint;
     private Location currentTarget;
@@ -175,16 +179,23 @@ public class GameService extends Service{
 
     private void showStatusNotification() {
         CharSequence text = getText(R.string.currently_playing);
+        CharSequence distText = getText(R.string.distanceTo);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+        notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_marker)
-                .setContentTitle(text)
-                .setContentText("You are playing route '" + currentRoute.name + "'");
+                .setContentTitle(text + " '" + currentRoute.name + "'")
+                .setContentText(distText + " "+distanceToTarget + "m")
+                .setOngoing(true);
         Intent intent = new Intent(this, PlayingActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        builder.setContentIntent(pendingIntent);
+        notificationBuilder.setContentIntent(pendingIntent);
 
-        mNM.notify(R.string.remote_service_notification, builder.build());
+
+        mNM.notify(R.string.remote_service_notification, notificationBuilder.build());
+    }
+
+    private void clearStatusNotification() {
+        mNM.cancel(R.string.remote_service_notification);
     }
 
     @Override
@@ -205,10 +216,18 @@ public class GameService extends Service{
     }
 
     private void reportDistanceToTarget() {
+        if(distanceToTarget == -1) {
+            Location oldGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            distanceToTarget = (int) currentTarget.distanceTo(oldGPS);
+        }
         sendMessage(MSG_DISTANCE_TO_TARGET, distanceToTarget, 0);
     }
 
     private void reportRoute() {
+        if(currentWaypoint == null) {
+            selectNewWaypoint();
+            return;
+        }
         int[] wayid = GeotownApplication.longToInts(currentWaypoint.id);
         sendMessage(MSG_NEW_WAYPOINT, wayid[0], wayid[1]);
     }
@@ -271,24 +290,30 @@ public class GameService extends Service{
 
     private void selectNewWaypoint() {
         if(currentWaypoint == null || currentWaypoint.done) {
+
             currentWaypoint = new Select()
                     .from(GeoTownWaypoint.class)
                     .where("done = ?", false)
                     .orderBy("RANDOM()")
                     .executeSingle();
+            Log.d("selectNewWaypoint","new route null?: " + (currentWaypoint == null));
             if(currentWaypoint == null) {
+                Log.d("selectNewWaypoint","Route finished");
                 //we finished the route
                 GeotownApplication.getPreferences().edit()
                         .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L);
                 int[] id = GeotownApplication.longToInts(-2L);
                 sendMessage(MSG_NEW_WAYPOINT, id[0], id[1]);
 
-            }
-            GeotownApplication.getPreferences().edit()
-                    .putLong(AppConstants.PREF_CURRENT_WAYPOINT, currentWaypoint.id);
-            setLocationToWaypoint();
+            } else {
+                currentWaypoint.save();
+                Log.d("selectNewWaypoint","new ID: " +currentWaypoint.id);
+                GeotownApplication.getPreferences().edit()
+                        .putLong(AppConstants.PREF_CURRENT_WAYPOINT, currentWaypoint.id);
+                setLocationToWaypoint();
 
-            reportRoute();
+                reportRoute();
+            }
         }
     }
 
@@ -303,7 +328,7 @@ public class GameService extends Service{
 //LOCATION HANDLING
 //--------------------------------------------------------------------------------------------------
     private void updateDistanceToTarget(Location location) {
-        if(location == null)
+        if(location == null || currentWaypoint == null)
             return;
         distanceToTarget = (int) currentTarget.distanceTo(location);
         if(distanceToTarget <= AppConstants.WAYPOINT_RADIUS) {
@@ -311,20 +336,28 @@ public class GameService extends Service{
 
         }
         reportDistanceToTarget();
+        if (currentListenMode == ListenMode.BACKGROUND)
+            showStatusNotification();
     }
 
     public void setLocationListenMode(ListenMode mode) {
+        if(mode == currentListenMode) {
+            return;
+        }
+        currentListenMode = mode;
         //First remove it
         locationManager.removeUpdates(locationListener);
         Log.d("LocationService", "Disabled location updates");
         switch (mode) {
             case FOREGROUND:
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 2, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 2, locationListener);
                 Log.d("LocationService", "Set to GPS mode");
+                clearStatusNotification();
                 break;
             case BACKGROUND:
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30, 100, locationListener);
                 Log.d("LocationService", "Set to Network mode");
+                showStatusNotification();
                 break;
             default:
         }

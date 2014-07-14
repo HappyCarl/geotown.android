@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_id">1005962513631</string>
+    
+    <string name="achievment_1route">CgkI35mnwKMdEAIQAA</string>
+    <string name="achievment_2route">CgkI35mnwKMdEAIQAQ</string>
+    <string name="achievment_5route">CgkI35mnwKMdEAIQAg</string>
+    <string name="achievment_10route">CgkI35mnwKMdEAIQAw</string>
+    <string name="achievment_20route">CgkI35mnwKMdEAIQBA</string>
+    
+    <string name="event_waypoints">CgkI35mnwKMdEAIQBQ</string>
+    <string name="event_routes">CgkI35mnwKMdEAIQBg</string>
+
+    <string name="leaderboard_waypoints">CgkI35mnwKMdEAIQCQ</string>
+    <string name="leaderboard_routes">CgkI35mnwKMdEAIQCA</string>
+
+
+</resources>

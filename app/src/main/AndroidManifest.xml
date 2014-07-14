@@ -71,6 +71,10 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAm9SW_x-8kOKI4QzGBmaPj3ObVNY3SEAo" />
 
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/app_id" />
+
         <activity
             android:name=".gui.PlayingActivity"
             android:label="@string/title_activity_playing" >

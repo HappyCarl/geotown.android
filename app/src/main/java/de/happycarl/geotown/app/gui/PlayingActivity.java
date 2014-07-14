@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.gui.views.FadingImageView;
 import de.happycarl.geotown.app.gui.views.WaypointDistanceView;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 import de.happycarl.geotown.app.service.GameService;
@@ -35,7 +36,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     WaypointDistanceView waypointDistanceView;
 
     @InjectView(R.id.waypointImage)
-    ImageView imageView;
+    FadingImageView imageView;
 
     Messenger gameService = null;
     boolean isBound = false;
@@ -110,14 +111,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     private void doUnbindService() {
         if(isBound) {
             if(gameService != null) {
-                try {
-                    Message msg = Message.obtain(null, GameService.MSG_UNREGISTER_CLIENT);
-                    msg.replyTo = messenger;
-                    gameService.send(msg);
-                } catch (RemoteException ex) {
-                    //Service crashed
-                    Log.d("GameService", "Service crashed");
-                }
+                sendMessage(GameService.MSG_UNREGISTER_CLIENT, 0 ,0 );
             }
 
             unbindService(serviceConnection);
@@ -132,9 +126,19 @@ public class PlayingActivity extends SystemBarTintActivity{
 
         ButterKnife.inject(this);
 
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setFadeDirection(FadingImageView.FadeSide.BOTTOM_SIDE);
+        imageView.setEdgeLength(30);
+
         doBindService();
 
 
+    }
+
+    @Override
+    public void onResume() {
+        sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
+        super.onResume();
     }
 
     @Override
@@ -156,6 +160,12 @@ public class PlayingActivity extends SystemBarTintActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onStop() {
+        sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.BACKGROUND.ordinal(), 0);
+        super.onStop();
+    }
+
     private void newCurrentWaypoint(long id) {
         Log.d("newCurrentWaypoint", "ID: " + id);
         if(id == -1L) {
@@ -166,6 +176,8 @@ public class PlayingActivity extends SystemBarTintActivity{
             //route finished, go back to overview and stop service
             doUnbindService();
             Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
+            Intent overview = new Intent(this, OverviewActivity.class);
+            startActivity(overview);
             finish();
             return;
         }
@@ -174,9 +186,11 @@ public class PlayingActivity extends SystemBarTintActivity{
                 .where("WaypointID = ?", id)
                 .executeSingle();
         if(currentWaypoint != null) {
+            Log.d("newCurrentWaypoint", "URL: " + currentWaypoint.imageURL);
+
             Picasso.with(this)
                     .load(currentWaypoint.imageURL)
-                    .resize(imageView.getWidth(), imageView.getHeight())
+                    .error(R.drawable.ic_launcher)
                     .into(imageView);
 
             sendMessage(GameService.MSG_DISTANCE_TO_TARGET, 0, 0);
@@ -186,6 +200,8 @@ public class PlayingActivity extends SystemBarTintActivity{
     }
 
     private void sendMessage(int request, int arg1, int arg2) {
+        if(gameService == null)
+            return;
         Log.d("ClientMessenger", "Sending :" + request + " (" + arg1 + ";"+arg2+")");
         try {
             Message msg = Message.obtain(null, request, arg1, arg2);
