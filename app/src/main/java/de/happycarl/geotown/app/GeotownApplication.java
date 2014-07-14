@@ -45,6 +45,17 @@ public class GeotownApplication extends Application {
         mGeotown = ApiUtils.getApiServiceHandle(cred);
     }
 
+    public static long intsToLong(int part1, int part2) {
+        return (long) part1 << 32 | part2 & 0xFFFFFFFFL;
+    }
+
+    public static int[] longToInts(long num) {
+        int[] res = new int[2];
+        res[0] = (int) (num >> 32);
+        res[1] = (int) num;
+        return res;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

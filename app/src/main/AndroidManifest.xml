@@ -75,7 +75,11 @@
             android:name=".gui.PlayingActivity"
             android:label="@string/title_activity_playing" >
         </activity>
+
+        <service android:name=".service.GameService"
+            android:process=":gameservice" />
     </application>
+
 
     <uses-feature
         android:glEsVersion="0x00020000"
