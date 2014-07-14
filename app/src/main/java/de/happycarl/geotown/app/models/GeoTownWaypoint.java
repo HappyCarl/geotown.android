@@ -28,7 +28,7 @@ public class GeoTownWaypoint extends Model {
     @Column(name = "wrongAnswers")
     public String wrongAnswers; //Seperated by >|<
 
-    @Column(name = "rigthAnswer")
+    @Column(name = "rightAnswer")
     public String rightAnswer;
 
     @Column(name = "route")

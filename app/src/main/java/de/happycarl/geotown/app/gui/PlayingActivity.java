@@ -84,6 +84,9 @@ public class PlayingActivity extends SystemBarTintActivity{
         public void onServiceConnected(ComponentName name, IBinder service) {
             gameService = new Messenger(service);
             Log.d("GameService","Attached to service");
+
+            sendMessage(GameService.MSG_REGISTER_CLIENT, 0, 0);
+            sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
         }
 
         @Override
@@ -101,7 +104,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         isBound = true;
         Log.d("GameService", "Bound to service");
 
-        sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
+
     }
 
     private void doUnbindService() {
@@ -168,7 +171,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         }
         currentWaypoint = new Select()
                 .from(GeoTownWaypoint.class)
-                .where("routeID = ?", id)
+                .where("WaypointID = ?", id)
                 .executeSingle();
         if(currentWaypoint != null) {
             Picasso.with(this)
@@ -185,7 +188,9 @@ public class PlayingActivity extends SystemBarTintActivity{
     private void sendMessage(int request, int arg1, int arg2) {
         Log.d("ClientMessenger", "Sending :" + request + " (" + arg1 + ";"+arg2+")");
         try {
-            gameService.send(Message.obtain(null, request, arg1, arg2));
+            Message msg = Message.obtain(null, request, arg1, arg2);
+            msg.replyTo = messenger;
+            gameService.send(msg);
         } catch (RemoteException e) {
             e.printStackTrace();
             doUnbindService();

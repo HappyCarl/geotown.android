@@ -97,7 +97,6 @@ public class WaypointDistanceView extends View {
         canvas.drawCircle(centerX, centerY, circleMaxDiameter / 35, (distance < 200)? centerHighlightPaint : centerPaint);
 
         for (int i = 200; i <= 800; i += 200) {
-            Log.d("onDraw", "" + i + " : " + distance + " : " + (circleMaxDiameter / 2) * ((float)i / 1000));
             Paint paint = circlePaint;
             if(distance >= i && distance < i + 200)
                 paint = circleHighlightPaint;
