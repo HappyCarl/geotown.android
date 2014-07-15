@@ -5,6 +5,7 @@ import com.activeandroid.query.Select;
 import com.appspot.drive_log.geotown.Geotown;
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
+import com.appspot.drive_log.geotown.model.WaypointCollection;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 

@@ -43,6 +43,8 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     GeoTownWaypoint currentWaypoint;
 
+    private boolean serviceIntoBackgroundMode = true;
+
     private class IncomingHandler extends Handler{
         @Override
         public void handleMessage(Message msg) {
@@ -68,13 +70,6 @@ public class PlayingActivity extends SystemBarTintActivity{
                     super.handleMessage(msg);
             }
         }
-    }
-
-    private void showWaypointQuestion() {
-        //TODO: SHOW QUESTION
-        Log.d("showWaypointQuestion", "Question showing: " + currentWaypoint.question + ": \n"
-                +currentWaypoint.rightAnswer + "\n" + currentWaypoint.wrongAnswers);
-        sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
     }
 
 
@@ -136,6 +131,12 @@ public class PlayingActivity extends SystemBarTintActivity{
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        GeotownApplication.getGameHelper().onStart(this);
+    }
+
+    @Override
     public void onResume() {
         sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
         super.onResume();
@@ -154,7 +155,9 @@ public class PlayingActivity extends SystemBarTintActivity{
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_cancel) {
+            Log.d("PlayingActivity","User requested route cancel");
+            routeEnd(false);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -162,9 +165,13 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     @Override
     public void onStop() {
-        sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.BACKGROUND.ordinal(), 0);
+        if(serviceIntoBackgroundMode)
+            sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.BACKGROUND.ordinal(), 0);
+        GeotownApplication.getGameHelper().onStop();
+
         super.onStop();
     }
+
 
     private void newCurrentWaypoint(long id) {
         Log.d("newCurrentWaypoint", "ID: " + id);
@@ -173,12 +180,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
             return;
         } else if(id == -2L) {
-            //route finished, go back to overview and stop service
-            doUnbindService();
-            Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
-            Intent overview = new Intent(this, OverviewActivity.class);
-            startActivity(overview);
-            finish();
+            routeEnd(true);
             return;
         }
         currentWaypoint = new Select()
@@ -197,6 +199,29 @@ public class PlayingActivity extends SystemBarTintActivity{
         }
 
 
+    }
+
+    private void showWaypointQuestion() {
+        //TODO: SHOW QUESTION
+        Log.d("showWaypointQuestion", "Question showing: " + currentWaypoint.question + ": \n"
+                +currentWaypoint.rightAnswer + "\n" + currentWaypoint.wrongAnswers);
+        sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
+        GeotownApplication.publishWaypointFinishToPlayGames(this);
+    }
+
+    private void routeEnd(boolean finished) {
+        //route finished, go back to overview and stop service
+        serviceIntoBackgroundMode = false;
+        doUnbindService();
+        stopService(new Intent(PlayingActivity.this, GameService.class));
+        if(finished) {
+            GeotownApplication.publishRouteFinishToPlayGames(this);
+            Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
+        }
+
+        Intent overview = new Intent(this, OverviewActivity.class);
+        startActivity(overview);
+        finish();
     }
 
     private void sendMessage(int request, int arg1, int arg2) {

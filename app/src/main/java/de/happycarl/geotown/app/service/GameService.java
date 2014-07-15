@@ -76,11 +76,17 @@ public class GameService extends Service {
             Log.d("ServerReceiver", "Received " + msg.what + " (" + msg.arg1 + ";" + msg.arg2 + ")");
             switch (msg.what) {
                 case MSG_REGISTER_CLIENT:
-                    mClients.add(msg.replyTo);
-                    reportRoute();
+                    Log.d("GameService","Client registered");
+                    if(!mClients.contains(msg.replyTo)) {
+                        mClients.add(msg.replyTo);
+                        reportRoute();
+                    }
                     break;
                 case MSG_UNREGISTER_CLIENT:
+                    Log.d("GameService","Client unregistered");
                     mClients.remove(msg.replyTo);
+                    if(mClients.size() == 0)
+                        stopSelf();
                     break;
                 case MSG_DISTANCE_TO_TARGET:
                     reportDistanceToTarget();
@@ -165,6 +171,7 @@ public class GameService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.d("GameService","Shutting down...");
         mNM.cancel(R.string.remote_service_notification);
 
         locationManager.removeUpdates(locationListener);
@@ -181,7 +188,8 @@ public class GameService extends Service {
                 .setContentText(distText + " " + distanceToTarget + "m")
                 .setOngoing(true);
         Intent intent = new Intent(this, PlayingActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(pendingIntent);
 
 
@@ -297,7 +305,7 @@ public class GameService extends Service {
                 Log.d("selectNewWaypoint", "Route finished");
                 //we finished the route
                 GeotownApplication.getPreferences().edit()
-                        .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L);
+                        .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
                 int[] id = GeotownApplication.longToInts(-2L);
                 sendMessage(MSG_NEW_WAYPOINT, id[0], id[1]);
 
@@ -305,7 +313,7 @@ public class GameService extends Service {
                 currentWaypoint.save();
                 Log.d("selectNewWaypoint", "new ID: " + currentWaypoint.id);
                 GeotownApplication.getPreferences().edit()
-                        .putLong(AppConstants.PREF_CURRENT_WAYPOINT, currentWaypoint.id);
+                        .putLong(AppConstants.PREF_CURRENT_WAYPOINT, currentWaypoint.id).apply();
                 setLocationToWaypoint();
 
                 reportRoute();

@@ -130,7 +130,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         }
 
-        new LoadRouteTask().execute(routeId);
+
 
     }
 
@@ -323,6 +323,15 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     private void loadRoute() {
         GeotownApplication.getJobManager().addJob(new RouteRequest(routeId));
+
+    }
+
+    @Subscribe
+    public void onRouteDataReceived(RouteDataReceivedEvent event) {
+        if(event.route.getId() == routeId) {
+            //Route is loaded and fully in db
+            new LoadRouteTask().execute(routeId);
+        }
     }
 
     private class LoadRouteTask extends AsyncTask<Long, Void, GeoTownRoute> {
