@@ -47,5 +47,6 @@
     <string name="action_gplus_sign_in">Log in</string>
     <string name="gplus_first_sign_in">You have to sign in to Google+ first</string>
     <string name="action_cancel">Cancel Route</string>
+    <string name="service_connection_id">Another string just for id purposes... tua mater crassa est!</string>
 
 </resources>

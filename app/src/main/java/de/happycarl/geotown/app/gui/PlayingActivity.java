@@ -32,6 +32,8 @@ import de.happycarl.geotown.app.service.GameService;
 public class PlayingActivity extends SystemBarTintActivity{
 
 
+    public static final int SERVICE_CONNECTION_ID = R.string.service_connection_id;
+
     @InjectView(R.id.distance_view)
     WaypointDistanceView waypointDistanceView;
 
@@ -81,7 +83,7 @@ public class PlayingActivity extends SystemBarTintActivity{
             gameService = new Messenger(service);
             Log.d("GameService","Attached to service");
 
-            sendMessage(GameService.MSG_REGISTER_CLIENT, 0, 0);
+            sendMessage(GameService.MSG_REGISTER_CLIENT, SERVICE_CONNECTION_ID, 0);
             sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
         }
 
@@ -106,7 +108,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     private void doUnbindService() {
         if(isBound) {
             if(gameService != null) {
-                sendMessage(GameService.MSG_UNREGISTER_CLIENT, 0 ,0 );
+                sendMessage(GameService.MSG_UNREGISTER_CLIENT, SERVICE_CONNECTION_ID ,0 );
             }
 
             unbindService(serviceConnection);
@@ -121,11 +123,13 @@ public class PlayingActivity extends SystemBarTintActivity{
 
         ButterKnife.inject(this);
 
+        doBindService();
+
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setFadeDirection(FadingImageView.FadeSide.BOTTOM_SIDE);
         imageView.setEdgeLength(30);
 
-        doBindService();
+
 
 
     }

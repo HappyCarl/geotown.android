@@ -17,8 +17,11 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.activeandroid.query.Select;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
@@ -66,7 +69,9 @@ public class GameService extends Service {
 
     //Stuff for service
     NotificationManager mNM;
-    ArrayList<Messenger> mClients = new ArrayList<>();
+    HashBiMap<Integer, Messenger> mClients = HashBiMap.create();
+    //ArrayList<Messenger> mClients = new ArrayList<>();
+    //ArrayList<Integer> mClientIds = new ArrayList<>();
 
 
     private class IncomingHandler extends Handler {
@@ -76,15 +81,17 @@ public class GameService extends Service {
             Log.d("ServerReceiver", "Received " + msg.what + " (" + msg.arg1 + ";" + msg.arg2 + ")");
             switch (msg.what) {
                 case MSG_REGISTER_CLIENT:
-                    Log.d("GameService","Client registered");
-                    if(!mClients.contains(msg.replyTo)) {
-                        mClients.add(msg.replyTo);
-                        reportRoute();
-                    }
+                    Log.d("GameService","Client registered :" + msg.arg1);
+                    if(msg.arg1 == 0)
+                        break;
+                    mClients.forcePut(msg.arg1, msg.replyTo);
+                    reportRoute();
                     break;
                 case MSG_UNREGISTER_CLIENT:
-                    Log.d("GameService","Client unregistered");
-                    mClients.remove(msg.replyTo);
+                    Log.d("GameService","Client unregistered :" + msg.arg1);
+                    if(msg.arg1 == 0)
+                        break;
+                    mClients.remove(msg.arg1);
                     if(mClients.size() == 0)
                         stopSelf();
                     break;
@@ -208,13 +215,14 @@ public class GameService extends Service {
     private void sendMessage(int messageCode, int arg1, int arg2) {
         Log.d("ServerMessenger", "Sending :" + messageCode + " (" + arg1 + ";" + arg2 + ")");
         Log.d("ServerMessenger", "Clients: " + mClients.size());
-        for (int i = mClients.size() - 1; i >= 0; i--) {
+        for(Messenger messenger : mClients.values()) {
             try {
-                mClients.get(i).send(Message.obtain(null, messageCode, arg1, arg2));
+                messenger.send(Message.obtain(null, messageCode, arg1, arg2));
             } catch (RemoteException ex) {
-                mClients.remove(i);
+                mClients.inverse().remove(messenger);
             }
         }
+
     }
 
     private void reportDistanceToTarget() {
