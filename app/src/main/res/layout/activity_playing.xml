@@ -3,23 +3,113 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding = "0dp"
-    android:orientation="vertical"
-    android:weightSum="10"
-    tools:context="de.happycarl.geotown.app.gui.PlayingActivity">
+    android:orientation="vertical">
 
 
-    <de.happycarl.geotown.app.gui.views.FadingImageView
+    <ViewFlipper
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:id="@+id/waypointImage"
-        android:layout_weight="6" />
+        android:layout_height="fill_parent"
+        android:id="@+id/viewswitch_playing">
 
-    <de.happycarl.geotown.app.gui.views.WaypointDistanceView
-            android:id="@+id/distance_view"
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding = "0dp"
+            android:orientation="vertical"
+            android:weightSum="10"
+            android:id="@+id/questionLayout">
+
+
+            <de.happycarl.geotown.app.gui.views.FadingImageView
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:id="@+id/waypointImage"
+                android:layout_weight="6" />
+
+
+
+
+            <de.happycarl.geotown.app.gui.views.WaypointDistanceView
+                android:id="@+id/distance_view"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:layout_below="@+id/map_play" />
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:weightSum="10"
+            android:id="@+id/searchLayout">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Question"
+                android:id="@+id/questionText"
+                android:layout_weight="4"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:weightSum="2"
+                android:layout_weight="6"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:weightSum="2">
+
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:id="@+id/answer1"/>
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:id="@+id/answer2"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:weightSum="2">
+
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:id="@+id/answer3"/>
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:id="@+id/answer4"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+        </ViewFlipper>
+
 
 
 

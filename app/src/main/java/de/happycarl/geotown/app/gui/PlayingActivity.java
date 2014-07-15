@@ -13,15 +13,23 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher;
 
 import com.activeandroid.query.Select;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.gui.views.FadingImageView;
@@ -39,6 +47,24 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     @InjectView(R.id.waypointImage)
     FadingImageView imageView;
+
+    @InjectView(R.id.viewswitch_playing)
+    ViewFlipper switcher;
+
+    @InjectView(R.id.answer1)
+    Button answer1;
+
+    @InjectView(R.id.answer2)
+    Button answer2;
+
+    @InjectView(R.id.answer3)
+    Button answer3;
+
+    @InjectView(R.id.answer4)
+    Button answer4;
+
+    @InjectView(R.id.questionText)
+    TextView questionText;
 
     Messenger gameService = null;
     boolean isBound = false;
@@ -125,14 +151,51 @@ public class PlayingActivity extends SystemBarTintActivity{
 
         doBindService();
 
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setFadeDirection(FadingImageView.FadeSide.BOTTOM_SIDE);
         imageView.setEdgeLength(30);
-
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
 
 
     }
+
+    private void fillQuestion() {
+        if(currentWaypoint != null) {
+            Log.d("WaypointQuestion",currentWaypoint.question + ": " + currentWaypoint.rightAnswer + " : " + currentWaypoint.wrongAnswers);
+            questionText.setText("OLAF WAS HERE");
+
+            ArrayList<String> ans = new ArrayList<>();
+            ans.add(currentWaypoint.rightAnswer);
+            String[] wrongAns = currentWaypoint.wrongAnswers.split("|");
+            for (int i = 0; i < wrongAns.length; i++) {
+                Log.d("WaypointQuestion", wrongAns[i]);
+            }
+            int ansCount = 1;
+            for(int i = 0; i < wrongAns.length; i++) {
+                if(!wrongAns[i].isEmpty()) {
+                    ans.add(wrongAns[i]);
+                    ansCount++;
+                }
+                if(ansCount == 4)
+                    break;
+            }
+
+            Collections.shuffle(ans);
+
+            try{
+                answer1.setText(ans.get(0));
+                answer2.setText(ans.get(1));
+                answer3.setText(ans.get(2));
+                answer4.setText(ans.get(3));
+            } catch (NullPointerException ex) {
+                Log.d("WaypointQuestion", "Creator did not specify 4 answers");
+            }
+
+        }
+
+    }
+
+
 
     @Override
     public void onStart() {
@@ -163,6 +226,8 @@ public class PlayingActivity extends SystemBarTintActivity{
             Log.d("PlayingActivity","User requested route cancel");
             routeEnd(false);
             return true;
+        } else if(id == R.id.action_switch) {
+            switcher.showNext();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -199,6 +264,8 @@ public class PlayingActivity extends SystemBarTintActivity{
                     .error(R.drawable.ic_launcher)
                     .into(imageView);
 
+            fillQuestion();
+
             sendMessage(GameService.MSG_DISTANCE_TO_TARGET, 0, 0);
         }
 
@@ -209,8 +276,17 @@ public class PlayingActivity extends SystemBarTintActivity{
         //TODO: SHOW QUESTION
         Log.d("showWaypointQuestion", "Question showing: " + currentWaypoint.question + ": \n"
                 +currentWaypoint.rightAnswer + "\n" + currentWaypoint.wrongAnswers);
+        if(switcher.getCurrentView().getId() == R.id.searchLayout)
+            switcher.showNext();
+
+    }
+
+    private void questionAnswerCorrect() {
         sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
         GeotownApplication.publishWaypointFinishToPlayGames(this);
+
+        if(switcher.getCurrentView().getId() == R.id.questionLayout)
+            switcher.showNext();
     }
 
     private void routeEnd(boolean finished) {
@@ -240,6 +316,34 @@ public class PlayingActivity extends SystemBarTintActivity{
             e.printStackTrace();
             doUnbindService();
             Toast.makeText(this, "Service did not respond", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @OnClick(R.id.answer1)
+    public void onAnswer1Clicked() {
+        if(answer1.getText().toString().equals(currentWaypoint.rightAnswer)) {
+            questionAnswerCorrect();
+        }
+    }
+
+    @OnClick(R.id.answer2)
+    public void onAnswer2Clicked() {
+        if(answer2.getText().toString().equals(currentWaypoint.rightAnswer)) {
+            questionAnswerCorrect();
+        }
+    }
+
+    @OnClick(R.id.answer3)
+    public void onAnswer3Clicked() {
+        if(answer3.getText().toString().equals(currentWaypoint.rightAnswer)) {
+            questionAnswerCorrect();
+        }
+    }
+
+    @OnClick(R.id.answer4)
+    public void onAnswer4Clicked() {
+        if(answer4.getText().toString().equals(currentWaypoint.rightAnswer)) {
+            questionAnswerCorrect();
         }
     }
 

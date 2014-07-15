@@ -190,7 +190,7 @@ public class GameService extends Service {
         CharSequence distText = getText(R.string.distanceTo);
 
         notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_marker)
+                .setSmallIcon(R.drawable.notification_world)
                 .setContentTitle(text + " '" + currentRoute.name + "'")
                 .setContentText(distText + " " + distanceToTarget + "m")
                 .setOngoing(true);

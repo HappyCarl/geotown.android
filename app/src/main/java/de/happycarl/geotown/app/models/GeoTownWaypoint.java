@@ -46,7 +46,7 @@ public class GeoTownWaypoint extends Model {
         String ans = "";
         if (w != null && w.getWrongAnswers() != null)
             for (String s : w.getWrongAnswers()) {
-                ans += s + ">|<";
+                ans += s + "|";
             }
         this.wrongAnswers = ans;
         this.rightAnswer = w.getRightAnswer();
