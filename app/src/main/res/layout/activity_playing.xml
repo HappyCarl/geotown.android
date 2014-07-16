@@ -1,7 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding = "0dp"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="false"
+    tools:context="de.happycarl.geotown.app.gui.PlayingActivity"
     android:orientation="vertical">
 
 
@@ -11,11 +14,10 @@
         android:id="@+id/viewswitch_playing">
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding = "0dp"
+            android:padding="0dp"
             android:orientation="vertical"
             android:weightSum="10"
             android:id="@+id/questionLayout">
@@ -26,8 +28,6 @@
                 android:layout_height="0dp"
                 android:id="@+id/waypointImage"
                 android:layout_weight="6" />
-
-
 
 
             <de.happycarl.geotown.app.gui.views.WaypointDistanceView
@@ -51,7 +51,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Question"
                 android:id="@+id/questionText"
-                android:layout_weight="4"/>
+                android:layout_weight="4" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -72,12 +72,13 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:id="@+id/answer1"/>
+                        android:id="@+id/answer1" />
+
                     <Button
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:id="@+id/answer2"/>
+                        android:id="@+id/answer2" />
 
                 </LinearLayout>
 
@@ -92,12 +93,13 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:id="@+id/answer3"/>
+                        android:id="@+id/answer3" />
+
                     <Button
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:id="@+id/answer4"/>
+                        android:id="@+id/answer4" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -106,10 +108,7 @@
         </LinearLayout>
 
 
-
-        </ViewFlipper>
-
-
+    </ViewFlipper>
 
 
 </LinearLayout>

@@ -303,6 +303,7 @@ public class GameService extends Service {
             currentWaypoint = new Select()
                     .from(GeoTownWaypoint.class)
                     .where("done = ?", false)
+                    .where("route = ?", currentRoute.getId() )
                     .orderBy("RANDOM()")
                     .executeSingle();
             Log.d("selectNewWaypoint", "new route null?: " + (currentWaypoint == null));

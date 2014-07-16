@@ -165,7 +165,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
             ArrayList<String> ans = new ArrayList<>();
             ans.add(currentWaypoint.rightAnswer);
-            String[] wrongAns = currentWaypoint.wrongAnswers.split("|");
+            String[] wrongAns = currentWaypoint.wrongAnswers.split("\\|");
             for (String wrongAn1 : wrongAns) {
                 Log.d("WaypointQuestion", wrongAn1);
             }
