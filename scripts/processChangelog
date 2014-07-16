@@ -2,10 +2,12 @@
 require 'open-uri'
 require 'json'
 require 'git'
+require 'htmlentities'
 
 g = Git.open(ARGV[0])
+coder = HTMLEntities.new
 
-  builds = JSON.parse(open("https://api.travis-ci.org/repos/HappyCarl/geotown.android/builds").read)
+builds = JSON.parse(open("https://api.travis-ci.org/repos/HappyCarl/geotown.android/builds").read)
 
 currentVersion = "Beta"
 beta = true
@@ -32,7 +34,7 @@ builds.each do |b|
   commit = b['commit']
 
   begin
-    puts "\t\t<change>#{g.object(commit).message}</change>"
+    puts "\t\t<change>#{coder.encode(g.object(commit).message)}</change>"
   rescue Git::GitExecuteError
     puts "\t\t<change>Coded Stuff.</change>"
   end

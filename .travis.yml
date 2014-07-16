@@ -11,6 +11,7 @@ before_install:
   - "android-update-sdk --components='extra-android-m2repository,extra-google-m2repository' --accept-licenses='.+'"
   - export PATH=${PATH}:${ANDROID_HOME}/build-tools/20.0.0
   - gem install git
+  - gem install htmlentities
   - git fetch origin master
   - git fetch --all
 before_script:
