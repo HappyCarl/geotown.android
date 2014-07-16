@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# brought to you by peda b
 UPLOADER_VERSION=1.07
 
 # Put your TestFairy API_KEY here. Find it in your TestFairy account settings.
