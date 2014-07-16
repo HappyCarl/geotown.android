@@ -34,7 +34,7 @@
     <string name="title_activity_playing">Playing Route</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="remote_service_notification">This should not be seen...</string>
+    <string name="remote_service_notification">This should not be seen…</string>
     <string name="service_connection_lost">Lost connection to service</string>
     <string name="route_finished">Congratulations! You completed the route.</string>
     <string name="distanceTo">Distance to target:</string>
@@ -47,7 +47,7 @@
     <string name="action_gplus_sign_in">Log in</string>
     <string name="gplus_first_sign_in">You have to sign in to Google+ first</string>
     <string name="action_cancel">Cancel Route</string>
-    <string name="service_connection_id">Another string just for id purposes... tua mater crassa est!</string>
+    <string name="service_connection_id">Another string just for id purposes… tua mater crassa est!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
