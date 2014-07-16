@@ -1,24 +1,10 @@
 package de.happycarl.geotown.app.models;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
-import com.appspot.drive_log.geotown.model.Route;
-import com.appspot.drive_log.geotown.model.Waypoint;
 
 import java.util.List;
-
-import de.happycarl.geotown.app.AppConstants;
-import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.events.db.GeoTownForeignRoutesRetrievedEvent;
-import de.happycarl.geotown.app.events.db.GeoTownRouteDeletedEvent;
-import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
-import de.happycarl.geotown.app.events.db.GeoTownRouteSavedEvent;
 
 /**
  * Created by ole on 20.06.14.

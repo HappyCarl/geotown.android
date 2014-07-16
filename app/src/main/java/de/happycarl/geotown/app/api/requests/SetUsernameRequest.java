@@ -11,7 +11,7 @@ import de.happycarl.geotown.app.events.net.UsernameSetEvent;
  * Created by jhbruhn on 19.06.14.
  */
 public class SetUsernameRequest extends Job {
-    private String name;
+    private final String name;
 
     public SetUsernameRequest(String name) {
         super(new Params(3).requireNetwork().persist().groupBy("set-username"));

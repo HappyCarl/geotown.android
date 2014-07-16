@@ -102,7 +102,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     final Messenger messenger = new Messenger(new IncomingHandler());
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             gameService = new Messenger(service);
@@ -166,16 +166,16 @@ public class PlayingActivity extends SystemBarTintActivity{
             ArrayList<String> ans = new ArrayList<>();
             ans.add(currentWaypoint.rightAnswer);
             String[] wrongAns = currentWaypoint.wrongAnswers.split("|");
-            for (int i = 0; i < wrongAns.length; i++) {
-                Log.d("WaypointQuestion", wrongAns[i]);
+            for (String wrongAn1 : wrongAns) {
+                Log.d("WaypointQuestion", wrongAn1);
             }
             int ansCount = 1;
-            for(int i = 0; i < wrongAns.length; i++) {
-                if(!wrongAns[i].isEmpty()) {
-                    ans.add(wrongAns[i]);
+            for (String wrongAn : wrongAns) {
+                if (!wrongAn.isEmpty()) {
+                    ans.add(wrongAn);
                     ansCount++;
                 }
-                if(ansCount == 4)
+                if (ansCount == 4)
                     break;
             }
 

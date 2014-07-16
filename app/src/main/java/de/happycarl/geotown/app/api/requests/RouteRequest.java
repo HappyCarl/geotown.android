@@ -19,7 +19,7 @@ import de.happycarl.geotown.app.models.GeoTownWaypoint;
  * Created by ole on 19.06.14.
  */
 public class RouteRequest extends Job {
-    private long routeId;
+    private final long routeId;
 
     public RouteRequest(long id) {
         super(new Params(3).requireNetwork().groupBy("fetch-route"));

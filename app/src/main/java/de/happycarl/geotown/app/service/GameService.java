@@ -59,7 +59,7 @@ public class GameService extends Service {
     public static final int MSG_QUESTION_ANSWERED = 0x7;
 
     public static final int MSG_ERROR = 0x99;
-    ;
+
     public static final int ERROR_NO_ROUTE = 0x1;
 
     final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -264,7 +264,7 @@ public class GameService extends Service {
             if (!loadCurrentWaypoint()) { //Old waypoint loaded, so report it to app
                 reportRoute();
             }
-            ;
+
             showStatusNotification();
         }
 

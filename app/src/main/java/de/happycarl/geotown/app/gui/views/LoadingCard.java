@@ -1,7 +1,5 @@
 package de.happycarl.geotown.app.gui.views;
 
-import android.content.Context;
-
 import com.afollestad.cardsui.Card;
 
 import de.happycarl.geotown.app.R;

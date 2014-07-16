@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
-import com.appspot.drive_log.geotown.model.Route;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -27,11 +26,11 @@ import de.happycarl.geotown.app.models.GeoTownRoute;
 public class RouteCard extends Card implements Target {
     private static final Map<Location, String> CACHE = new HashMap<>();
 
-    Context con;
-    CardAdapter adapter;
-    long routeID;
-    String owner;
-    Location location;
+    final Context con;
+    final CardAdapter adapter;
+    final long routeID;
+    final String owner;
+    final Location location;
 
     private void updateContent() {
         this.setContent(CACHE.get(location) + "\nby " + owner);
@@ -74,7 +73,8 @@ public class RouteCard extends Card implements Target {
     }
 
     private class Location {
-        double lat, lng;
+        final double lat;
+        final double lng;
 
         public Location(double lat, double lng) {
             this.lat = lat;
@@ -97,8 +97,8 @@ public class RouteCard extends Card implements Target {
 
     private class GeoCodingAsyncTask extends AsyncTask<Void, Void, String> {
 
-        private Location l;
-        private Context ctx;
+        private final Location l;
+        private final Context ctx;
 
         public GeoCodingAsyncTask(Context ctx, Location l) {
             this.l = l;

@@ -36,8 +36,7 @@ public class AllMyRoutesRequest extends Job {
             return;
         }
 
-        RouteCollection rc = null;
-        rc = GeotownApplication.getGeotown().routes().listMine().execute();
+        RouteCollection rc = GeotownApplication.getGeotown().routes().listMine().execute();
 
         List<Route> routes = new ArrayList<>();
         if (rc != null && rc.getItems() != null) {

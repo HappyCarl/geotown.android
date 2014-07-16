@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
 
 import butterknife.ButterKnife;
@@ -19,7 +18,7 @@ import de.happycarl.geotown.app.models.GeoTownWaypoint;
  */
 public class ProgressCard extends RouteCard {
 
-    GeoTownRoute geoTownRoute;
+    final GeoTownRoute geoTownRoute;
 
     @InjectView(R.id.progress)
     ProgressBar progress;
@@ -27,7 +26,7 @@ public class ProgressCard extends RouteCard {
     @InjectView(R.id.progress_text)
     TextView progressText;
 
-    Context c;
+    final Context c;
     View view;
 
 

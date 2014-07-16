@@ -2,14 +2,12 @@ package de.happycarl.geotown.app;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 import com.appspot.drive_log.geotown.Geotown;
-import com.google.android.gms.games.Games;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
@@ -28,7 +26,7 @@ import de.happycarl.geotown.app.events.google.GoogleClientConnectionFailedEvent;
  */
 public class GeotownApplication extends Application implements GameHelper.GameHelperListener {
 
-    public static Handler mHandler = new Handler();
+    public static final Handler mHandler = new Handler();
 
     private static Bus mEventBus;
     private static SharedPreferences mPreferences;

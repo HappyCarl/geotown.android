@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
-import com.appspot.drive_log.geotown.model.Route;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,21 +34,16 @@ public class RouteDetailCard extends Card {
     @InjectView(R.id.card_route_detail_waypoint_amount)
     TextView mWaypointAmountTextView;
 
-    private GeoTownRoute mRoute;
-    private Context mContext;
+    private final GeoTownRoute mRoute;
     private CardAdapter mAdapter;
-    private int mWaypointAmount = 0;
-    private Location mLocation;
     private String mLocationString;
 
     public RouteDetailCard(Context ctx, CardAdapter cardAdapter, GeoTownRoute route) {
         super("");
         this.mAdapter = cardAdapter;
-        this.mContext = ctx;
         this.mRoute = route;
-        this.mLocation = new Location(mRoute.latitude, mRoute.longitude);
         this.mAdapter.update(this, true);
-        new GeoCodingAsyncTask(this.mContext, mLocation).execute();
+        new GeoCodingAsyncTask(ctx, new Location(mRoute.latitude, mRoute.longitude)).execute();
 
     }
 

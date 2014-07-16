@@ -35,18 +35,13 @@ import butterknife.InjectView;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
-import de.happycarl.geotown.app.api.requests.GetRouteWaypointsRequest;
 import de.happycarl.geotown.app.api.requests.RouteRequest;
-import de.happycarl.geotown.app.events.db.GeoTownRouteRetrievedEvent;
-import de.happycarl.geotown.app.events.db.GeoTownWaypointsAddedEvent;
 import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
-import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
 import de.happycarl.geotown.app.gui.views.LoadingCard;
 import de.happycarl.geotown.app.gui.views.RouteActionsCard;
 import de.happycarl.geotown.app.gui.views.RouteDetailCard;
 import de.happycarl.geotown.app.gui.views.RouteDetailCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
-import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
 public class RouteDetailActivity extends SystemBarTintActivity implements RouteActionsCard.RouteActionsCardListener {
 
@@ -59,18 +54,13 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     @InjectView(R.id.route_detail_card_list)
     CardListView cardsList;
 
-    private MapFragment mMapFragment;
     private ShareActionProvider mShareActionProvider;
     private CardAdapter mCardAdapter;
-    private RouteDetailCard mRouteDetailCard;
-    private RouteActionsCard mRouteActionsCard;
 
     private long routeId = -1;
     private GeoTownRoute mRoute;
-    private List<Waypoint> mWaypoints = new ArrayList<>();
 
     private NfcAdapter mNfcAdapter;
-    private NdefMessage mNdefMessage;
 
 
     //================================================================================
@@ -87,7 +77,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         GeotownApplication.getEventBus().register(this);
 
 
-        mCardAdapter = new RouteDetailCardAdapter(this, R.color.primary_color, mRoute);
+        mCardAdapter = new RouteDetailCardAdapter(this, R.color.primary_color);
         cardsList.setAdapter(mCardAdapter);
 
         String path = "";
@@ -210,7 +200,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         }
 
         FragmentManager fm = this.getFragmentManager();
-        mMapFragment = (MapFragment) fm.findFragmentById(R.id.map);
+        MapFragment mMapFragment = (MapFragment) fm.findFragmentById(R.id.map);
 
 
         mMapFragment.getMap().setMyLocationEnabled(false);
@@ -228,8 +218,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         mCardAdapter.clear();
 
         if (mRoute != null) {
-            mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
-            mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
+            RouteDetailCard mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
+            RouteActionsCard mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
 
             mCardAdapter.add(mRouteActionsCard);
         } else {
@@ -262,7 +252,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         if (mNfcAdapter != null) {
             NdefRecord[] records = new NdefRecord[]{NdefRecord.createUri(AppConstants.SHARE_DOMAIN_NAME + AppConstants.SHARE_PATH_PREFIX + mRoute.id), NdefRecord.createApplicationRecord("de.happycarl.geotown.app")};
 
-            mNdefMessage = new NdefMessage(records);
+            NdefMessage mNdefMessage = new NdefMessage(records);
 
             mNfcAdapter.setNdefPushMessage(mNdefMessage, this);
         }

@@ -2,10 +2,8 @@ package de.happycarl.geotown.app.api.requests;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
-import com.appspot.drive_log.geotown.Geotown;
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.RouteCollection;
-import com.appspot.drive_log.geotown.model.WaypointCollection;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
@@ -22,7 +20,9 @@ import de.happycarl.geotown.app.models.GeoTownRoute;
  */
 public class NearRoutesRequest extends Job {
 
-    private double lat, lng, radius;
+    private final double lat;
+    private final double lng;
+    private final double radius;
 
     public NearRoutesRequest(double lat, double lng, double radius) {
         super(new Params(3).requireNetwork().groupBy("fetch-near-routes"));

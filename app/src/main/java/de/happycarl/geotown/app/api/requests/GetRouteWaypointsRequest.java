@@ -16,7 +16,7 @@ import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
  */
 public class GetRouteWaypointsRequest extends Job {
 
-    private long routeId;
+    private final long routeId;
 
     public GetRouteWaypointsRequest(long routeId) {
         super(new Params(3).requireNetwork().groupBy("fetch-waypoints"));

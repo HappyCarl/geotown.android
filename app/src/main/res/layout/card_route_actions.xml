@@ -6,6 +6,7 @@
     <LinearLayout
         android:id="@android:id/widget_frame"
         style="@style/card_inner_frame"
+        android:baselineAligned="false"
         android:layout_height="75dp"
         android:divider="@drawable/vertical_divider"
         android:weightSum="6">

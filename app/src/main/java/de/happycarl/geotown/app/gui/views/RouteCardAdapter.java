@@ -2,8 +2,6 @@ package de.happycarl.geotown.app.gui.views;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardBase;

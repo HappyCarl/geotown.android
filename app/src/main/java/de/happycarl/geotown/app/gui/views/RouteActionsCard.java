@@ -6,7 +6,6 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 
 import com.afollestad.cardsui.Card;
-import com.appspot.drive_log.geotown.model.Route;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -33,9 +32,9 @@ public class RouteActionsCard extends Card {
     @InjectView(R.id.card_route_actions_star_checkbox)
     CheckBox mCheckBox;
 
-    private GeoTownRoute mRoute;
+    private final GeoTownRoute mRoute;
 
-    private RouteActionsCardListener mListener;
+    private final RouteActionsCardListener mListener;
 
     public RouteActionsCard(Context ctx, RouteActionsCardListener l, GeoTownRoute route) {
         super("");

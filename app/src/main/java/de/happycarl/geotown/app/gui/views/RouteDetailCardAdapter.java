@@ -5,7 +5,6 @@ import android.view.View;
 
 import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardBase;
-import com.appspot.drive_log.geotown.model.Route;
 
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
@@ -15,11 +14,8 @@ import de.happycarl.geotown.app.models.GeoTownRoute;
  */
 public class RouteDetailCardAdapter extends CardAdapter {
 
-    private GeoTownRoute mRoute;
-
-    public RouteDetailCardAdapter(Context context, int accentColorRes, GeoTownRoute mRoute) {
+    public RouteDetailCardAdapter(Context context, int accentColorRes) {
         super(context, accentColorRes);
-        this.mRoute = mRoute;
 
         registerLayout(R.layout.card_loading);
         registerLayout(R.layout.card_route_detail);

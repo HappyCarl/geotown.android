@@ -32,17 +32,17 @@ public class OverviewCardsAdapter extends CardAdapter {
 
     private GeoTownRoute currentRoute;
 
-    private CardHeader nearRoutesHeader = new CardHeader(getContext().getString(R.string.near_routes));
-    private CardHeader localRoutesHeader = new CardHeader(getContext().getString(R.string.local_routes));
-    private CardHeader myRoutesHeader = new CardHeader(getContext().getString(R.string.my_routes));
+    private final CardHeader nearRoutesHeader = new CardHeader(getContext().getString(R.string.near_routes));
+    private final CardHeader localRoutesHeader = new CardHeader(getContext().getString(R.string.local_routes));
+    private final CardHeader myRoutesHeader = new CardHeader(getContext().getString(R.string.my_routes));
 
-    private CardCenteredHeader noOwnRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_routes));
-    private CardCenteredHeader noLocalRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_routes));
-    private CardCenteredHeader noNearRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_near_routes));
+    private final CardCenteredHeader noOwnRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_routes));
+    private final CardCenteredHeader noLocalRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_routes));
+    private final CardCenteredHeader noNearRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_near_routes));
 
     private ProgressCard progressCard;
 
-    private Handler handler;
+    private final Handler handler;
 
     public OverviewCardsAdapter(Context context) {
         super(context, R.color.primary_color);

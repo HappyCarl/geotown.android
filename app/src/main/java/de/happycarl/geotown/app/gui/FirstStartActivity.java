@@ -39,7 +39,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     // Constants
     //================================================================================
 
-    static final int REQUEST_ACCOUNT_PICKER = 2;
+    private static final int REQUEST_ACCOUNT_PICKER = 2;
 
     //================================================================================
     // Properties
@@ -57,7 +57,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     //================================================================================
     // Activity Lifecycle
     //================================================================================
-    private View.OnTouchListener spinnerTouchListener = new View.OnTouchListener() {
+    private final View.OnTouchListener spinnerTouchListener = new View.OnTouchListener() {
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -65,7 +65,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
             return true;
         }
     };
-    private View.OnKeyListener spinnerKeyListener = new View.OnKeyListener() {
+    private final View.OnKeyListener spinnerKeyListener = new View.OnKeyListener() {
 
         @Override
         public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -73,7 +73,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
             return true;
         }
     };
-    private TextWatcher usernameEditTextListener = new TextWatcher() {
+    private final TextWatcher usernameEditTextListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 
@@ -133,7 +133,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ((GeotownApplication) getApplication()).getGameHelper().onActivityResult(requestCode, resultCode, data);
+        GeotownApplication.getGameHelper().onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_ACCOUNT_PICKER:
                 if (data != null && data.getExtras() != null) {
@@ -173,7 +173,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     }
 
     private void updateAccountChooserValue(String accountName) {
-        accountChooser.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, new String[]{accountName}));
+        accountChooser.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{accountName}));
     }
 
     private void setAccountName(String accountName) {
@@ -222,7 +222,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     private void setSelectedAccountName(String accountName) {
         SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
         editor.putString(AppConstants.PREF_ACCOUNT_EMAIL, accountName);
-        editor.commit();
+        editor.apply();
         credential.setSelectedAccountName(accountName);
         this.accountName = accountName;
     }

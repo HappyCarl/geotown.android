@@ -12,7 +12,7 @@ import android.widget.ImageView;
 public class FadingImageView extends ImageView {
     private FadeSide mFadeSide;
 
-    private Context c;
+    private final Context c;
 
     public enum FadeSide {
         TOP_SIDE, BOTTOM_SIDE
