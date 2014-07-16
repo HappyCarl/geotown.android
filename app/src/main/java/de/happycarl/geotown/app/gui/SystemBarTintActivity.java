@@ -14,7 +14,7 @@ import de.happycarl.geotown.app.R;
 /**
  * Created by jhbruhn on 20.06.14.
  */
-public class SystemBarTintActivity extends Activity {
+public abstract class SystemBarTintActivity extends Activity {
 
     @TargetApi(19)
     private void setTranslucentStatus(boolean on) {
