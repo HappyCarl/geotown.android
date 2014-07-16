@@ -147,7 +147,6 @@ public class GameService extends Service {
 
     NotificationCompat.Builder notificationBuilder;
 
-
     //--------------------------------------------------------------------------------------------------
     //GAME LOGIC VARIABLES
     //--------------------------------------------------------------------------------------------------

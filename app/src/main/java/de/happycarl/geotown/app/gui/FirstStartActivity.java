@@ -26,7 +26,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.GoogleUtils;
+import de.happycarl.geotown.app.util.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.CurrentUserDataRequest;
 import de.happycarl.geotown.app.api.requests.SetUsernameRequest;

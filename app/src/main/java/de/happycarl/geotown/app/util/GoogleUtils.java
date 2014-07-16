@@ -1,4 +1,4 @@
-package de.happycarl.geotown.app;
+package de.happycarl.geotown.app.util;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.happycarl.geotown.app.GoogleUtils;
+import de.happycarl.geotown.app.util.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
