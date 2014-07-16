@@ -17,11 +17,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.activeandroid.query.Select;
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
@@ -29,6 +25,7 @@ import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.gui.PlayingActivity;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
+import de.happycarl.geotown.app.util.MathUtil;
 
 /**
  * Created by ole on 12.07.14.
@@ -239,7 +236,7 @@ public class GameService extends Service {
             selectNewWaypoint();
             return;
         }
-        int[] wayid = GeotownApplication.longToInts(currentWaypoint.id);
+        int[] wayid = MathUtil.longToInts(currentWaypoint.id);
         sendMessage(MSG_NEW_WAYPOINT, wayid[0], wayid[1]);
     }
 
@@ -314,7 +311,7 @@ public class GameService extends Service {
                 //we finished the route
                 GeotownApplication.getPreferences().edit()
                         .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
-                int[] id = GeotownApplication.longToInts(-2L);
+                int[] id = MathUtil.longToInts(-2L);
                 sendMessage(MSG_NEW_WAYPOINT, id[0], id[1]);
 
             } else {

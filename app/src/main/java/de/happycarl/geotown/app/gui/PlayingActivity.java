@@ -1,6 +1,5 @@
 package de.happycarl.geotown.app.gui;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -15,11 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-import android.widget.ViewSwitcher;
 
 import com.activeandroid.query.Select;
 import com.squareup.picasso.Picasso;
@@ -36,6 +33,8 @@ import de.happycarl.geotown.app.gui.views.FadingImageView;
 import de.happycarl.geotown.app.gui.views.WaypointDistanceView;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 import de.happycarl.geotown.app.service.GameService;
+import de.happycarl.geotown.app.util.GameUtil;
+import de.happycarl.geotown.app.util.MathUtil;
 
 public class PlayingActivity extends SystemBarTintActivity{
 
@@ -82,7 +81,7 @@ public class PlayingActivity extends SystemBarTintActivity{
                     waypointDistanceView.setDistance(msg.arg1);
                     break;
                 case GameService.MSG_NEW_WAYPOINT:
-                    newCurrentWaypoint(GeotownApplication.intsToLong(msg.arg1, msg.arg2));
+                    newCurrentWaypoint(MathUtil.intsToLong(msg.arg1, msg.arg2));
                     break;
                 case GameService.MSG_TARGET_WAYPOINT_REACHED:
                     showWaypointQuestion();
@@ -283,7 +282,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     private void questionAnswerCorrect() {
         sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
-        GeotownApplication.publishWaypointFinishToPlayGames(this);
+        GameUtil.publishWaypointFinishToPlayGames(this);
 
         if(switcher.getCurrentView().getId() == R.id.questionLayout)
             switcher.showNext();
@@ -295,7 +294,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         doUnbindService();
         stopService(new Intent(PlayingActivity.this, GameService.class));
         if(finished) {
-            GeotownApplication.publishRouteFinishToPlayGames(this);
+            GameUtil.publishRouteFinishToPlayGames(this);
             Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
         }
 

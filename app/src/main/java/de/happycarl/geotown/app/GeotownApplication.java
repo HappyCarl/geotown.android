@@ -57,73 +57,17 @@ public class GeotownApplication extends Application implements GameHelper.GameHe
         return mGameHelper;
     }
 
-    public void login(GoogleAccountCredential cred) {
+    public void doServerLogin(GoogleAccountCredential cred) {
         mGeotown = ApiUtils.getApiServiceHandle(cred);
     }
 
-    public void googleLogin(Activity a) {
+    public void doGooglePlayLogin(Activity a) {
         Log.i("PEDAB", "Logging in...");
         mGameHelper = new GameHelper(a, GameHelper.CLIENT_GAMES);
         mGameHelper.setConnectOnStart(true);
         mGameHelper.enableDebugLog(true);
         mGameHelper.setup(this);
         mGameHelper.onStart(a);
-    }
-
-    public static void publishRouteFinishToPlayGames(Context c) {
-        int currCount = mPreferences.getInt(AppConstants.PREF_SCORE_ROUTE, 0);
-        if(currCount == 0) {
-            unlockAchievement(c.getString(R.string.achievment_1route));
-        }
-        incrementAchievement(c.getString(R.string.achievment_2route), 1);
-        incrementAchievement(c.getString(R.string.achievment_5route), 1);
-        incrementAchievement(c.getString(R.string.achievment_10route), 1);
-        incrementAchievement(c.getString(R.string.achievment_20route), 1);
-
-        incrementEvent(c.getString(R.string.event_routes), 1);
-        submitScore(c.getString(R.string.leaderboard_routes), currCount++);
-        mPreferences.edit().putInt(AppConstants.PREF_SCORE_ROUTE, currCount++).apply();
-
-    }
-
-    public static void publishWaypointFinishToPlayGames(Context c) {
-        int currCount = mPreferences.getInt(AppConstants.PREF_SCORE_WAYPOINT, 0);
-
-        incrementEvent(c.getString(R.string.event_waypoints), 1);
-        submitScore(c.getString(R.string.leaderboard_waypoints), currCount++);
-
-        mPreferences.edit().putInt(AppConstants.PREF_SCORE_WAYPOINT, currCount++).apply();
-    }
-
-    public static void unlockAchievement(String id) {
-        if(mGameHelper.isSignedIn())
-            Games.Achievements.unlock(mGameHelper.getApiClient(), id);
-    }
-
-    public static void incrementAchievement(String id, int num) {
-        if(mGameHelper.isSignedIn())
-            Games.Achievements.increment(mGameHelper.getApiClient(), id, num);
-    }
-
-    public static void incrementEvent(String id, int num) {
-        if(mGameHelper.isSignedIn())
-            Games.Events.increment(mGameHelper.getApiClient(), id, num);
-    }
-
-    public static void submitScore(String id, int score) {
-        if(mGameHelper.isSignedIn())
-            Games.Leaderboards.submitScore(mGameHelper.getApiClient(), id, score);
-    }
-
-    public static long intsToLong(int part1, int part2) {
-        return (long) part1 << 32 | part2 & 0xFFFFFFFFL;
-    }
-
-    public static int[] longToInts(long num) {
-        int[] res = new int[2];
-        res[0] = (int) (num >> 32);
-        res[1] = (int) num;
-        return res;
     }
 
     @Override

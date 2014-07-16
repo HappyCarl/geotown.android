@@ -118,8 +118,8 @@ public class FirstStartActivity extends SystemBarTintActivity {
         if (!storedAccountName.isEmpty()) {
             setSelectedAccountName(storedAccountName);
 
-            ((GeotownApplication) getApplication()).login(credential);
-            ((GeotownApplication) getApplication()).googleLogin(this);
+            ((GeotownApplication) getApplication()).doServerLogin(credential);
+            ((GeotownApplication) getApplication()).doGooglePlayLogin(this);
         }
     }
 
@@ -196,7 +196,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         }
         setSelectedAccountName(accountName);
 
-        ((GeotownApplication) getApplication()).login(credential);
+        ((GeotownApplication) getApplication()).doServerLogin(credential);
 
 
         if (credential.getSelectedAccountName() != null) {
@@ -235,7 +235,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     public void onUsernameSet(UsernameSetEvent e) {
         GeotownApplication.getPreferences().edit().putString(AppConstants.PREF_ACCOUNT_NAME, e.userData.getUsername()).apply();
         progressDialog.cancel();
-        ((GeotownApplication) getApplication()).googleLogin(this);
+        ((GeotownApplication) getApplication()).doGooglePlayLogin(this);
     }
 
     @Subscribe
