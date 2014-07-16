@@ -19,7 +19,7 @@ AUTO_UPDATE="on"
 MAX_DURATION="10m"
 
 # Is video recording enabled for this build
-VIDEO="off"
+VIDEO="wifi"
 
 # Add a TestFairy watermark to the application icon?
 ICON_WATERMARK="on"
