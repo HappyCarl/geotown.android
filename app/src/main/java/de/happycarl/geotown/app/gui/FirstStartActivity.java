@@ -182,6 +182,19 @@ public class FirstStartActivity extends SystemBarTintActivity {
         credential.setSelectedAccountName(accountName);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        GeotownApplication.getGameHelper().onStart(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        GeotownApplication.getGameHelper().onStop();
+    }
+
+
     //================================================================================
     // Networking
     //================================================================================

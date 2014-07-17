@@ -188,7 +188,7 @@ public class PlayingActivity extends SystemBarTintActivity{
                 answer2.setText(ans.get(1));
                 answer3.setText(ans.get(2));
                 answer4.setText(ans.get(3));
-            } catch (NullPointerException ex) {
+            } catch (NullPointerException | IndexOutOfBoundsException ex) {
                 Log.d("WaypointQuestion", "Creator did not specify 4 answers");
             }
 
@@ -208,6 +208,14 @@ public class PlayingActivity extends SystemBarTintActivity{
     public void onResume() {
         sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
         super.onResume();
+    }
+
+
+    @Override
+    protected void onActivityResult(int request, int response, Intent data) {
+
+        GeotownApplication.getGameHelper().onActivityResult(request, response, data);
+        super.onActivityResult(request, response, data);
     }
 
     @Override
@@ -305,12 +313,12 @@ public class PlayingActivity extends SystemBarTintActivity{
         serviceIntoBackgroundMode = false;
         doUnbindService();
         stopService(new Intent(PlayingActivity.this, GameService.class));
+        GeotownApplication.getPreferences().edit()
+                .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
+        GeotownApplication.getPreferences().edit()
+                .putLong(AppConstants.PREF_CURRENT_ROUTE, -1L).apply();
         if(finished) {
             //we finished the route
-            GeotownApplication.getPreferences().edit()
-                    .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
-            GeotownApplication.getPreferences().edit()
-                    .putLong(AppConstants.PREF_CURRENT_ROUTE, -1L).apply();
             GameUtil.publishRouteFinishToPlayGames(this);
             Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
         }

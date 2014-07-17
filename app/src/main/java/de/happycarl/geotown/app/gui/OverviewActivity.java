@@ -135,6 +135,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
         locationClient.connect();
         this.refreshRoutes();
         GeotownApplication.getGameHelper().onStart(this);
+        GeotownApplication.getGameHelper().makeSimpleDialog("Welcome back!");
     }
 
     @Override
@@ -151,8 +152,9 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
-        super.onActivityResult(request, response, data);
+
         GeotownApplication.getGameHelper().onActivityResult(request, response, data);
+        super.onActivityResult(request, response, data);
     }
     //================================================================================
     // UI

@@ -54,7 +54,8 @@ public class RouteRequest extends Job {
             if (waypoints != null)
                 for (Waypoint w : waypoints) {
                     GeoTownWaypoint wp = new GeoTownWaypoint(w, route);
-                    if (new Select().from(GeoTownWaypoint.class).where("WaypointID = ?", w.getId()).executeSingle() == null) {
+                    GeoTownWaypoint oldwp = new Select().from(GeoTownWaypoint.class).where("WaypointID = ?", w.getId()).executeSingle();
+                    if (oldwp == null) {
                         wp.save();
                     }
                 }

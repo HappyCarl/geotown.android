@@ -21,6 +21,7 @@ public class AppConstants {
     //Sharing stuff
     public static final String SHARE_DOMAIN_NAME = "http://geotown.de";
     public static final String SHARE_PATH_PREFIX = "/routes/";
+    public static final String SHARE_APPSTORE_LINK = "(Not yet in store)";
 
     public static final int WAYPOINT_RADIUS = 5000;
 

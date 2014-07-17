@@ -49,5 +49,6 @@
     <string name="action_cancel">Cancel Route</string>
     <string name="service_connection_id">Another string just for id purposes… tua mater crassa est!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="clear_route_data">Reset Route</string>
 
 </resources>
