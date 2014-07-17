@@ -27,6 +27,7 @@ import java.util.Collections;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.gui.views.FadingImageView;
@@ -71,6 +72,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     GeoTownWaypoint currentWaypoint;
 
     private boolean serviceIntoBackgroundMode = true;
+    private boolean questionShowing = false;
 
     private class IncomingHandler extends Handler{
         @Override
@@ -161,7 +163,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     private void fillQuestion() {
         if(currentWaypoint != null) {
             Log.d("WaypointQuestion",currentWaypoint.question + ": " + currentWaypoint.rightAnswer + " : " + currentWaypoint.wrongAnswers);
-            questionText.setText("OLAF WAS HERE");
+            questionText.setText(currentWaypoint.question);
 
             ArrayList<String> ans = new ArrayList<>();
             ans.add(currentWaypoint.rightAnswer);
@@ -227,6 +229,7 @@ public class PlayingActivity extends SystemBarTintActivity{
             return true;
         } else if(id == R.id.action_switch) {
             switcher.showNext();
+            questionShowing = !questionShowing;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -256,6 +259,8 @@ public class PlayingActivity extends SystemBarTintActivity{
                 .where("WaypointID = ?", id)
                 .executeSingle();
         if(currentWaypoint != null) {
+            GeotownApplication.getPreferences().edit()
+                    .putLong(AppConstants.PREF_CURRENT_WAYPOINT, currentWaypoint.id).apply();
             Log.d("newCurrentWaypoint", "URL: " + currentWaypoint.imageURL);
 
             Picasso.with(this)
@@ -275,8 +280,12 @@ public class PlayingActivity extends SystemBarTintActivity{
         //TODO: SHOW QUESTION
         Log.d("showWaypointQuestion", "Question showing: " + currentWaypoint.question + ": \n"
                 +currentWaypoint.rightAnswer + "\n" + currentWaypoint.wrongAnswers);
-        if(switcher.getCurrentView().getId() == R.id.searchLayout)
+
+        if(!questionShowing) {
             switcher.showNext();
+            questionShowing = true;
+        }
+
 
     }
 
@@ -284,8 +293,11 @@ public class PlayingActivity extends SystemBarTintActivity{
         sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
         GameUtil.publishWaypointFinishToPlayGames(this);
 
-        if(switcher.getCurrentView().getId() == R.id.questionLayout)
+
+        if(questionShowing) {
             switcher.showNext();
+            questionShowing = false;
+        }
     }
 
     private void routeEnd(boolean finished) {
@@ -294,6 +306,11 @@ public class PlayingActivity extends SystemBarTintActivity{
         doUnbindService();
         stopService(new Intent(PlayingActivity.this, GameService.class));
         if(finished) {
+            //we finished the route
+            GeotownApplication.getPreferences().edit()
+                    .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
+            GeotownApplication.getPreferences().edit()
+                    .putLong(AppConstants.PREF_CURRENT_ROUTE, -1L).apply();
             GameUtil.publishRouteFinishToPlayGames(this);
             Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
         }

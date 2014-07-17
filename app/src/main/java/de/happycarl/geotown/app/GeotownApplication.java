@@ -75,7 +75,7 @@ public class GeotownApplication extends Application implements GameHelper.GameHe
         ActiveAndroid.initialize(this);
 
         mEventBus = new Bus(ThreadEnforcer.MAIN);
-        mPreferences = getSharedPreferences(AppConstants.PREF_NAME, 0);
+        mPreferences = getSharedPreferences(AppConstants.PREF_NAME, 0 | MODE_MULTI_PROCESS);
         mGeotown = ApiUtils.getApiServiceHandle(null);
 
         configureJobManager();

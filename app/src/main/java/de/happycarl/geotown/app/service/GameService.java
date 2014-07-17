@@ -82,7 +82,7 @@ public class GameService extends Service {
                     if(msg.arg1 == 0)
                         break;
                     mClients.forcePut(msg.arg1, msg.replyTo);
-                    reportRoute();
+                    reportWaypoint();
                     break;
                 case MSG_UNREGISTER_CLIENT:
                     Log.d("GameService","Client unregistered :" + msg.arg1);
@@ -224,19 +224,25 @@ public class GameService extends Service {
     private void reportDistanceToTarget() {
         if (distanceToTarget == -1) {
             Location oldGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (oldGPS != null)
+            Location oldNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (oldGPS != null) {
                 distanceToTarget = (int) currentTarget.distanceTo(oldGPS);
+            } else if (oldNetwork != null) {
+                distanceToTarget = (int) currentTarget.distanceTo(oldNetwork);
+            }
+
         }
         sendMessage(MSG_DISTANCE_TO_TARGET, distanceToTarget, 0);
     }
 
-    private void reportRoute() {
+    private void reportWaypoint() {
         if (currentWaypoint == null) {
             selectNewWaypoint();
             return;
         }
         int[] wayid = MathUtil.longToInts(currentWaypoint.id);
         sendMessage(MSG_NEW_WAYPOINT, wayid[0], wayid[1]);
+        reportDistanceToTarget();
     }
 
     private void reportError(int errorCode) {
@@ -261,7 +267,7 @@ public class GameService extends Service {
             stopSelf();
         } else {
             if (!loadCurrentWaypoint()) { //Old waypoint loaded, so report it to app
-                reportRoute();
+                reportWaypoint();
             }
 
             showStatusNotification();
@@ -294,6 +300,7 @@ public class GameService extends Service {
         currentTarget = new Location("GeoTownWaypoint");
         currentTarget.setLatitude(currentWaypoint.latitude);
         currentTarget.setLongitude(currentWaypoint.longitude);
+        distanceToTarget = -1;
     }
 
     private void selectNewWaypoint() {
@@ -308,20 +315,16 @@ public class GameService extends Service {
             Log.d("selectNewWaypoint", "new route null?: " + (currentWaypoint == null));
             if (currentWaypoint == null) {
                 Log.d("selectNewWaypoint", "Route finished");
-                //we finished the route
-                GeotownApplication.getPreferences().edit()
-                        .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
+
                 int[] id = MathUtil.longToInts(-2L);
                 sendMessage(MSG_NEW_WAYPOINT, id[0], id[1]);
 
             } else {
                 currentWaypoint.save();
                 Log.d("selectNewWaypoint", "new ID: " + currentWaypoint.id);
-                GeotownApplication.getPreferences().edit()
-                        .putLong(AppConstants.PREF_CURRENT_WAYPOINT, currentWaypoint.id).apply();
                 setLocationToWaypoint();
 
-                reportRoute();
+                reportWaypoint();
             }
         }
     }
@@ -337,10 +340,10 @@ public class GameService extends Service {
     //LOCATION HANDLING
     //--------------------------------------------------------------------------------------------------
     private void updateDistanceToTarget(Location location) {
-        if (location == null || currentWaypoint == null)
+        if (location == null || currentWaypoint == null || currentTarget == null)
             return;
         distanceToTarget = (int) currentTarget.distanceTo(location);
-        if (distanceToTarget <= AppConstants.WAYPOINT_RADIUS) {
+        if (distanceToTarget <= AppConstants.WAYPOINT_RADIUS && distanceToTarget > 0) {
             sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
 
         }
