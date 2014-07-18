@@ -185,7 +185,8 @@ public class FirstStartActivity extends SystemBarTintActivity {
     @Override
     public void onStart() {
         super.onStart();
-        GeotownApplication.getGameHelper().onStart(this);
+        if(GeotownApplication.getGameHelper() != null)
+            GeotownApplication.getGameHelper().onStart(this);
     }
 
     @Override
