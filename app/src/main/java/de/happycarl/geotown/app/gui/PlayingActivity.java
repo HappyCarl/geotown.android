@@ -160,6 +160,11 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     }
 
+    @Override
+    public void onBackPressed() {
+        //There is no way back
+    }
+
     private void fillQuestion() {
         if(currentWaypoint != null) {
             Log.d("WaypointQuestion",currentWaypoint.question + ": " + currentWaypoint.rightAnswer + " : " + currentWaypoint.wrongAnswers);
