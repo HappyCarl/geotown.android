@@ -1,14 +1,19 @@
 language: android
 android:
+  components:
+    - android-19
+    - android-20
+    - build-tools-20.0.0
+    - extra-android-m2repository
+    - extra-google-m2repository
   licenses:
-    - android-sdk-license-5be876d5 # new license!
-    - android-sdk-license-598b93a6
+    - android-sdk-license-.+
 before_install:
-  - 'sudo mv /usr/local/android-sdk/tools/android-* /usr/local/bin'
-  - "android-update-sdk --components='platform-tools,tools' --accept-licenses='.+'"
-  - "android-update-sdk --components='build-tools-20.0.0' --accept-licenses='.+'"
-  - "android-update-sdk --components='android-20,android-19' --accept-licenses='.+'"
-  - "android-update-sdk --components='extra-android-m2repository,extra-google-m2repository' --accept-licenses='.+'"
+  - #'sudo mv /usr/local/android-sdk/tools/android-* /usr/local/bin'
+  - #"android-update-sdk --components='platform-tools,tools' --accept-licenses='.+'"
+  - #"android-update-sdk --components='build-tools-20.0.0' --accept-licenses='.+'"
+  - #"android-update-sdk --components='android-20,android-19' --accept-licenses='.+'"
+  - #"android-update-sdk --components='extra-android-m2repository,extra-google-m2repository' --accept-licenses='.+'"
   - export PATH=${PATH}:${ANDROID_HOME}/build-tools/20.0.0
   - gem install git
   - gem install htmlentities
