@@ -51,9 +51,13 @@ android {
             runProguard false
             proguardFiles 'proguard-rules.txt'
             signingConfig signingConfigs.release
+
+            resValue "string", "client_id", "server:client_id:1005962513631-78253fgvv2ahe6noj99iepmeccibtlvg.apps.googleusercontent.com"
         }
         debug {
             signingConfig signingConfigs.release
+
+            resValue "string", "client_id", "server:client_id:1005962513631-78253fgvv2ahe6noj99iepmeccibtlvg.apps.googleusercontent.com"
         }
     }
 }
@@ -80,7 +84,9 @@ dependencies {
     compile 'de.cketti.library.changelog:ckchangelog:1.2.0'
     // BEGIN Google APIs
     // Play Services will validate the application prior to allowing OAuth2 access.
-    compile 'com.google.android.gms:play-services:5.0.77'
+    compile ('com.google.android.gms:play-services:5.0.89') {
+        exclude module: 'support-v4'
+    }
     // The following lines implement maven imports as defined at:
     // https://code.google.com/p/google-api-java-client/wiki/Setup
     // Android extensions for Google HTTP Client.
