@@ -5,7 +5,7 @@ package de.happycarl.geotown.app;
  * Created by ole on 18.06.14.
  */
 public class AppConstants {
-    
+
     //shared prefs stuff
     public static final String PREF_NAME = "GeoTown";
     public static final String PREF_ACCOUNT_EMAIL = "account_email";

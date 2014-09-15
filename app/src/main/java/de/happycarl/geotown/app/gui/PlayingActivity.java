@@ -289,7 +289,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     }
 
     private void showWaypointQuestion() {
-        //TODO: SHOW QUESTION
+
         Log.d("showWaypointQuestion", "Question showing: " + currentWaypoint.question + ": \n"
                 +currentWaypoint.rightAnswer + "\n" + currentWaypoint.wrongAnswers);
 
