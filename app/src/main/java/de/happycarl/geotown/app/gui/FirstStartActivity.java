@@ -108,7 +108,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         accountChooser.setOnKeyListener(spinnerKeyListener);
         usernameEditText.addTextChangedListener(usernameEditTextListener);
 
-        credential = GoogleAccountCredential.usingAudience(this, AppConstants.CLIENT_ID);
+        credential = GoogleAccountCredential.usingAudience(this, getString(R.string.client_id));
 
         Account[] list = credential.getAllAccounts();
         setAccountName(list[0].name);

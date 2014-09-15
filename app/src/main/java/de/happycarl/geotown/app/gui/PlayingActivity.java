@@ -129,7 +129,6 @@ public class PlayingActivity extends SystemBarTintActivity{
         isBound = true;
         Log.d("GameService", "Bound to service");
 
-
     }
 
     private void doUnbindService() {
