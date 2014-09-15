@@ -18,7 +18,7 @@ import de.happycarl.geotown.app.models.GeoTownRoute;
 /**
  * Created by jhbruhn on 20.06.14.
  */
-public class NearRoutesRequest extends Job {
+public class NearRoutesRequest extends NetworkRequestJob {
 
     private final double lat;
     private final double lng;
@@ -85,8 +85,5 @@ public class NearRoutesRequest extends Job {
 
     }
 
-    @Override
-    protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        return false;
-    }
+
 }

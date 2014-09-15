@@ -14,7 +14,7 @@ import de.happycarl.geotown.app.events.net.RouteWaypointsReceivedEvent;
 /**
  * Created by ole on 20.06.14.
  */
-public class GetRouteWaypointsRequest extends Job {
+public class GetRouteWaypointsRequest extends NetworkRequestJob {
 
     private final long routeId;
 
@@ -51,8 +51,4 @@ public class GetRouteWaypointsRequest extends Job {
 
     }
 
-    @Override
-    protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        return false;
-    }
 }

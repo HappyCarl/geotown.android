@@ -10,7 +10,7 @@ import de.happycarl.geotown.app.events.net.UsernameSetEvent;
 /**
  * Created by jhbruhn on 19.06.14.
  */
-public class SetUsernameRequest extends Job {
+public class SetUsernameRequest extends NetworkRequestJob {
     private final String name;
 
     public SetUsernameRequest(String name) {
@@ -39,8 +39,4 @@ public class SetUsernameRequest extends Job {
 
     }
 
-    @Override
-    protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        return false;
-    }
 }

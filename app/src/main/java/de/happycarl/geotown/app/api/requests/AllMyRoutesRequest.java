@@ -15,7 +15,7 @@ import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 /**
  * Created by ole on 18.06.14.
  */
-public class AllMyRoutesRequest extends Job {
+public class AllMyRoutesRequest extends NetworkRequestJob {
     private static final AtomicInteger jobCounter = new AtomicInteger(0);
 
     private final int id;
@@ -59,8 +59,5 @@ public class AllMyRoutesRequest extends Job {
 
     }
 
-    @Override
-    protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        return false;
-    }
+
 }

@@ -12,7 +12,7 @@ import de.happycarl.geotown.app.events.net.CurrentUserDataReceivedEvent;
 /**
  * Created by ole on 19.06.14.
  */
-public class CurrentUserDataRequest extends Job {
+public class CurrentUserDataRequest extends NetworkRequestJob {
     private static final AtomicInteger jobCounter = new AtomicInteger(0);
 
     private final int id;
@@ -48,8 +48,4 @@ public class CurrentUserDataRequest extends Job {
 
     }
 
-    @Override
-    protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        return false;
-    }
 }
