@@ -19,6 +19,9 @@ import android.util.Log;
 import com.activeandroid.query.Select;
 import com.google.common.collect.HashBiMap;
 
+import java.util.List;
+import java.util.Random;
+
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
@@ -35,7 +38,8 @@ public class GameService extends Service {
     /**
      * Command to the service to register a client, receiving callbacks
      * from the service.  The Message's replyTo field must be a Messenger of
-     * the client where callbacks should be sent.
+     * the client where callbacks should be sent. The 2nd argument has to be the seed for the
+     * PRNG
      */
     public static final int MSG_REGISTER_CLIENT = 0x1;
     /**
@@ -52,11 +56,22 @@ public class GameService extends Service {
      * Sent to the clients if the current waypoint was reached
      */
     public static final int MSG_TARGET_WAYPOINT_REACHED = 0x4;
+    /**
+     * Sent to the clients once a new waypoint is set, containing the id as payload
+     */
     public static final int MSG_NEW_WAYPOINT = 0x5;
 
+    /**
+     * Sent by client to switch from GPS to wifi location mode or vice versa
+     */
     public static final int MSG_SET_LOCATION_MODE = 0x6;
 
+    /**
+     * Sent by client if the question was answered correctly,
+     * indicating that a new waypoint has to be generated.
+     */
     public static final int MSG_QUESTION_ANSWERED = 0x7;
+
 
     public static final int MSG_ERROR = 0x99;
 
@@ -69,6 +84,8 @@ public class GameService extends Service {
     HashBiMap<Integer, Messenger> mClients = HashBiMap.create();
     //ArrayList<Messenger> mClients = new ArrayList<>();
     //ArrayList<Integer> mClientIds = new ArrayList<>();
+
+    private Random random;
 
 
     private class IncomingHandler extends Handler {
@@ -164,6 +181,10 @@ public class GameService extends Service {
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        long seed = GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0);
+
+        random = new Random((seed != 0L)? seed : System.currentTimeMillis());
 
         loadRoute();
 
@@ -304,22 +325,39 @@ public class GameService extends Service {
     }
 
     private void selectNewWaypoint() {
+        if(random == null)
+            return;
         if (currentWaypoint == null || currentWaypoint.done) {
 
+            /*
             currentWaypoint = new Select()
                     .from(GeoTownWaypoint.class)
                     .where("done = ?", false)
                     .where("route = ?", currentRoute.getId() )
                     .orderBy("RANDOM()")
                     .executeSingle();
+*/
+
+            //Random with seed testing area
+            List<GeoTownWaypoint> waypoints = new Select()
+                    .from(GeoTownWaypoint.class)
+                    .where("done = ?", false)
+                    .where("route = ?", currentRoute.getId())
+                    .execute();
+
+
+
             Log.d("selectNewWaypoint", "new route null?: " + (currentWaypoint == null));
-            if (currentWaypoint == null) {
+
+            if (waypoints.isEmpty()) {
                 Log.d("selectNewWaypoint", "Route finished");
 
                 int[] id = MathUtil.longToInts(-2L);
                 sendMessage(MSG_NEW_WAYPOINT, id[0], id[1]);
 
             } else {
+                int index = random.nextInt(waypoints.size());
+                currentWaypoint = waypoints.get(index);
                 currentWaypoint.save();
                 Log.d("selectNewWaypoint", "new ID: " + currentWaypoint.id);
                 setLocationToWaypoint();

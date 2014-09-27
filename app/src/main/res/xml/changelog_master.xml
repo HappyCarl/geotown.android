@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog>
+    <release version="0.2" versioncode="2">
+        <change>Fixed app-crash on startup</change>
+    </release>
+    <release version="0.1" versioncode="1">
+        <change>First Alpha release on Google Play Store.</change>
+        <change>These will be build and uploaded manually</change>
+        <change>For absolutely bleeding-edge versions check out the Testfairy builds</change>
+    </release>
+</changelog>

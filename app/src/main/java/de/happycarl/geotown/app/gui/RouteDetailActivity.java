@@ -14,7 +14,9 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ShareActionProvider;
+import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
@@ -51,6 +53,9 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     @InjectView(R.id.route_detail_card_list)
     CardListView cardsList;
+
+    @InjectView(R.id.sync_info_text)
+    TextView syncText;
 
     private ShareActionProvider mShareActionProvider;
     private CardAdapter mCardAdapter;
@@ -111,6 +116,11 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             });
             b.show();
         } else {
+
+            if(GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) != 0L) {
+                syncText.setVisibility(View.VISIBLE);
+            }
+
             loadRoute();
 
             updateRouteUI();

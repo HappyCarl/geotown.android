@@ -6,8 +6,12 @@
         android:orderInCategory="100"
         android:showAsAction="never" />
 
+    <item android:id="@+id/action_sync_qr"
+        android:orderInCategory="50"
+        android:title="@string/action_sync"
+        />
     <item android:id="@+id/action_switch"
-        android:title="Switch view"
+        android:title="Debug information"
         android:orderInCategory="200"
         android:showAsAction="never" />
 </menu>

@@ -14,12 +14,15 @@ public class AppConstants {
     public static final String PREF_CURRENT_WAYPOINT = "current_waypoint";
     public static final String PREF_SCORE_WAYPOINT = "score_waypoint";
     public static final String PREF_SCORE_ROUTE = "score_route";
+    public static final String PREF_PRNG_SEED = "prng_seed";
 
     //Sharing stuff
     public static final String SHARE_DOMAIN_NAME = "http://geotown.de";
     public static final String SHARE_PATH_PREFIX = "/routes/";
-    public static final String SHARE_APPSTORE_LINK = "(Not yet in store)";
+    public static final String SHARE_APPSTORE_LINK = "market://details?id=de.happycarl.geotown.app";
 
-    public static final int WAYPOINT_RADIUS = 5000;
+    public static final String QR_CODE_PREFIX = "geotown-route";
+
+    public static final int WAYPOINT_RADIUS = 30;
 
 }

@@ -15,7 +15,7 @@
     <string name="intro_text">Welcome! Please sign in to proceed.</string>
     <string name="username">Username</string>
     <string name="error_no_username">Please enter a username.</string>
-    <string name="loading">Doing awesome shit…</string>
+    <string name="loading">Initializing account…</string>
     <string name="near_routes">Near Routes</string>
     <string name="no_near_routes">No near routes :(</string>
     <string name="near_routes_no_location">Waiting for GPS…</string>
@@ -32,7 +32,7 @@
     <string name="not_found">Route not found</string>
     <string name="not_found_detail">Sorry, this route does not exist</string>
     <string name="title_activity_playing">Playing Route</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Hello world!</string> <!--lol, why is this still in here-->
     <string name="action_settings">Settings</string>
     <string name="remote_service_notification">This should not be seen…</string>
     <string name="service_connection_lost">Lost connection to service</string>
@@ -50,5 +50,9 @@
     <string name="service_connection_id">Another string just for id purposes… tua mater crassa est!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="clear_route_data">Reset Route</string>
+    <string name="scan_qr_code">Scan QR-Code</string>
+    <string name="invalid_qr">Invalid QR-code data!</string>
+    <string name="sync_info">INFO: This route will be played in sync mode with another player. You will both have the waypoints appearing in the same order</string>
+    <string name="action_sync">Sync with partner</string>
 
 </resources>

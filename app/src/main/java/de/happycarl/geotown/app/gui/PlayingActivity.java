@@ -1,8 +1,10 @@
 package de.happycarl.geotown.app.gui;
 
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -42,6 +44,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     public static final int SERVICE_CONNECTION_ID = R.string.service_connection_id;
 
+
     @InjectView(R.id.distance_view)
     WaypointDistanceView waypointDistanceView;
 
@@ -68,6 +71,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     Messenger gameService = null;
     boolean isBound = false;
+    long seed;
 
     GeoTownWaypoint currentWaypoint;
 
@@ -110,7 +114,9 @@ public class PlayingActivity extends SystemBarTintActivity{
             gameService = new Messenger(service);
             Log.d("GameService","Attached to service");
 
+
             sendMessage(GameService.MSG_REGISTER_CLIENT, SERVICE_CONNECTION_ID, 0);
+
             sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
         }
 
@@ -148,6 +154,14 @@ public class PlayingActivity extends SystemBarTintActivity{
         setContentView(R.layout.activity_playing);
 
         ButterKnife.inject(this);
+
+        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) == 0) {
+            seed = System.currentTimeMillis();
+            GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, seed).apply();
+            Toast.makeText(this,"Put " + seed + " as seed" , Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Read " + GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) + " as seed", Toast.LENGTH_LONG).show();
+        }
 
         doBindService();
 
@@ -242,6 +256,21 @@ public class PlayingActivity extends SystemBarTintActivity{
         } else if(id == R.id.action_switch) {
             switcher.showNext();
             questionShowing = !questionShowing;
+        } else if(id == R.id.action_sync_qr) {
+
+            Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
+            intent.putExtra("ENCODE_FORMAT", "QR_CODE");
+            intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
+
+            String qrPayload = AppConstants.QR_CODE_PREFIX + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) + ":" + seed;
+            intent.putExtra("ENCODE_DATA", qrPayload);
+
+            try {
+                startActivityForResult(intent, 0);
+            } catch (ActivityNotFoundException ex) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.google.zxing.client.android")));
+            }
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -295,6 +324,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
         if(!questionShowing) {
             switcher.showNext();
+
             questionShowing = true;
         }
 
@@ -321,8 +351,11 @@ public class PlayingActivity extends SystemBarTintActivity{
                 .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
         GeotownApplication.getPreferences().edit()
                 .putLong(AppConstants.PREF_CURRENT_ROUTE, -1L).apply();
+
         if(finished) {
             //we finished the route
+            GeotownApplication.getPreferences().edit()
+                    .putLong(AppConstants.PREF_PRNG_SEED, 0L).apply();
             GameUtil.publishRouteFinishToPlayGames(this);
             Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
         }

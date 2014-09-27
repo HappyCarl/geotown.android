@@ -15,17 +15,20 @@ import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
+import com.appspot.drive_log.geotown.Geotown;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.zxing.integration.android.IntentResult;
 import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.cketti.library.changelog.ChangeLog;
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.AllMyRoutesRequest;
@@ -36,6 +39,8 @@ import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.data.OverviewCardsAdapter;
 import de.happycarl.geotown.app.gui.views.RouteCard;
+
+import com.google.zxing.integration.android.IntentIntegrator;
 
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -153,6 +158,37 @@ public class OverviewActivity extends SystemBarTintActivity implements
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
 
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(request, response, data);
+        if (scanResult != null) {
+            Toast.makeText(this,scanResult.getContents(),Toast.LENGTH_LONG).show();
+            String[] splitResult = scanResult.getContents().split(":");
+            if(splitResult.length == 3) {
+
+                if(!splitResult[0].equals(AppConstants.QR_CODE_PREFIX))
+                    Toast.makeText(this, R.string.invalid_qr, Toast.LENGTH_LONG).show();
+                    Log.d("QR-Scan", "First part did not match prefix");
+
+                try {
+
+                    long routeId = Long.parseLong(splitResult[1]);
+                    long prngSeed = Long.parseLong(splitResult[2]);
+
+                    GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, prngSeed);
+                    startOverviewActivity(routeId);
+
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, R.string.invalid_qr, Toast.LENGTH_LONG).show();
+                    Log.d("QR-Scan", "number parsing failed");
+                }
+
+
+            } else {
+                Toast.makeText(this, R.string.invalid_qr, Toast.LENGTH_LONG).show();
+                Log.d("QR-Scan", "does not consist of 3 parts");
+            }
+        }
+
+
         GeotownApplication.getGameHelper().onActivityResult(request, response, data);
         super.onActivityResult(request, response, data);
     }
@@ -167,10 +203,14 @@ public class OverviewActivity extends SystemBarTintActivity implements
         RouteCard rc = (RouteCard) c;
         Log.d("Clicked", rc.getRouteID() + "");
 
-        Intent intent = new Intent(this, RouteDetailActivity.class);
-        intent.putExtra("routeID", rc.getRouteID());
-        startActivity(intent);
+        startOverviewActivity(rc.getRouteID());
         //GeoTownRoute.getRoute(item.getTitle().toString(), GET_ROUTE_BY_NAME_DETAIL_REQUEST);
+    }
+
+    private void startOverviewActivity(long routeID) {
+        Intent intent = new Intent(this, RouteDetailActivity.class);
+        intent.putExtra("routeID", routeID);
+        startActivity(intent);
     }
 
     @Override
@@ -217,6 +257,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
             case R.id.action_glpus_sign_out:
                 if(GeotownApplication.getGameHelper().isSignedIn())
                     GeotownApplication.getGameHelper().signOut();
+                break;
+
+            case R.id.action_scan_qr_route:
+                IntentIntegrator integrator = new IntentIntegrator(this);
+                integrator.initiateScan();
                 break;
 
         }
