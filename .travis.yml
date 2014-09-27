@@ -40,5 +40,5 @@ deploy:
   file: "app/build/outputs/apk/app-release.apk"
   on:
     tags: true
-    all_branches: false
+    all_branches: true
     repo: HappyCarl/geotown.android
