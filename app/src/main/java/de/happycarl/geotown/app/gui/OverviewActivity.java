@@ -160,8 +160,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         IntentResult scanResult = IntentIntegrator.parseActivityResult(request, response, data);
         if (scanResult != null) {
-            Toast.makeText(this,scanResult.getContents(),Toast.LENGTH_LONG).show();
-            String[] splitResult = scanResult.getContents().split(":");
+            String contents = scanResult.getContents();
+            if(contents == null || contents.isEmpty()) return;
+
+            Toast.makeText(this, contents, Toast.LENGTH_LONG).show();
+            String[] splitResult = contents.split(":");
             if(splitResult.length == 3) {
 
                 if(!splitResult[0].equals(AppConstants.QR_CODE_PREFIX))
