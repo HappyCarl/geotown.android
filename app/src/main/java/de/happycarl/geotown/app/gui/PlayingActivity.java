@@ -185,7 +185,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
         ButterKnife.inject(this);
 
-        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) == 0) {
+        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) <= 0) {
             seed = System.currentTimeMillis();
             GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, seed).apply();
         }

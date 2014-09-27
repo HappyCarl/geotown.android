@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GeoTown</string>
+
+    <string name="waypoints">Wegpunkte</string>
+    <string name="route">Route</string>
+
+
+    <string name="title_activity_overview">Übersicht</string>
+    <string name="title_overview_my_routes">Meine Routen</string>
+    <string name="title_overview_local_routes">Gespeicherte Routen</string>
+    <string name="title_overview_near_routes">Routen in der Nähe</string>
+    <string name="message_overview_no_my_routes">Du besitzt keine Routen</string>
+    <string name="message_overview_no_near_routes">Keine Routen in der Nähe :(</string>
+    <string name="message_overview_near_routes_no_location">Warte auf GPS…</string>
+    <string name="message_overview_invalid_qr">Die Daten aus dem QR-Code sind ungültig!</string>
+    <string name="unknown_place">Unbekannter Ort</string>
+    <string name="unknown_town">Unbekannte Stadt</string>
+    <string name="unknown_country">Unbekanntes Land</string>
+    <string name="text_overview_currently_playing">Es wird gespielt</string>
+    <string name="action_overview_close">Schließen</string>
+    <string name="action_overview_achievements">Errungenschaften</string>
+    <string name="action_overview_leaderboard">Highscore</string>
+    <string name="action_overview_gplus_sign_out">Ausloggen</string>
+    <string name="action_overview_gplus_sign_in">Einloggen</string>
+    <string name="action_overview_see_more">Mehr</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_scan_qr_code">QR-Code scannen</string>
+
+
+    <string name="title_activity_route_detail">Route betrachten</string>
+    <string name="text_routedetail_share_text">Ohjo, guck dir mal die GeoTown Route an: %1$s.\nDu hast kein GeoTown? Dann organize es dir jetzt: %2$s</string>
+    <string name="error_routedetail_not_found">Route nicht gefunden werden</string>
+    <string name="error_routedetail_not_found_detail">Diese Route konnte leider nicht gefunden werden.</string>
+    <string name="message_routedetail_cancel_current_route">Willst du wirklich das aktuelle Spiel abbrechen und mit dieser Route beginnen?\n(Der Fortschritt wird gespeichert)</string>
+    <string name="action_routedetail_play_route">Route spielen</string>
+    <string name="action_routedetail_clear_route_data">Route zurücksetzen</string>
+
+
+    <string name="title_activity_firststart">Anmelden</string>
+    <string name="action_firststart_login">Anmelden</string>
+    <string name="text_firststart_intro">Moin! Bitte melde Dich an um fortzufahren.</string>
+    <string name="text_firststart_username">Benutzername</string>
+    <string name="text_firststart_loading">Bereite Nutzerkonto vor…</string>
+    <string name="error_firststart_no_username">Bitte gib einen Nutzernamen ein.</string>
+
+
+    <string name="title_activity_playing">Spiele Route</string>
+    <string name="action_playing_cancel">Route abbrechen</string>
+    <string name="action_playing_sync">Mit Partner synchronisieren</string>
+    <string name="text_playing_distance_to">Distanz zum Ziel:</string>
+    <string name="message_playing_wrong_answer">Du hast die falsche Antwort ausgewählt!</string>
+    <string name="message_playing_route_finished">Glückwunsch! Du hast die Route beendet.</string>
+
+
+    <string name="service_connection_lost">Verbindung zum Service verloren.</string>
+
+    <string name="gamehelper_sign_in_failed">Failed to sign in. Please check your network connection and try again.</string>
+    <string name="gamehelper_app_misconfigured">The application is incorrectly configured. Check that the package name and signing certificate match the client ID created in Developer Console. Also, if the application is not yet published, check that the account you are trying to sign in with is listed as a tester account. See logs for more information.</string>
+    <string name="gamehelper_license_failed">License check failed.</string>
+    <string name="gamehelper_unknown_error">Unknown error.</string>
+    <string name="gplus_first_sign_in">Dafür musst du dich mit Google+ anmelden.</string>
+
+
+</resources>
