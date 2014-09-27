@@ -99,6 +99,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mGameHelper.setConnectOnStart(false);
         setContentView(R.layout.activity_start);
 
         ButterKnife.inject(this);
@@ -118,7 +119,10 @@ public class FirstStartActivity extends SystemBarTintActivity {
         if (!storedAccountName.isEmpty()) {
             setSelectedAccountName(storedAccountName);
 
+            progressDialog = ProgressDialog.show(this, "", getString(R.string.loading));
+
             ((GeotownApplication) getApplication()).doServerLogin(credential);
+            mGameHelper.beginUserInitiatedSignIn();
         }
     }
 
@@ -238,8 +242,10 @@ public class FirstStartActivity extends SystemBarTintActivity {
         mGameHelper.beginUserInitiatedSignIn();
     }
 
-    @Subscribe
-    public void onGoogleClientConnected(GoogleClientConnectedEvent e) {
+    protected void onSignInSucceeded() {
+        if(progressDialog != null)
+            progressDialog.cancel();
+
         Log.i("PEDAB", "Sign In Arrived");
         if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, -1L) != -1) {
             Intent playingActivity = new Intent(this, PlayingActivity.class);
