@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.activeandroid.query.Select;
@@ -155,7 +154,7 @@ public class PlayingActivity extends SystemBarTintActivity{
             Log.d("GameService", "Disconnected service");
             gameService = null;
 
-            Toast.makeText(PlayingActivity.this, R.string.service_connection_lost, Toast.LENGTH_LONG).show();
+            Crouton.makeText(PlayingActivity.this, R.string.service_connection_lost, Style.INFO).show();
         }
     };
 
@@ -188,9 +187,6 @@ public class PlayingActivity extends SystemBarTintActivity{
         if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) == 0) {
             seed = System.currentTimeMillis();
             GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, seed).apply();
-            Toast.makeText(this,"Put " + seed + " as seed" , Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Read " + GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) + " as seed", Toast.LENGTH_LONG).show();
         }
 
         doBindService();
@@ -374,7 +370,8 @@ public class PlayingActivity extends SystemBarTintActivity{
             GeotownApplication.getPreferences().edit()
                     .putLong(AppConstants.PREF_PRNG_SEED, 0L).apply();
             GameUtil.publishRouteFinishToPlayGames(this, mGameHelper);
-            Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
+
+            Crouton.makeText(this, R.string.route_finished, Style.CONFIRM).show();
         }
 
         Intent overview = new Intent(this, OverviewActivity.class);
@@ -393,7 +390,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         } catch (RemoteException e) {
             e.printStackTrace();
             doUnbindService();
-            Toast.makeText(this, "Service did not respond", Toast.LENGTH_LONG).show();
+            Crouton.makeText(this, "Service did not respond", Style.INFO).show();
         }
     }
 

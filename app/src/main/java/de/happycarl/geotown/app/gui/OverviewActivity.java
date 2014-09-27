@@ -9,13 +9,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
-import com.appspot.drive_log.geotown.Geotown;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.games.Games;
@@ -39,6 +37,8 @@ import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.data.OverviewCardsAdapter;
 import de.happycarl.geotown.app.gui.views.RouteCard;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
@@ -160,12 +160,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
             String contents = scanResult.getContents();
             if(contents == null || contents.isEmpty()) return;
 
-            Toast.makeText(this, contents, Toast.LENGTH_LONG).show();
             String[] splitResult = contents.split(":");
             if(splitResult.length == 3) {
 
                 if(!splitResult[0].equals(AppConstants.QR_CODE_PREFIX))
-                    Toast.makeText(this, R.string.invalid_qr, Toast.LENGTH_LONG).show();
+                    Crouton.makeText(this, R.string.invalid_qr, Style.ALERT).show();
                     Log.d("QR-Scan", "First part did not match prefix");
 
                 try {
@@ -177,13 +176,13 @@ public class OverviewActivity extends SystemBarTintActivity implements
                     startOverviewActivity(routeId);
 
                 } catch (NumberFormatException e) {
-                    Toast.makeText(this, R.string.invalid_qr, Toast.LENGTH_LONG).show();
+                    Crouton.makeText(this, R.string.invalid_qr, Style.ALERT).show();
                     Log.d("QR-Scan", "number parsing failed");
                 }
 
 
             } else {
-                Toast.makeText(this, R.string.invalid_qr, Toast.LENGTH_LONG).show();
+                Crouton.makeText(this, R.string.invalid_qr, Style.ALERT).show();
                 Log.d("QR-Scan", "does not consist of 3 parts");
             }
         }
@@ -237,7 +236,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 if(mGameHelper.isSignedIn()) {
                     startActivityForResult(Games.Achievements.getAchievementsIntent(mGameHelper.getApiClient()), 42);
                 } else {
-                    Toast.makeText(this, R.string.gplus_first_sign_in, Toast.LENGTH_LONG).show();
+                    Crouton.makeText(this, R.string.gplus_first_sign_in, Style.INFO).show();
                 }
 
                 break;
@@ -247,7 +246,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
                     startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGameHelper.getApiClient(),
                             getString(R.string.leaderboard_routes)), 43);
                 } else {
-                    Toast.makeText(this, R.string.gplus_first_sign_in, Toast.LENGTH_LONG).show();
+                    Crouton.makeText(this, R.string.gplus_first_sign_in, Style.INFO).show();
                 }
 
                 break;
