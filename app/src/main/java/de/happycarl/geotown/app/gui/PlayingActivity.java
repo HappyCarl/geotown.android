@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.happycarl.geotown.app.AppConstants;
+import de.happycarl.geotown.app.BuildConfig;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.gui.views.FadingImageView;
@@ -268,8 +269,12 @@ public class PlayingActivity extends SystemBarTintActivity{
             routeEnd(false);
             return true;
         } else if(id == R.id.action_switch) {
-            switcher.showNext();
-            questionShowing = !questionShowing;
+            if(BuildConfig.DEBUG) {
+                switcher.showNext();
+                questionShowing = !questionShowing;
+            } else {
+                Crouton.makeText(this, "Pscht.", Style.INFO).show();
+            }
         } else if(id == R.id.action_sync_qr) {
 
             Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
