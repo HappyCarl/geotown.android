@@ -44,18 +44,12 @@ import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
 public class RouteDetailActivity extends SystemBarTintActivity implements RouteActionsCard.RouteActionsCardListener {
-
-    public static final int REQUEST_ROUTE_ID = 876354;
-
     //================================================================================
     // Properties
     //================================================================================
 
     @InjectView(R.id.route_detail_card_list)
     CardListView cardsList;
-
-    @InjectView(R.id.sync_info_text)
-    TextView syncText;
 
     private ShareActionProvider mShareActionProvider;
     private CardAdapter mCardAdapter;
@@ -116,11 +110,6 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             });
             b.show();
         } else {
-
-            if(GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) != 0L) {
-                syncText.setVisibility(View.VISIBLE);
-            }
-
             loadRoute();
 
             updateRouteUI();

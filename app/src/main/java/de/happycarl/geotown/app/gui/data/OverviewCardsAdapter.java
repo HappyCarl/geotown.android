@@ -125,8 +125,10 @@ public class OverviewCardsAdapter extends CardAdapter {
                 this.remove(noLocalRoutesIndex);
         }
 
-        for (GeoTownRoute r : localRoutes)
+        for (GeoTownRoute r : localRoutes) {
+            Log.d("PEDA", r.name);
             this.add(localRoutesIndex++, new RouteCard(this.getContext(), this, r));
+        }
     }
 
     private void updateMyRoutes() {
