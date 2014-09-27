@@ -166,26 +166,6 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         super.onResume();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        GeotownApplication.getGameHelper().onStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        GeotownApplication.getGameHelper().onStop();
-    }
-
-
-    @Override
-    protected void onActivityResult(int request, int response, Intent data) {
-
-        GeotownApplication.getGameHelper().onActivityResult(request, response, data);
-        super.onActivityResult(request, response, data);
-    }
-
     //================================================================================
     // UI
     //================================================================================

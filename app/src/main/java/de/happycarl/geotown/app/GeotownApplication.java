@@ -24,7 +24,7 @@ import de.happycarl.geotown.app.events.google.GoogleClientConnectionFailedEvent;
 /**
  * Created by jhbruhn on 19.06.14.
  */
-public class GeotownApplication extends Application implements GameHelper.GameHelperListener {
+public class GeotownApplication extends Application {
 
     public static final Handler mHandler = new Handler();
 
@@ -32,7 +32,6 @@ public class GeotownApplication extends Application implements GameHelper.GameHe
     private static SharedPreferences mPreferences;
     private static Geotown mGeotown;
     private static JobManager mJobManager;
-    private static GameHelper mGameHelper;
 
 
     public static Bus getEventBus() {
@@ -51,21 +50,8 @@ public class GeotownApplication extends Application implements GameHelper.GameHe
         return mJobManager;
     }
 
-    public static GameHelper getGameHelper() {
-        return mGameHelper;
-    }
-
     public void doServerLogin(GoogleAccountCredential cred) {
         mGeotown = ApiUtils.getApiServiceHandle(cred);
-    }
-
-    public void doGooglePlayLogin(Activity a) {
-        Log.i("PEDAB", "Logging in...");
-        mGameHelper = new GameHelper(a, GameHelper.CLIENT_GAMES);
-        mGameHelper.setConnectOnStart(true);
-        mGameHelper.enableDebugLog(true);
-        mGameHelper.setup(this);
-        mGameHelper.onStart(a);
     }
 
     @Override
@@ -75,7 +61,7 @@ public class GeotownApplication extends Application implements GameHelper.GameHe
         ActiveAndroid.initialize(this);
 
         mEventBus = new Bus(ThreadEnforcer.MAIN);
-        mPreferences = getSharedPreferences(AppConstants.PREF_NAME, 0 | MODE_MULTI_PROCESS);
+        mPreferences = getSharedPreferences(AppConstants.PREF_NAME, MODE_MULTI_PROCESS);
         mGeotown = ApiUtils.getApiServiceHandle(null);
 
         configureJobManager();
@@ -121,17 +107,5 @@ public class GeotownApplication extends Application implements GameHelper.GameHe
     public void onTerminate() {
         super.onTerminate();
         ActiveAndroid.dispose();
-    }
-
-    @Override
-    public void onSignInFailed() {
-        Log.i("PEDAB", "Sign In Failed");
-        mEventBus.post(new GoogleClientConnectionFailedEvent());
-    }
-
-    @Override
-    public void onSignInSucceeded() {
-        Log.i("PEDAB", "Sign In Succeeded");
-        mEventBus.post(new GoogleClientConnectedEvent());
     }
 }

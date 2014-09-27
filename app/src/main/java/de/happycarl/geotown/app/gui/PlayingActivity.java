@@ -214,26 +214,10 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     }
 
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        GeotownApplication.getGameHelper().onStart(this);
-    }
-
     @Override
     public void onResume() {
         sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
         super.onResume();
-    }
-
-
-    @Override
-    protected void onActivityResult(int request, int response, Intent data) {
-
-        GeotownApplication.getGameHelper().onActivityResult(request, response, data);
-        super.onActivityResult(request, response, data);
     }
 
     @Override
@@ -279,7 +263,6 @@ public class PlayingActivity extends SystemBarTintActivity{
     public void onStop() {
         if(serviceIntoBackgroundMode)
             sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.BACKGROUND.ordinal(), 0);
-        GeotownApplication.getGameHelper().onStop();
 
         super.onStop();
     }
@@ -333,7 +316,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     private void questionAnswerCorrect() {
         sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
-        GameUtil.publishWaypointFinishToPlayGames(this);
+        GameUtil.publishWaypointFinishToPlayGames(this, mGameHelper);
 
 
         if(questionShowing) {
@@ -356,7 +339,7 @@ public class PlayingActivity extends SystemBarTintActivity{
             //we finished the route
             GeotownApplication.getPreferences().edit()
                     .putLong(AppConstants.PREF_PRNG_SEED, 0L).apply();
-            GameUtil.publishRouteFinishToPlayGames(this);
+            GameUtil.publishRouteFinishToPlayGames(this, mGameHelper);
             Toast.makeText(this, R.string.route_finished, Toast.LENGTH_LONG).show();
         }
 

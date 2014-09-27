@@ -139,8 +139,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
         super.onStart();
         locationClient.connect();
         this.refreshRoutes();
-        GeotownApplication.getGameHelper().onStart(this);
-        GeotownApplication.getGameHelper().makeSimpleDialog("Welcome back!");
     }
 
     @Override
@@ -151,7 +149,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         // Disconnecting the client invalidates it.
         locationClient.disconnect();
-        GeotownApplication.getGameHelper().onStop();
         super.onStop();
     }
 
@@ -191,8 +188,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
             }
         }
 
-
-        GeotownApplication.getGameHelper().onActivityResult(request, response, data);
         super.onActivityResult(request, response, data);
     }
     //================================================================================
@@ -239,8 +234,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
                 break;
             case R.id.action_achievements:
-                if(GeotownApplication.getGameHelper().isSignedIn()) {
-                    startActivityForResult(Games.Achievements.getAchievementsIntent(GeotownApplication.getGameHelper().getApiClient()), 42);
+                if(mGameHelper.isSignedIn()) {
+                    startActivityForResult(Games.Achievements.getAchievementsIntent(mGameHelper.getApiClient()), 42);
                 } else {
                     Toast.makeText(this, R.string.gplus_first_sign_in, Toast.LENGTH_LONG).show();
                 }
@@ -248,8 +243,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 break;
 
             case R.id.action_leaderboard:
-                if(GeotownApplication.getGameHelper().isSignedIn()) {
-                    startActivityForResult(Games.Leaderboards.getLeaderboardIntent(GeotownApplication.getGameHelper().getApiClient(),
+                if(mGameHelper.isSignedIn()) {
+                    startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGameHelper.getApiClient(),
                             getString(R.string.leaderboard_routes)), 43);
                 } else {
                     Toast.makeText(this, R.string.gplus_first_sign_in, Toast.LENGTH_LONG).show();
@@ -258,8 +253,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 break;
 
             case R.id.action_glpus_sign_out:
-                if(GeotownApplication.getGameHelper().isSignedIn())
-                    GeotownApplication.getGameHelper().signOut();
+                if(mGameHelper.isSignedIn())
+                    mGameHelper.signOut();
                 break;
 
             case R.id.action_scan_qr_route:

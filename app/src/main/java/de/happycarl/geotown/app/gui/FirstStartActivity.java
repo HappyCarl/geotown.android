@@ -119,7 +119,6 @@ public class FirstStartActivity extends SystemBarTintActivity {
             setSelectedAccountName(storedAccountName);
 
             ((GeotownApplication) getApplication()).doServerLogin(credential);
-            ((GeotownApplication) getApplication()).doGooglePlayLogin(this);
         }
     }
 
@@ -133,7 +132,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        GeotownApplication.getGameHelper().onActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
             case REQUEST_ACCOUNT_PICKER:
                 if (data != null && data.getExtras() != null) {
@@ -181,20 +180,6 @@ public class FirstStartActivity extends SystemBarTintActivity {
         this.updateAccountChooserValue(accountName);
         credential.setSelectedAccountName(accountName);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if(GeotownApplication.getGameHelper() != null)
-            GeotownApplication.getGameHelper().onStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        GeotownApplication.getGameHelper().onStop();
-    }
-
 
     //================================================================================
     // Networking
@@ -249,7 +234,8 @@ public class FirstStartActivity extends SystemBarTintActivity {
     public void onUsernameSet(UsernameSetEvent e) {
         GeotownApplication.getPreferences().edit().putString(AppConstants.PREF_ACCOUNT_NAME, e.userData.getUsername()).apply();
         progressDialog.cancel();
-        ((GeotownApplication) getApplication()).doGooglePlayLogin(this);
+
+        mGameHelper.beginUserInitiatedSignIn();
     }
 
     @Subscribe
