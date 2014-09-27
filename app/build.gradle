@@ -82,6 +82,11 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.+'
     compile 'com.path:android-priority-jobqueue:1.1.2'
     compile 'de.cketti.library.changelog:ckchangelog:1.2.0'
+    compile('de.keyboardsurfer.android.widget:crouton:1.8.4') {
+        // exclusion is not neccessary, but generally a good idea.
+        exclude group: 'com.google.android', module: 'support-v4'
+    }
+
     // BEGIN Google APIs
     // Play Services will validate the application prior to allowing OAuth2 access.
     compile('com.google.android.gms:play-services:5.0.89') {

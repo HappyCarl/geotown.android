@@ -54,5 +54,6 @@
     <string name="invalid_qr">Invalid QR-code data!</string>
     <string name="sync_info">INFO: This route will be played in sync mode with another player. You will both have the waypoints appearing in the same order</string>
     <string name="action_sync">Sync with partner</string>
+    <string name="wrong_answer">You selected the wrong answer!</string>
 
 </resources>

@@ -39,6 +39,8 @@ import de.happycarl.geotown.app.models.GeoTownWaypoint;
 import de.happycarl.geotown.app.service.GameService;
 import de.happycarl.geotown.app.util.GameUtil;
 import de.happycarl.geotown.app.util.MathUtil;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class PlayingActivity extends SystemBarTintActivity{
 
@@ -400,7 +402,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         if(answer1.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
         } else {
-            wrongAnswerCountdown.start();
+            wrongAnswerClicked();
         }
     }
 
@@ -409,7 +411,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         if(answer2.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
         }else {
-            wrongAnswerCountdown.start();
+            wrongAnswerClicked();
         }
     }
 
@@ -418,7 +420,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         if(answer3.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
         }else {
-            wrongAnswerCountdown.start();
+            wrongAnswerClicked();
         }
     }
 
@@ -427,8 +429,13 @@ public class PlayingActivity extends SystemBarTintActivity{
         if(answer4.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
         }else {
-            wrongAnswerCountdown.start();
+            wrongAnswerClicked();
         }
+    }
+
+    private void wrongAnswerClicked() {
+        wrongAnswerCountdown.start();
+        Crouton.makeText(this, R.string.wrong_answer, Style.ALERT).show();
     }
 
 }
