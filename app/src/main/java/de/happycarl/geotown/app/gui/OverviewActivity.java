@@ -164,7 +164,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
             if(splitResult.length == 3) {
 
                 if(!splitResult[0].equals(AppConstants.QR_CODE_PREFIX))
-                    Crouton.makeText(this, R.string.invalid_qr, Style.ALERT).show();
+                    Crouton.makeText(this, R.string.message_overview_invalid_qr, Style.ALERT).show();
                     Log.d("QR-Scan", "First part did not match prefix");
 
                 try {
@@ -176,13 +176,13 @@ public class OverviewActivity extends SystemBarTintActivity implements
                     startOverviewActivity(routeId);
 
                 } catch (NumberFormatException e) {
-                    Crouton.makeText(this, R.string.invalid_qr, Style.ALERT).show();
+                    Crouton.makeText(this, R.string.message_overview_invalid_qr, Style.ALERT).show();
                     Log.d("QR-Scan", "number parsing failed");
                 }
 
 
             } else {
-                Crouton.makeText(this, R.string.invalid_qr, Style.ALERT).show();
+                Crouton.makeText(this, R.string.message_overview_invalid_qr, Style.ALERT).show();
                 Log.d("QR-Scan", "does not consist of 3 parts");
             }
         }
@@ -229,9 +229,6 @@ public class OverviewActivity extends SystemBarTintActivity implements
             case R.id.action_close:
                 finish();
                 return true;
-            case R.id.action_about:
-
-                break;
             case R.id.action_achievements:
                 if(mGameHelper.isSignedIn()) {
                     startActivityForResult(Games.Achievements.getAchievementsIntent(mGameHelper.getApiClient()), 42);

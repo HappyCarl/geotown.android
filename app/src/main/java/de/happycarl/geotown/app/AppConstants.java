@@ -23,6 +23,8 @@ public class AppConstants {
 
     public static final String QR_CODE_PREFIX = "geotown-route";
 
+    public static final int REMOTE_SERVICE_NOTIFICATION = 4212425;
+
     public static final int WAYPOINT_RADIUS = 30;
 
 }

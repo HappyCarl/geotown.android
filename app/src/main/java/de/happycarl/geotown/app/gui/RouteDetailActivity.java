@@ -105,8 +105,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         if (routeId == -1L) {
             AlertDialog.Builder b = new AlertDialog.Builder(this);
             b.setCancelable(false);
-            b.setTitle(R.string.not_found);
-            b.setMessage(R.string.not_found_detail);
+            b.setTitle(R.string.error_routedetail_not_found);
+            b.setMessage(R.string.error_routedetail_not_found_detail);
             b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
                 @Override
@@ -247,7 +247,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
 
         String routeShare = AppConstants.SHARE_DOMAIN_NAME + AppConstants.SHARE_PATH_PREFIX + routeId;
-        String shareTextRaw = getResources().getString(R.string.share_text);
+        String shareTextRaw = getResources().getString(R.string.text_routedetail_share_text);
         String shareText = String.format(shareTextRaw, routeShare, AppConstants.SHARE_APPSTORE_LINK);
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
         shareIntent.setType("text/plain");
@@ -300,7 +300,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder
-                    .setMessage(R.string.cancel_current_route)
+                    .setMessage(R.string.message_routedetail_cancel_current_route)
                     .setPositiveButton(android.R.string.yes, dialogClickListener)
                     .setNegativeButton(android.R.string.no, dialogClickListener).show();
 

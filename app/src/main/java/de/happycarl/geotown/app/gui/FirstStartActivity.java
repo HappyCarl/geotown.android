@@ -30,7 +30,6 @@ import de.happycarl.geotown.app.util.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.CurrentUserDataRequest;
 import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
-import de.happycarl.geotown.app.events.google.GoogleClientConnectedEvent;
 import de.happycarl.geotown.app.events.net.UsernameSetEvent;
 
 
@@ -87,7 +86,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         @Override
         public void afterTextChanged(Editable editable) {
             if (usernameEditText.getText().toString().length() <= 0)
-                usernameEditText.setError(getString(R.string.error_no_username));
+                usernameEditText.setError(getString(R.string.error_firststart_no_username));
         }
     };
 
@@ -119,7 +118,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         if (!storedAccountName.isEmpty()) {
             setSelectedAccountName(storedAccountName);
 
-            progressDialog = ProgressDialog.show(this, "", getString(R.string.loading));
+            progressDialog = ProgressDialog.show(this, "", getString(R.string.text_firststart_loading));
 
             ((GeotownApplication) getApplication()).doServerLogin(credential);
             mGameHelper.beginUserInitiatedSignIn();
@@ -194,7 +193,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         if (!GoogleUtils.checkGooglePlayServicesAvailable(this))
             return;
         if (usernameEditText.getText().toString().length() <= 0) {
-            usernameEditText.setError(getString(R.string.error_no_username));
+            usernameEditText.setError(getString(R.string.error_firststart_no_username));
             return;
         }
         setSelectedAccountName(accountName);
@@ -203,7 +202,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
 
 
         if (credential.getSelectedAccountName() != null) {
-            progressDialog = ProgressDialog.show(this, "", getString(R.string.loading));
+            progressDialog = ProgressDialog.show(this, "", getString(R.string.text_firststart_loading));
             startSetUsernameRequest((usernameEditText.getText().toString().trim()));
         } else {
             Log.d("Login", "Showing account picker");

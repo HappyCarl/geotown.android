@@ -32,13 +32,13 @@ public class OverviewCardsAdapter extends CardAdapter {
 
     private GeoTownRoute currentRoute;
 
-    private final CardHeader nearRoutesHeader = new CardHeader(getContext().getString(R.string.near_routes));
-    private final CardHeader localRoutesHeader = new CardHeader(getContext().getString(R.string.local_routes));
-    private final CardHeader myRoutesHeader = new CardHeader(getContext().getString(R.string.my_routes));
+    private final CardHeader nearRoutesHeader = new CardHeader(getContext().getString(R.string.title_overview_near_routes));
+    private final CardHeader localRoutesHeader = new CardHeader(getContext().getString(R.string.title_overview_local_routes));
+    private final CardHeader myRoutesHeader = new CardHeader(getContext().getString(R.string.title_overview_my_routes));
 
-    private final CardCenteredHeader noOwnRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_routes));
-    private final CardCenteredHeader noLocalRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_routes));
-    private final CardCenteredHeader noNearRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.no_near_routes));
+    private final CardCenteredHeader noOwnRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.message_overview_no_my_routes));
+    private final CardCenteredHeader noLocalRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.message_overview_no_my_routes));
+    private final CardCenteredHeader noNearRoutesHeader = new CardCenteredHeader(getContext().getString(R.string.message_overview_no_near_routes));
 
     private ProgressCard progressCard;
 

@@ -14,13 +14,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="@string/intro_text" />
+        android:text="@string/text_firststart_intro" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:hint="@string/username"
+        android:hint="@string/text_firststart_username"
         android:ems="10"
         android:id="@+id/username_edit_text"
         android:layout_below="@+id/intro_text_view"
@@ -38,7 +38,7 @@
     <Button
         android:layout_width="110dp"
         android:layout_height="48dp"
-        android:text="@string/start_button"
+        android:text="@string/action_firststart_login"
         android:id="@+id/start_button"
         android:layout_below="@+id/account_chooser_spinner"
         android:layout_centerHorizontal="true" />

@@ -195,16 +195,16 @@ public class GameService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("GameService","Shutting down...");
-        mNM.cancel(R.string.remote_service_notification);
+        Log.d("GameService", "Shutting down...");
+        mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION);
 
         locationManager.removeUpdates(locationListener);
     }
 
 
     private void showStatusNotification() {
-        CharSequence text = getText(R.string.currently_playing);
-        CharSequence distText = getText(R.string.distanceTo);
+        CharSequence text = getText(R.string.text_overview_currently_playing);
+        CharSequence distText = getText(R.string.text_playing_distance_to);
 
         notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.notification_world)
@@ -217,11 +217,11 @@ public class GameService extends Service {
         notificationBuilder.setContentIntent(pendingIntent);
 
 
-        mNM.notify(R.string.remote_service_notification, notificationBuilder.build());
+        mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION, notificationBuilder.build());
     }
 
     private void clearStatusNotification() {
-        mNM.cancel(R.string.remote_service_notification);
+        mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION);
     }
 
     @Override

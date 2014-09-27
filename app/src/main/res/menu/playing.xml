@@ -2,13 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="de.happycarl.geotown.app.gui.PlayingActivity" >
     <item android:id="@+id/action_cancel"
-        android:title="@string/action_cancel"
+        android:title="@string/action_playing_cancel"
         android:orderInCategory="100"
         android:showAsAction="never" />
 
     <item android:id="@+id/action_sync_qr"
         android:orderInCategory="50"
-        android:title="@string/action_sync"
+        android:title="@string/action_playing_sync"
         />
     <item android:id="@+id/action_switch"
         android:title="Debug information"

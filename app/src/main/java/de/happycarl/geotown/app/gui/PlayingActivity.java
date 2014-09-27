@@ -45,7 +45,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class PlayingActivity extends SystemBarTintActivity{
 
 
-    public static final int SERVICE_CONNECTION_ID = R.string.service_connection_id;
+    public static final int SERVICE_CONNECTION_ID = 42129;
 
 
     @InjectView(R.id.distance_view)
@@ -376,7 +376,7 @@ public class PlayingActivity extends SystemBarTintActivity{
                     .putLong(AppConstants.PREF_PRNG_SEED, 0L).apply();
             GameUtil.publishRouteFinishToPlayGames(this, mGameHelper);
 
-            Crouton.makeText(this, R.string.route_finished, Style.CONFIRM).show();
+            Crouton.makeText(this, R.string.message_playing_route_finished, Style.CONFIRM).show();
         }
 
         Intent overview = new Intent(this, OverviewActivity.class);
@@ -437,7 +437,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     private void wrongAnswerClicked() {
         wrongAnswerCountdown.start();
-        Crouton.makeText(this, R.string.wrong_answer, Style.ALERT).show();
+        Crouton.makeText(this, R.string.message_playing_wrong_answer, Style.ALERT).show();
     }
 
 }
