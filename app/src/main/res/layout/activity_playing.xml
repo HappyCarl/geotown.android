@@ -50,6 +50,8 @@
                 android:layout_height="0dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Question"
+                android:padding="10dp"
+                android:gravity="center"
                 android:id="@+id/questionText"
                 android:layout_weight="4" />
 
