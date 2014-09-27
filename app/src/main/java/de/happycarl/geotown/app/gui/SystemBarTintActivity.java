@@ -28,7 +28,6 @@ public abstract class SystemBarTintActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         initSystemBarTint();
 
-
         // create game helper with all APIs (Games and Plus):
         mGameHelper = new GameHelper(this, GameHelper.CLIENT_GAMES);
 
