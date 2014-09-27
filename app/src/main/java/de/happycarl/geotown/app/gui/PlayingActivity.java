@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -72,6 +73,33 @@ public class PlayingActivity extends SystemBarTintActivity{
     Messenger gameService = null;
     boolean isBound = false;
     long seed;
+
+    String[] answers = new String[4];
+    CountDownTimer wrongAnswerCountdown = new CountDownTimer(30000, 1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            answer1.setEnabled(false);
+            answer2.setEnabled(false);
+            answer3.setEnabled(false);
+            answer4.setEnabled(false);
+            answer1.setText(Long.toString(millisUntilFinished / 1000));
+            answer2.setText(Long.toString(millisUntilFinished / 1000));
+            answer3.setText(Long.toString(millisUntilFinished / 1000));
+            answer4.setText(Long.toString(millisUntilFinished / 1000));
+        }
+
+        @Override
+        public void onFinish() {
+            answer1.setEnabled(true);
+            answer2.setEnabled(true);
+            answer3.setEnabled(true);
+            answer4.setEnabled(true);
+            answer1.setText(answers[0]);
+            answer2.setText(answers[1]);
+            answer3.setText(answers[2]);
+            answer4.setText(answers[3]);
+        }
+    };
 
     GeoTownWaypoint currentWaypoint;
 
@@ -203,9 +231,13 @@ public class PlayingActivity extends SystemBarTintActivity{
 
             try{
                 answer1.setText(ans.get(0));
+                answers[0] = ans.get(0);
                 answer2.setText(ans.get(1));
+                answers[1] = ans.get(1);
                 answer3.setText(ans.get(2));
+                answers[2] = ans.get(2);
                 answer4.setText(ans.get(3));
+                answers[3] = ans.get(3);
             } catch (NullPointerException | IndexOutOfBoundsException ex) {
                 Log.d("WaypointQuestion", "Creator did not specify 4 answers");
             }
@@ -367,6 +399,8 @@ public class PlayingActivity extends SystemBarTintActivity{
     public void onAnswer1Clicked() {
         if(answer1.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
+        } else {
+            wrongAnswerCountdown.start();
         }
     }
 
@@ -374,6 +408,8 @@ public class PlayingActivity extends SystemBarTintActivity{
     public void onAnswer2Clicked() {
         if(answer2.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
+        }else {
+            wrongAnswerCountdown.start();
         }
     }
 
@@ -381,6 +417,8 @@ public class PlayingActivity extends SystemBarTintActivity{
     public void onAnswer3Clicked() {
         if(answer3.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
+        }else {
+            wrongAnswerCountdown.start();
         }
     }
 
@@ -388,6 +426,8 @@ public class PlayingActivity extends SystemBarTintActivity{
     public void onAnswer4Clicked() {
         if(answer4.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
+        }else {
+            wrongAnswerCountdown.start();
         }
     }
 
