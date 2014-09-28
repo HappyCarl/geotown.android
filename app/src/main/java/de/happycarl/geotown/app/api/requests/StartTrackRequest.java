@@ -15,7 +15,7 @@ public class StartTrackRequest extends NetworkRequestJob {
     long routeId;
 
     public StartTrackRequest(long routeId) {
-        super(new Params(3).requireNetwork().persist().groupBy("start-track"));
+        super(new Params(1).requireNetwork().persist().groupBy("start-track"));
         this.routeId = routeId;
     }
 
@@ -26,7 +26,6 @@ public class StartTrackRequest extends NetworkRequestJob {
 
     @Override
     public void onRun() throws Throwable {
-
         final long trackId = GeotownApplication.getGeotown().tracks().startTrack(routeId).execute().getId();
         Log.d("StartTrackRequest", "Got track id: " + trackId);
 

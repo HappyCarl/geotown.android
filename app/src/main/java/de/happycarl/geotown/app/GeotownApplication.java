@@ -2,6 +2,7 @@ package de.happycarl.geotown.app;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
@@ -32,7 +33,7 @@ public class GeotownApplication extends Application {
     private static SharedPreferences mPreferences;
     private static Geotown mGeotown;
     private static JobManager mJobManager;
-
+    private static Context mContext;
 
     public static Bus getEventBus() {
         return mEventBus;
@@ -49,6 +50,8 @@ public class GeotownApplication extends Application {
     public static JobManager getJobManager() {
         return mJobManager;
     }
+
+    public static Context getContext() {return mContext;}
 
     public void doServerLogin(GoogleAccountCredential cred) {
         mGeotown = ApiUtils.getApiServiceHandle(cred);
@@ -67,6 +70,8 @@ public class GeotownApplication extends Application {
         configureJobManager();
 
         mEventBus.post(new ApplicationStartedEvent(this));
+
+        mContext = this.getApplicationContext();
 
     }
 

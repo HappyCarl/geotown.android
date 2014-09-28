@@ -12,6 +12,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.BufferedReader;
@@ -34,7 +35,7 @@ public class FinishTrackRequest extends NetworkRequestJob {
     String gpxFile;
 
     public FinishTrackRequest(long trackId, String gpxFile) {
-        super(new Params(3).requireNetwork().persist().groupBy("finish-track"));
+        super(new Params(1).requireNetwork().persist().groupBy("finish-track"));
 
         this.gpxFile = gpxFile;
         this.trackId = trackId;
@@ -72,11 +73,11 @@ public class FinishTrackRequest extends NetworkRequestJob {
                 builder.append(line).append("\n");
             }
             JSONTokener tokener = new JSONTokener(builder.toString());
-            JSONArray finalResult = new JSONArray(tokener);
+            JSONObject finalResult = new JSONObject(tokener);
 
             Log.d("FinishTrackRequest", "Result: " + finalResult.toString());
 
-            String blobKey = finalResult.getString(0);
+            String blobKey = finalResult.getString("blobkey");
             if (blobKey != null) {
                 Log.d("FinishTrackRequest", "BlobKey: " + blobKey);
                 GeotownApplication.getGeotown().tracks().finishTrack(blobKey, trackId).execute();
