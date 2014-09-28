@@ -274,7 +274,6 @@ public class OverviewCardsAdapter extends CardAdapter {
 
         @Override
         protected void onPostExecute(final GeoTownRoute route) {
-            Log.d("Ulf", route + "");
             handler.post(new Runnable() {
                 @Override
                 public void run() {
