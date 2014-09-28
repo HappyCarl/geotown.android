@@ -60,7 +60,7 @@ public class WaypointDistanceView extends View {
 
         centerHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         centerHighlightPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        centerHighlightPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
+        centerHighlightPaint.setColor(getResources().getColor(android.R.color.holo_green_light));
         centerHighlightPaint.setStrokeWidth(10f);
 
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

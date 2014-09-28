@@ -17,7 +17,7 @@
     <string name="unknown_place">Unbekannter Ort</string>
     <string name="unknown_town">Unbekannte Stadt</string>
     <string name="unknown_country">Unbekanntes Land</string>
-    <string name="text_overview_currently_playing">Es wird gespielt</string>
+    <string name="text_overview_currently_playing">Spiele Route</string>
     <string name="action_overview_close">Schließen</string>
     <string name="action_overview_achievements">Errungenschaften</string>
     <string name="action_overview_leaderboard">Highscore</string>

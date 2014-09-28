@@ -17,6 +17,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.activeandroid.query.Select;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.HashBiMap;
 
 import java.util.List;
@@ -34,7 +38,7 @@ import de.happycarl.geotown.app.util.MathUtil;
 /**
  * Created by ole on 12.07.14.
  */
-public class GameService extends Service {
+public class GameService extends Service implements GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener, GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * Command to the service to register a client, receiving callbacks
@@ -73,6 +77,16 @@ public class GameService extends Service {
      */
     public static final int MSG_QUESTION_ANSWERED = 0x7;
 
+    /**
+     * Sent by Service when init is done
+     */
+    public static final int MSG_CONNECTED = 0x8;
+
+    /*
+     * Sent by activity when it was attached
+     */
+    public static final int MSG_ATTACHED = 0x9;
+
 
     public static final int MSG_ERROR = 0x99;
 
@@ -83,13 +97,10 @@ public class GameService extends Service {
     //Stuff for service
     NotificationManager mNM;
     HashBiMap<Integer, Messenger> mClients = HashBiMap.create();
-    //ArrayList<Messenger> mClients = new ArrayList<>();
-    //ArrayList<Integer> mClientIds = new ArrayList<>();
 
     private Random random;
 
     GPXRouteLogger routeLogger;
-
 
     private class IncomingHandler extends Handler {
 
@@ -97,6 +108,10 @@ public class GameService extends Service {
         public void handleMessage(Message msg) {
             Log.d("ServerReceiver", "Received " + msg.what + " (" + msg.arg1 + ";" + msg.arg2 + ")");
             switch (msg.what) {
+                case MSG_ATTACHED:
+                    if(mApiClient.isConnected())
+                        GameService.this.sendMessage(MSG_CONNECTED, 0, 0);
+                    break;
                 case MSG_REGISTER_CLIENT:
                     Log.d("GameService","Client registered :" + msg.arg1);
                     if(msg.arg1 == 0)
@@ -133,30 +148,7 @@ public class GameService extends Service {
         }
     }
 
-
-    //Location stuff
-    LocationManager locationManager;
-    LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            updateDistanceToTarget(location);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
+    private GoogleApiClient mApiClient;
 
 
     public enum ListenMode {
@@ -176,6 +168,8 @@ public class GameService extends Service {
     private Location currentTarget;
 
 
+
+
     //--------------------------------------------------------------------------------------------------
     //SERVICE LIFECYCLE & COMMUNICATION
     //--------------------------------------------------------------------------------------------------
@@ -183,31 +177,34 @@ public class GameService extends Service {
     public void onCreate() {
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        mApiClient = new GoogleApiClient.Builder(getApplicationContext())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        mApiClient.connect();
+
+        loadRoute();
 
         long seed = GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0);
 
         random = new Random((seed != 0L)? seed : System.currentTimeMillis());
-
-        loadRoute();
-
-        //Normally set to background, activity should set it to foreground
-        setLocationListenMode(ListenMode.BACKGROUND);
-
     }
 
     @Override
     public void onDestroy() {
         Log.d("GameService", "Shutting down...");
         mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION);
-
-        locationManager.removeUpdates(locationListener);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mApiClient, this);
     }
 
 
     private void showStatusNotification() {
         CharSequence text = getText(R.string.text_overview_currently_playing);
         CharSequence distText = getText(R.string.text_playing_distance_to);
+
+        Log.d("ROUTE", currentRoute+ "");
 
         notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.notification_world)
@@ -247,12 +244,9 @@ public class GameService extends Service {
 
     private void reportDistanceToTarget() {
         if (distanceToTarget == -1) {
-            Location oldGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            Location oldNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Location oldGPS = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
             if (oldGPS != null) {
                 distanceToTarget = (int) currentTarget.distanceTo(oldGPS);
-            } else if (oldNetwork != null) {
-                distanceToTarget = (int) currentTarget.distanceTo(oldNetwork);
             }
 
         }
@@ -335,27 +329,15 @@ public class GameService extends Service {
     }
 
     private void selectNewWaypoint() {
-        if(random == null)
+        if(random == null || currentRoute == null)
             return;
         if (currentWaypoint == null || currentWaypoint.done) {
-
-            /*
-            currentWaypoint = new Select()
-                    .from(GeoTownWaypoint.class)
-                    .where("done = ?", false)
-                    .where("route = ?", currentRoute.getId() )
-                    .orderBy("RANDOM()")
-                    .executeSingle();
-*/
-
             //Random with seed testing area
             List<GeoTownWaypoint> waypoints = new Select()
                     .from(GeoTownWaypoint.class)
                     .where("done = ?", false)
                     .where("route = ?", currentRoute.getId())
                     .execute();
-
-
 
             Log.d("selectNewWaypoint", "new route null?: " + (currentWaypoint == null));
 
@@ -389,6 +371,29 @@ public class GameService extends Service {
     //--------------------------------------------------------------------------------------------------
     //LOCATION HANDLING
     //--------------------------------------------------------------------------------------------------
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d("LocationServer", "Connected");
+        setLocationListenMode(ListenMode.BACKGROUND);
+        sendMessage(MSG_CONNECTED, 0, 0);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        updateDistanceToTarget(location);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e("LOCATION", connectionResult.toString());
+    }
+
     private void updateDistanceToTarget(Location location) {
         if (location == null || currentWaypoint == null || currentTarget == null)
             return;
@@ -409,16 +414,24 @@ public class GameService extends Service {
         }
         currentListenMode = mode;
         //First remove it
-        locationManager.removeUpdates(locationListener);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mApiClient, this);
+
+
+        LocationRequest request = LocationRequest.create();
+
         Log.d("LocationService", "Disabled location updates");
         switch (mode) {
             case FOREGROUND:
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 2, locationListener);
+                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                request.setInterval(5000);
+                LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, request, this);
                 Log.d("LocationService", "Set to GPS mode");
                 clearStatusNotification();
                 break;
             case BACKGROUND:
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30, 100, locationListener);
+                request.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+                request.setInterval(1000);
+                LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, request, this);
                 Log.d("LocationService", "Set to Network mode");
                 showStatusNotification();
                 break;

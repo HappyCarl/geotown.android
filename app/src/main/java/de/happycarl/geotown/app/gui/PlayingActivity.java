@@ -115,6 +115,9 @@ public class PlayingActivity extends SystemBarTintActivity{
         public void handleMessage(Message msg) {
             Log.d("ClientReceiver" , "Received " + msg.what + " (" + msg.arg1 + ";" + msg.arg2 + ")");
             switch (msg.what) {
+                case GameService.MSG_CONNECTED:
+                    PlayingActivity.this.sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
+                    break;
                 case GameService.MSG_DISTANCE_TO_TARGET:
                     waypointDistanceView.setDistance(msg.arg1);
                     break;
@@ -145,11 +148,8 @@ public class PlayingActivity extends SystemBarTintActivity{
         public void onServiceConnected(ComponentName name, IBinder service) {
             gameService = new Messenger(service);
             Log.d("GameService","Attached to service");
-
-
-            sendMessage(GameService.MSG_REGISTER_CLIENT, SERVICE_CONNECTION_ID, 0);
-
-            sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
+            PlayingActivity.this.sendMessage(GameService.MSG_ATTACHED, 0, 0);
+            PlayingActivity.this.sendMessage(GameService.MSG_REGISTER_CLIENT, SERVICE_CONNECTION_ID, 0);
         }
 
         @Override
