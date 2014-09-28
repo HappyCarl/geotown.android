@@ -15,6 +15,7 @@ public class AppConstants {
     public static final String PREF_SCORE_WAYPOINT = "score_waypoint";
     public static final String PREF_SCORE_ROUTE = "score_route";
     public static final String PREF_PRNG_SEED = "prng_seed";
+    public static final String PREF_SUBMIT_TRACK_DATA = "submit_track_data";
 
     //Sharing stuff
     public static final String SHARE_DOMAIN_NAME = "http://geotown.de";

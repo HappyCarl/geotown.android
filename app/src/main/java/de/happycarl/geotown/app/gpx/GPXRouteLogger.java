@@ -38,8 +38,10 @@ public class GPXRouteLogger {
 
     DateFormat dateFormat;
 
+    Location lastLocation;
+
     public GPXRouteLogger() {
-        username = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_NAME, "<default>");
+        username = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "<no-mail-given>");
 
         TimeZone tz = TimeZone.getTimeZone("UTC");
         dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
@@ -63,15 +65,26 @@ public class GPXRouteLogger {
 
     public void addWaypoint(GeoTownWaypoint wp) {
         waypointsInOrder.put(wp, new Date());
+        Log.d("GPXRouteLogger", "Added waypoint : " + wp.question);
     }
 
     public void addPosition(Location pos) {
+        if(lastLocation == null) {
+            lastLocation = pos;
+            lastLocation.setLatitude(0);
+        }
+        //only log new position data
+        if(pos.getLongitude() == lastLocation.getLongitude() && pos.getLatitude() == lastLocation.getLatitude())
+            return;
+
         position.put(pos, new Date());
+        lastLocation = pos;
+        Log.d("GPXRouteLogger", "Added position: " + pos.getLatitude() + " : " + pos.getLongitude());
     }
 
-    public void generateXml() {
+    public String generateXml() {
         if (route == null)
-            return;
+            return null;
 
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
@@ -96,25 +109,26 @@ public class GPXRouteLogger {
             serializer.endDocument();
 
 
-            if (!saveFileToSDCard(writer)) return;
+            return saveFileToSDCard(writer);
 
         } catch (Exception e) {
-            Log.d("GPXRouteLogger", e.getMessage());
+            Log.e("GPXRouteLogger", e.getMessage());
         }
+        return null;
 
     }
 
-    private boolean saveFileToSDCard(StringWriter writer) throws IOException {
+    private String saveFileToSDCard(StringWriter writer) throws IOException {
         if(!isExternalStorageWritable()) {
             Log.e("GPXRouteLogger", "External storage not writable");
-            return false;
+            return null;
 
         }
         File trackFileDirectory = new File(Environment.getExternalStorageDirectory(), "/GeoTown");
         Log.d("GPXRouteLogger", "" + trackFileDirectory.exists());
         if (!trackFileDirectory.exists() && !trackFileDirectory.mkdirs()) {
             Log.e("GPXRouteLogger", "Directory creation failed: " + Environment.getExternalStorageDirectory().getAbsolutePath() + "   -   " + trackFileDirectory.getAbsolutePath());
-            return false;
+            return null;
         }
 
         File trackFile = new File(trackFileDirectory, "route-" + route.name + "-" + route.id + "-" + dateFormat.format(new Date()) + ".gpx");
@@ -122,7 +136,7 @@ public class GPXRouteLogger {
         FileWriter fileWriter = new FileWriter(trackFile);
         fileWriter.write(writer.toString());
         fileWriter.close();
-        return true;
+        return trackFile.getAbsolutePath();
     }
 
     private void generateGPSTrack(XmlSerializer serializer) throws IOException {

@@ -31,9 +31,16 @@
         android:orderInCategory="150"
         android:showAsAction="never"/>
 
+    <item android:id="@+id/action_upload_track_data"
+        android:title="@string/action_overview_upload_track_data"
+        android:orderInCategory="60"
+        android:showAsAction="never"
+        android:checkable="true"
+        />
+
     <item android:id="@+id/action_glpus_sign_out"
         android:title="@string/action_overview_gplus_sign_out"
-        android:orderInCategory="150"
+        android:orderInCategory="190"
         android:showAsAction="never"/>
 
     <item android:id="@+id/action_close"

@@ -14,6 +14,7 @@
     <string name="message_overview_near_routes_no_location">Waiting for GPS…</string>
     <string name="message_overview_invalid_qr">Invalid QR-code data!</string>
     <string name="message_overview_sync_info">INFO: This route will be played in sync mode with another player. You will both have the waypoints appearing in the same order</string>
+    <string name="message_overview_submit_track_info">WARNING: If this option is activated, your movements while actively playing a route is logged and later uploaded to our servers. This might contain sensitive information about your position and the time you played. This information will NOT be visible for other users nor will it be used for marketing purposes. You can later download &amp; manage these track data from www.geotown.de. Do you agree with uploading the data?</string>
     <string name="unknown_place">Unknown Place</string>
     <string name="unknown_town">Unknown Town</string>
     <string name="unknown_country">Unknown Country</string>
@@ -24,6 +25,7 @@
     <string name="action_overview_gplus_sign_out">Log out</string>
     <string name="action_overview_gplus_sign_in">Log in</string>
     <string name="action_overview_see_more">See More</string>
+    <string name="action_overview_upload_track_data">Upload track</string>
     <string name="action_delete">Delete</string>
     <string name="action_scan_qr_code">Scan QR-Code</string>
     <string name="title_activity_route_detail">Look at the Route</string>
@@ -67,5 +69,6 @@
     <string name="gamehelper_license_failed">License check failed.</string>
     <string name="gamehelper_unknown_error">Unknown error.</string>
     <string name="gplus_first_sign_in">You have to sign in to Google+ first</string>
+
 
 </resources>

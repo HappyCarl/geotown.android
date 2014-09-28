@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
@@ -18,11 +19,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.PolylineOptionsCreator;
+import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.api.requests.FinishTrackRequest;
+import de.happycarl.geotown.app.events.net.TrackFinishedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
@@ -103,4 +108,5 @@ public class RouteFinishedActivity extends Activity {
                     .executeSingle();
         }
     }
+
 }

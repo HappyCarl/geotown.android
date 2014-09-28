@@ -1,5 +1,7 @@
 package de.happycarl.geotown.app.gui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
@@ -20,6 +22,7 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.squareup.otto.Subscribe;
 
@@ -39,8 +42,6 @@ import de.happycarl.geotown.app.gui.data.OverviewCardsAdapter;
 import de.happycarl.geotown.app.gui.views.RouteCard;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-
-import com.google.zxing.integration.android.IntentIntegrator;
 
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -113,6 +114,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
         locationRequest.setInterval(UPDATE_INTERVAL);
         locationRequest.setFastestInterval(FASTEST_INTERVAL);
 
+
         refreshRoutes();
 
         ChangeLog cl = new ChangeLog(this);
@@ -158,14 +160,14 @@ public class OverviewActivity extends SystemBarTintActivity implements
         IntentResult scanResult = IntentIntegrator.parseActivityResult(request, response, data);
         if (scanResult != null) {
             String contents = scanResult.getContents();
-            if(contents == null || contents.isEmpty()) return;
+            if (contents == null || contents.isEmpty()) return;
 
             String[] splitResult = contents.split(":");
-            if(splitResult.length == 3) {
+            if (splitResult.length == 3) {
 
-                if(!splitResult[0].equals(AppConstants.QR_CODE_PREFIX))
+                if (!splitResult[0].equals(AppConstants.QR_CODE_PREFIX))
                     Crouton.makeText(this, R.string.message_overview_invalid_qr, Style.ALERT).show();
-                    Log.d("QR-Scan", "First part did not match prefix");
+                Log.d("QR-Scan", "First part did not match prefix");
 
                 try {
 
@@ -218,6 +220,13 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_upload_track_data).setChecked(GeotownApplication.getPreferences().getBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false));
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -230,7 +239,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 finish();
                 return true;
             case R.id.action_achievements:
-                if(mGameHelper.isSignedIn()) {
+                if (mGameHelper.isSignedIn()) {
                     startActivityForResult(Games.Achievements.getAchievementsIntent(mGameHelper.getApiClient()), 42);
                 } else {
                     Crouton.makeText(this, R.string.gplus_first_sign_in, Style.INFO).show();
@@ -239,7 +248,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 break;
 
             case R.id.action_leaderboard:
-                if(mGameHelper.isSignedIn()) {
+                if (mGameHelper.isSignedIn()) {
                     startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGameHelper.getApiClient(),
                             getString(R.string.leaderboard_routes)), 43);
                 } else {
@@ -249,13 +258,46 @@ public class OverviewActivity extends SystemBarTintActivity implements
                 break;
 
             case R.id.action_glpus_sign_out:
-                if(mGameHelper.isSignedIn())
+                if (mGameHelper.isSignedIn())
                     mGameHelper.signOut();
                 break;
 
             case R.id.action_scan_qr_route:
                 IntentIntegrator integrator = new IntentIntegrator(this);
                 integrator.initiateScan();
+                break;
+
+            case R.id.action_upload_track_data:
+                Log.d("OverviewActivity", "Clicked Upload GPS");
+                if (!item.isChecked()) {
+                    final MenuItem finItem = item;
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, true).apply();
+                                    finItem.setChecked(true);
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false).apply();
+                                    finItem.setChecked(false);
+                                    break;
+                            }
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder
+                            .setMessage(R.string.message_overview_submit_track_info)
+                            .setPositiveButton(android.R.string.yes, dialogClickListener)
+                            .setNegativeButton(android.R.string.no, dialogClickListener).show();
+                } else {
+                    GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false).apply();
+                    item.setChecked(false);
+                }
+
                 break;
 
         }

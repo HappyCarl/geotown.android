@@ -5,8 +5,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,6 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.HashBiMap;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 import java.util.Random;
@@ -29,6 +28,10 @@ import java.util.Random;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.api.requests.FinishTrackRequest;
+import de.happycarl.geotown.app.api.requests.StartTrackRequest;
+import de.happycarl.geotown.app.events.net.TrackFinishedEvent;
+import de.happycarl.geotown.app.events.net.TrackStartedEvent;
 import de.happycarl.geotown.app.gpx.GPXRouteLogger;
 import de.happycarl.geotown.app.gui.PlayingActivity;
 import de.happycarl.geotown.app.models.GeoTownRoute;
@@ -102,6 +105,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
     GPXRouteLogger routeLogger;
 
+    private long trackId;
+
     private class IncomingHandler extends Handler {
 
         @Override
@@ -109,22 +114,22 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
             Log.d("ServerReceiver", "Received " + msg.what + " (" + msg.arg1 + ";" + msg.arg2 + ")");
             switch (msg.what) {
                 case MSG_ATTACHED:
-                    if(mApiClient.isConnected())
+                    if (mApiClient.isConnected())
                         GameService.this.sendMessage(MSG_CONNECTED, 0, 0);
                     break;
                 case MSG_REGISTER_CLIENT:
-                    Log.d("GameService","Client registered :" + msg.arg1);
-                    if(msg.arg1 == 0)
+                    Log.d("GameService", "Client registered :" + msg.arg1);
+                    if (msg.arg1 == 0)
                         break;
                     mClients.forcePut(msg.arg1, msg.replyTo);
                     reportWaypoint();
                     break;
                 case MSG_UNREGISTER_CLIENT:
-                    Log.d("GameService","Client unregistered :" + msg.arg1);
-                    if(msg.arg1 == 0)
+                    Log.d("GameService", "Client unregistered :" + msg.arg1);
+                    if (msg.arg1 == 0)
                         break;
                     mClients.remove(msg.arg1);
-                    if(mClients.size() == 0)
+                    if (mClients.size() == 0)
                         stopSelf();
                     break;
                 case MSG_DISTANCE_TO_TARGET:
@@ -168,8 +173,6 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     private Location currentTarget;
 
 
-
-
     //--------------------------------------------------------------------------------------------------
     //SERVICE LIFECYCLE & COMMUNICATION
     //--------------------------------------------------------------------------------------------------
@@ -185,11 +188,13 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 .build();
         mApiClient.connect();
 
+        GeotownApplication.getEventBus().register(this);
+
         loadRoute();
 
         long seed = GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0);
 
-        random = new Random((seed != 0L)? seed : System.currentTimeMillis());
+        random = new Random((seed != 0L) ? seed : System.currentTimeMillis());
     }
 
     @Override
@@ -204,7 +209,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         CharSequence text = getText(R.string.text_overview_currently_playing);
         CharSequence distText = getText(R.string.text_playing_distance_to);
 
-        Log.d("ROUTE", currentRoute+ "");
+        Log.d("ROUTE", currentRoute + "");
 
         notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.notification_world)
@@ -232,7 +237,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     private void sendMessage(int messageCode, int arg1, int arg2) {
         Log.d("ServerMessenger", "Sending :" + messageCode + " (" + arg1 + ";" + arg2 + ")");
         Log.d("ServerMessenger", "Clients: " + mClients.size());
-        for(Messenger messenger : mClients.values()) {
+        for (Messenger messenger : mClients.values()) {
             try {
                 messenger.send(Message.obtain(null, messageCode, arg1, arg2));
             } catch (RemoteException ex) {
@@ -284,7 +289,9 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
             reportError(ERROR_NO_ROUTE);
             stopSelf();
         } else {
+
             routeLogger = new GPXRouteLogger(currentRoute);
+            GeotownApplication.getJobManager().addJob(new StartTrackRequest(id));
 
             if (!loadCurrentWaypoint()) { //Old waypoint loaded, so report it to app
                 reportWaypoint();
@@ -329,7 +336,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     }
 
     private void selectNewWaypoint() {
-        if(random == null || currentRoute == null)
+        if (random == null || currentRoute == null)
             return;
         if (currentWaypoint == null || currentWaypoint.done) {
             //Random with seed testing area
@@ -347,8 +354,15 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 int[] id = MathUtil.longToInts(-2L);
                 sendMessage(MSG_NEW_WAYPOINT, id[0], id[1]);
 
-                routeLogger.generateXml();
+                String gpxPath = routeLogger.generateXml();
 
+                //only submit if user accepted
+                if(GeotownApplication.getPreferences().getBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false)) {
+                    Log.d("GameService", "UPLOAD TRACK STARTED");
+                    GeotownApplication.getJobManager().addJob(new FinishTrackRequest(trackId, gpxPath));
+                } else {
+                    Log.d("GameService", "NO TRACK UPLOAD");
+                }
             } else {
                 int index = random.nextInt(waypoints.size());
                 currentWaypoint = waypoints.get(index);
@@ -441,6 +455,22 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
             default:
         }
     }
+
+    @Subscribe
+    public void onTrackStarted(TrackStartedEvent event) {
+        trackId = event.trackId;
+    }
+
+    @Subscribe
+    public void onTrackFinished(TrackFinishedEvent event) {
+        if (event.success) {
+            Log.d("GameService", "Upload of track successfull");
+        } else {
+            Log.e("GameService", "Upload of track failed");
+        }
+    }
+
+
 
 
 }

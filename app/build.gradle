@@ -107,6 +107,6 @@ dependencies {
     // END Google APIs
     // This is used by the Google HTTP client library.
     compile 'com.google.guava:guava:14.0.+'
-    compile 'com.appspot.drive_log:geotown:0.3.8-SNAPSHOT'
+    compile 'com.appspot.drive_log:geotown:0.3.9-SNAPSHOT'
     compile 'com.google.zxing:android-integration:3.0.0'
 }
