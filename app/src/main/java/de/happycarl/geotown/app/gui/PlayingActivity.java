@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
 import com.squareup.picasso.Picasso;
 
@@ -440,5 +442,6 @@ public class PlayingActivity extends SystemBarTintActivity{
         wrongAnswerCountdown.start();
         Crouton.makeText(this, R.string.message_playing_wrong_answer, Style.ALERT).show();
     }
+
 
 }
