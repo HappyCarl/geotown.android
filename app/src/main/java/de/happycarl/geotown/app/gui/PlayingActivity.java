@@ -377,11 +377,18 @@ public class PlayingActivity extends SystemBarTintActivity{
             GameUtil.publishRouteFinishToPlayGames(this, mGameHelper);
 
             Crouton.makeText(this, R.string.message_playing_route_finished, Style.CONFIRM).show();
-        }
 
-        Intent overview = new Intent(this, OverviewActivity.class);
-        startActivity(overview);
-        finish();
+            Long routeId = this.currentWaypoint.route.id;
+
+            Intent finishedActivity = new Intent(this, RouteFinishedActivity.class);
+            finishedActivity.putExtra("routeId", routeId);
+            startActivity(finishedActivity);
+            finish();
+        } else {
+            Intent overview = new Intent(this, OverviewActivity.class);
+            startActivity(overview);
+            finish();
+        }
     }
 
     private void sendMessage(int request, int arg1, int arg2) {

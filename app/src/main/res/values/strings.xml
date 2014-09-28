@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GeoTown</string>
 
+    <string name="app_name">GeoTown</string>
     <string name="waypoints">Waypoints</string>
     <string name="route">Route</string>
-
-
+    <!-- Activity Overview -->
     <string name="title_activity_overview">Overview</string>
     <string name="title_overview_my_routes">My Routes</string>
     <string name="title_overview_local_routes">Saved Routes</string>
@@ -27,9 +26,10 @@
     <string name="action_overview_see_more">See More</string>
     <string name="action_delete">Delete</string>
     <string name="action_scan_qr_code">Scan QR-Code</string>
-
-
     <string name="title_activity_route_detail">Look at the Route</string>
+
+
+    <!-- Activity Route Detail -->
     <string name="text_routedetail_share_text">Hey, check out this epic GeoTown Route: %1$s.\nNot playing GeoTown yet? Get it now: %2$s</string>
     <string name="error_routedetail_not_found">Route not found</string>
     <string name="error_routedetail_not_found_detail">Sorry, this route does not exist</string>
@@ -37,7 +37,7 @@
     <string name="action_routedetail_play_route">Play Route</string>
     <string name="action_routedetail_clear_route_data">Reset Route</string>
 
-
+    <!-- Activity First Start -->
     <string name="title_activity_firststart">Login</string>
     <string name="action_firststart_login">Log In</string>
     <string name="text_firststart_intro">Welcome! Please sign in to proceed.</string>
@@ -45,7 +45,7 @@
     <string name="text_firststart_loading">Initializing account…</string>
     <string name="error_firststart_no_username">Please enter a username.</string>
 
-
+    <!-- Activity Playing -->
     <string name="title_activity_playing">Playing Route</string>
     <string name="action_playing_cancel">Cancel Route</string>
     <string name="action_playing_sync">Sync with partner</string>
@@ -54,14 +54,18 @@
     <string name="message_playing_right_answer">Correct!</string>
     <string name="message_playing_route_finished">Congratulations! You completed the route.</string>
 
+    <!-- Activity Route Finished -->
+    <string name="title_activity_route_finished">Route Finished!</string>
+    <string name="text_route_finished_header">Congratulations!</string>
+    <string name="text_route_finished_text">You finished the Route %1$s.</string>
+    <string name="button_route_finished_okay">Okay</string>
 
+    <!-- Common -->
     <string name="service_connection_lost">Lost connection to service</string>
-
     <string name="gamehelper_sign_in_failed">Failed to sign in. Please check your network connection and try again.</string>
     <string name="gamehelper_app_misconfigured">The application is incorrectly configured. Check that the package name and signing certificate match the client ID created in Developer Console. Also, if the application is not yet published, check that the account you are trying to sign in with is listed as a tester account. See logs for more information.</string>
     <string name="gamehelper_license_failed">License check failed.</string>
     <string name="gamehelper_unknown_error">Unknown error.</string>
     <string name="gplus_first_sign_in">You have to sign in to Google+ first</string>
-
 
 </resources>

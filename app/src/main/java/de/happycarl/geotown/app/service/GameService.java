@@ -398,12 +398,15 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         if (location == null || currentWaypoint == null || currentTarget == null)
             return;
         distanceToTarget = (int) currentTarget.distanceTo(location);
+
         if (distanceToTarget <= AppConstants.WAYPOINT_RADIUS && distanceToTarget > 0) {
             sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
-
         }
+
         reportDistanceToTarget();
+
         routeLogger.addPosition(location);
+
         if (currentListenMode == ListenMode.BACKGROUND)
             showStatusNotification();
     }
