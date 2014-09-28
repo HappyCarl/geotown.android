@@ -25,6 +25,7 @@ import java.util.Random;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.gpx.GPXRouteLogger;
 import de.happycarl.geotown.app.gui.PlayingActivity;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
@@ -86,6 +87,8 @@ public class GameService extends Service {
     //ArrayList<Integer> mClientIds = new ArrayList<>();
 
     private Random random;
+
+    GPXRouteLogger routeLogger;
 
 
     private class IncomingHandler extends Handler {
@@ -287,6 +290,8 @@ public class GameService extends Service {
             reportError(ERROR_NO_ROUTE);
             stopSelf();
         } else {
+            routeLogger = new GPXRouteLogger(currentRoute);
+
             if (!loadCurrentWaypoint()) { //Old waypoint loaded, so report it to app
                 reportWaypoint();
             }
@@ -321,6 +326,11 @@ public class GameService extends Service {
         currentTarget = new Location("GeoTownWaypoint");
         currentTarget.setLatitude(currentWaypoint.latitude);
         currentTarget.setLongitude(currentWaypoint.longitude);
+
+        //As this is called for every new waypoint, no matter if loaded from Preferences or randomly selected
+        //we pass the waypoint here to the logger
+        routeLogger.addWaypoint(currentWaypoint);
+
         distanceToTarget = -1;
     }
 
@@ -355,6 +365,8 @@ public class GameService extends Service {
                 int[] id = MathUtil.longToInts(-2L);
                 sendMessage(MSG_NEW_WAYPOINT, id[0], id[1]);
 
+                routeLogger.generateXml();
+
             } else {
                 int index = random.nextInt(waypoints.size());
                 currentWaypoint = waypoints.get(index);
@@ -386,6 +398,7 @@ public class GameService extends Service {
 
         }
         reportDistanceToTarget();
+        routeLogger.addPosition(location);
         if (currentListenMode == ListenMode.BACKGROUND)
             showStatusNotification();
     }
