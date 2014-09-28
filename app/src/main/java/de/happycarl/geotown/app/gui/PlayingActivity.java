@@ -439,7 +439,8 @@ public class PlayingActivity extends SystemBarTintActivity{
     }
 
     private void wrongAnswerClicked() {
-        wrongAnswerCountdown.start();
+        if(!BuildConfig.DEBUG)
+            wrongAnswerCountdown.start();
         Crouton.makeText(this, R.string.message_playing_wrong_answer, Style.ALERT).show();
     }
 
