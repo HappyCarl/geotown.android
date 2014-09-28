@@ -105,9 +105,15 @@ public class GPXRouteLogger {
     }
 
     private boolean saveFileToSDCard(StringWriter writer) throws IOException {
-        File trackFileDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "/GeoTown");
-        if (!trackFileDirectory.mkdirs()) {
-            Log.e("GPXRouteLogger", "Directory creation failed");
+        if(!isExternalStorageWritable()) {
+            Log.e("GPXRouteLogger", "External storage not writable");
+            return false;
+
+        }
+        File trackFileDirectory = new File(Environment.getExternalStorageDirectory(), "/GeoTown");
+        Log.d("GPXRouteLogger", "" + trackFileDirectory.exists());
+        if (!trackFileDirectory.exists() && !trackFileDirectory.mkdirs()) {
+            Log.e("GPXRouteLogger", "Directory creation failed: " + Environment.getExternalStorageDirectory().getAbsolutePath() + "   -   " + trackFileDirectory.getAbsolutePath());
             return false;
         }
 
