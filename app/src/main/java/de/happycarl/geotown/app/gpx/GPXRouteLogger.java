@@ -131,6 +131,7 @@ public class GPXRouteLogger {
         serializer.startTag("", "name");
         serializer.text(route.name + " - " + username);
         serializer.endTag("", "name");
+
         serializer.startTag("", "desc");
         serializer.text("GPS data of route \"" + route.name + "\" played by \"" + username + "\"");
         serializer.endTag("", "desc");
@@ -162,6 +163,7 @@ public class GPXRouteLogger {
 
     private void generateRouteData(XmlSerializer serializer) throws IOException {
         serializer.startTag("", "rte"); //Here will be the route data containing the waypoints in the order played by the user
+
         serializer.startTag("", "name");
         serializer.text(route.name);
         serializer.endTag("", "name");
@@ -183,6 +185,8 @@ public class GPXRouteLogger {
             serializer.startTag("", "desc");
             serializer.text(entry.getKey().imageURL);
             serializer.endTag("", "desc");
+
+            serializer.endTag("", "rtept");
         }
 
         serializer.endTag("", "rte"); //end of route data
