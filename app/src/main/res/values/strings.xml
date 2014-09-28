@@ -51,6 +51,7 @@
     <string name="action_playing_sync">Sync with partner</string>
     <string name="text_playing_distance_to">Distance to target:</string>
     <string name="message_playing_wrong_answer">You selected the wrong answer!</string>
+    <string name="message_playing_right_answer">Correct!</string>
     <string name="message_playing_route_finished">Congratulations! You completed the route.</string>
 
 

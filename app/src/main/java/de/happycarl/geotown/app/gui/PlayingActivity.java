@@ -350,6 +350,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     }
 
     private void questionAnswerCorrect() {
+        Crouton.makeText(this, R.string.message_playing_right_answer, Style.CONFIRM).show();
         sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
         GameUtil.publishWaypointFinishToPlayGames(this, mGameHelper);
 
