@@ -14,6 +14,7 @@ import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
+import de.happycarl.geotown.app.util.GeocoderUtil;
 
 /**
  * Created by jhbruhn on 20.06.14.
@@ -59,6 +60,7 @@ public class NearRoutesRequest extends NetworkRequestJob {
             GeoTownRoute route = new Select().from(GeoTownRoute.class).where("routeID = ?", r.getId()).executeSingle();
             if(route == null)
                 route = new GeoTownRoute();
+            route.location = GeocoderUtil.geocodeLocation(r.getLatitude(), r.getLongitude(), GeotownApplication.getContext());
             route.id = r.getId();
             route.nearIndex = i++;
             route.name = r.getName();

@@ -14,6 +14,7 @@ import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.events.net.RouteDataReceivedEvent;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
+import de.happycarl.geotown.app.util.GeocoderUtil;
 
 /**
  * Created by ole on 19.06.14.
@@ -41,6 +42,7 @@ public class RouteRequest extends NetworkRequestJob {
         GeoTownRoute route = new Select().from(GeoTownRoute.class).where("routeID = ?", r.getId()).executeSingle();
         if (route == null)
             route = new GeoTownRoute();
+        route.location = GeocoderUtil.geocodeLocation(r.getLatitude(), r.getLongitude(), GeotownApplication.getContext());
         route.id = r.getId();
         route.name = r.getName();
         route.latitude = r.getLatitude();

@@ -37,6 +37,9 @@ public class GeoTownRoute extends Model {
     @Column(name = "starred")
     public boolean starred;
 
+    @Column(name = "location")
+    public String location;
+
     public List<GeoTownWaypoint> waypoints() {
         return getMany(GeoTownWaypoint.class, "route");
     }
