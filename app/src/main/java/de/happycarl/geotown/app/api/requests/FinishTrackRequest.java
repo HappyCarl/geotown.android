@@ -6,6 +6,13 @@ import android.util.Log;
 import com.appspot.drive_log.geotown.Geotown;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.path.android.jobqueue.Params;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.MultipartBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -65,11 +72,23 @@ public class FinishTrackRequest extends NetworkRequestJob {
 
         if (uploadUrl != null && !uploadUrl.isEmpty()) {
 
-            HttpClient httpClient = AndroidHttpClient.newInstance("GeoTown-App");
+            RequestBody body = new MultipartBuilder()
+                    .type(MultipartBuilder.FORM)
+                    .addPart(Headers.of("Content-Disposition", "form-data; name=\"gpx\""),
+                            RequestBody.create(MediaType.parse("text/plain"), readGPXFile())).build();
+
+            Request request = new Request.Builder().url(uploadUrl).post(body).build();
+
+            Response r = new OkHttpClient().newCall(request).execute();
+
+
+            /*HttpClient httpClient = AndroidHttpClient.newInstance("GeoTown-App");
             HttpPost httpPost = new HttpPost(uploadUrl);
 
             List<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("gpx", readGPXFile()));
+
+            httpPost.setHeader("Content-Type", "multipart/form-data");
 
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 
@@ -80,9 +99,10 @@ public class FinishTrackRequest extends NetworkRequestJob {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\n");
-            }
-            JSONTokener tokener = new JSONTokener(builder.toString());
-            JSONObject finalResult = new JSONObject(tokener);
+            }*/
+            String res = r.body().string();
+            Log.d("FinishTrackRequest", res);
+            JSONObject finalResult = new JSONObject(res);
 
             Log.d("FinishTrackRequest", "Result: " + finalResult.toString());
 
