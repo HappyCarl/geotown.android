@@ -2,9 +2,14 @@ package de.happycarl.geotown.app.api.requests;
 
 import android.util.Log;
 
+import com.appspot.drive_log.geotown.Geotown;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.path.android.jobqueue.Params;
 
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
+import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.api.ApiUtils;
 import de.happycarl.geotown.app.events.net.TrackStartedEvent;
 
 /**
@@ -26,7 +31,11 @@ public class StartTrackRequest extends NetworkRequestJob {
 
     @Override
     public void onRun() throws Throwable {
-        final long trackId = GeotownApplication.getGeotown().tracks().startTrack(routeId).execute().getId();
+        GoogleAccountCredential cred = GoogleAccountCredential.usingAudience(GeotownApplication.getContext(), GeotownApplication.getContext().getResources().getString(R.string.client_id));
+        cred.setSelectedAccountName(GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, ""));
+        Geotown gt = ApiUtils.getApiServiceHandle(cred);
+
+        final long trackId = gt.tracks().startTrack(routeId).execute().getId();
         Log.d("StartTrackRequest", "Got track id: " + trackId);
 
         GeotownApplication.mHandler.post(new Runnable() {

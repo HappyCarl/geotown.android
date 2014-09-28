@@ -3,6 +3,8 @@ package de.happycarl.geotown.app.api.requests;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
+import com.appspot.drive_log.geotown.Geotown;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.path.android.jobqueue.Params;
 
 import org.apache.http.HttpResponse;
@@ -23,7 +25,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
+import de.happycarl.geotown.app.R;
+import de.happycarl.geotown.app.api.ApiUtils;
 import de.happycarl.geotown.app.events.net.TrackFinishedEvent;
 
 /**
@@ -51,7 +56,11 @@ public class FinishTrackRequest extends NetworkRequestJob {
 
         boolean success = true;
 
-        String uploadUrl = GeotownApplication.getGeotown().tracks().getTrackGPXUploadURL().execute().getUploadUrl();
+        GoogleAccountCredential cred = GoogleAccountCredential.usingAudience(GeotownApplication.getContext(), GeotownApplication.getContext().getResources().getString(R.string.client_id));
+        cred.setSelectedAccountName(GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, ""));
+        Geotown gt = ApiUtils.getApiServiceHandle(cred);
+
+        String uploadUrl = gt.tracks().getTrackGPXUploadURL().execute().getUploadUrl();
         Log.d("FinishTrackRequest", "Got upload url: " + uploadUrl);
 
         if (uploadUrl != null && !uploadUrl.isEmpty()) {
@@ -80,7 +89,7 @@ public class FinishTrackRequest extends NetworkRequestJob {
             String blobKey = finalResult.getString("blobkey");
             if (blobKey != null) {
                 Log.d("FinishTrackRequest", "BlobKey: " + blobKey);
-                GeotownApplication.getGeotown().tracks().finishTrack(blobKey, trackId).execute();
+                gt.tracks().finishTrack(blobKey, trackId).execute();
             } else {
                 success = false;
             }
