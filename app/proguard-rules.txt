@@ -120,3 +120,8 @@
 -keepattributes Column
 -keepattributes Table
 -keep public class de.happycarl.geotown.app.models.** { *; }
+
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
