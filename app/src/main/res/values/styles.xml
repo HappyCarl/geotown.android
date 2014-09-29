@@ -1,56 +1,77 @@
 <resources>
 
-    <style name="AppTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_geotown</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu.Geotown</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView.Geotown</item>
-        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Geotown</item>
-        <item name="android:actionDropDownStyle">@style/DropDownNav.Geotown</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Geotown</item>
-        <item name="android:actionModeBackground">@drawable/cab_background_top_geotown</item>
-        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_geotown</item>
-        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Geotown</item>
-
-        <!-- Light.DarkActionBar specific -->
-        <item name="android:actionBarWidgetTheme">@style/Theme.Geotown.Widget</item>
-
+    <style name="AutoCompleteTextViewAppTheme" parent="android:Widget.Holo.Light.AutoCompleteTextView">
+        <item name="android:dropDownSelector">@drawable/apptheme_list_selector_holo_light</item>
+        <item name="android:background">@drawable/apptheme_edit_text_holo_light</item>
     </style>
 
-    <style name="ActionBar.Solid.Geotown" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+    <style name="ButtonAppTheme" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/apptheme_btn_default_holo_light</item>
+    </style>
+
+    <style name="ImageButtonAppTheme" parent="android:Widget.Holo.Light.ImageButton">
+        <item name="android:background">@drawable/apptheme_btn_default_holo_light</item>
+    </style>
+
+    <style name="ProgressBarAppTheme" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/apptheme_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/apptheme_progress_indeterminate_horizontal_holo_light</item>
+    </style>
+
+    <style name="RatingBarAppTheme" parent="android:Widget.Holo.Light.RatingBar">
+        <item name="android:progressDrawable">@drawable/apptheme_ratingbar_full_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/apptheme_ratingbar_full_holo_light</item>
+    </style>
+
+    <style name="RatingBarBigAppTheme" parent="android:Widget.Holo.Light.RatingBar.Indicator">
+        <item name="android:progressDrawable">@drawable/apptheme_ratingbar_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/apptheme_ratingbar_holo_light</item>
+    </style>
+
+    <style name="RatingBarSmallAppTheme" parent="android:Widget.Holo.Light.RatingBar.Small">
+        <item name="android:progressDrawable">@drawable/apptheme_ratingbar_small_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/apptheme_ratingbar_small_holo_light</item>
+    </style>
+
+    <style name="ToggleAppTheme" parent="android:Widget.Holo.Light.Button.Toggle">
+        <item name="android:background">@drawable/apptheme_btn_toggle_holo_light</item>
+    </style>
+
+    <style name="ActionBar.Solid.Geotown" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
         <item name="android:background">@drawable/ab_solid_geotown</item>
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_geotown</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_geotown</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Geotown</item>
     </style>
 
-    <style name="ActionBar.Transparent.Geotown" parent="@android:style/Widget.Holo.ActionBar">
+    <style name="ActionBar.Transparent.Geotown" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@drawable/ab_transparent_geotown</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Geotown</item>
     </style>
 
-    <style name="PopupMenu.Geotown" parent="@android:style/Widget.Holo.ListPopupWindow">
+    <style name="PopupMenu.Geotown" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_geotown</item>
     </style>
 
-    <style name="DropDownListView.Geotown" parent="@android:style/Widget.Holo.ListView.DropDown">
+    <style name="DropDownListView.Geotown" parent="@android:style/Widget.Holo.Light.ListView.DropDown">
         <item name="android:listSelector">@drawable/selectable_background_geotown</item>
     </style>
 
-    <style name="ActionBarTabStyle.Geotown" parent="@android:style/Widget.Holo.ActionBar.TabView">
+    <style name="ActionBarTabStyle.Geotown" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_geotown</item>
     </style>
 
-    <style name="DropDownNav.Geotown" parent="@android:style/Widget.Holo.Spinner">
+    <style name="DropDownNav.Geotown" parent="@android:style/Widget.Holo.Light.Spinner">
         <item name="android:background">@drawable/spinner_background_ab_geotown</item>
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_geotown</item>
         <item name="android:dropDownSelector">@drawable/selectable_background_geotown</item>
     </style>
 
-    <style name="ProgressBar.Geotown" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
+    <style name="ProgressBar.Geotown" parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_geotown</item>
     </style>
 
-    <style name="ActionButton.CloseMode.Geotown" parent="@android:style/Widget.Holo.ActionButton.CloseMode">
+    <style name="ActionButton.CloseMode.Geotown" parent="@android:style/Widget.Holo.Light.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_geotown</item>
     </style>
 
