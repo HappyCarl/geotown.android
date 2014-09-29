@@ -11,8 +11,13 @@ android {
     } catch(e) {}
 
     project.ext.vName = System.getenv("TRAVIS_TAG")
+    
     if(!project.ext.vName) {
-        project.ext.vName = "1.1.0dev"
+        if(System.getenv("TRAVIS_COMMIT")) {
+            project.ext.vName = System.getenv("TRAVIS_COMMIT")
+        } else {
+            project.ext.vName = "Dev"
+        }
     } else {
         project.ext.vName = project.ext.vName.replace("v", "")
     }
