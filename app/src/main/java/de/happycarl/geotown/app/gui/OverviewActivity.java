@@ -85,7 +85,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
         @Override
         public void onHeaderActionClick(CardHeader cardHeader) {
-            // TODO: Show "NearRoutesActivity" here.
+            // TODO: Show "NearRoutesActivity" here. Lel.
         }
     };
 

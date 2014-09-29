@@ -64,6 +64,10 @@
     <string name="text_route_finished_text">You finished the Route %1$s.</string>
     <string name="button_route_finished_okay">Okay</string>
 
+    <!-- Wear -->
+    <string name="wear_notification_distance">Distance:</string>
+
+
     <!-- Common -->
     <string name="service_connection_lost">Lost connection to service</string>
     <string name="gamehelper_sign_in_failed">Failed to sign in. Please check your network connection and try again.</string>

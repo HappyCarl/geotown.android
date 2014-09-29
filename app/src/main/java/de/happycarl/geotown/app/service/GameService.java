@@ -1,9 +1,9 @@
 package de.happycarl.geotown.app.service;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +13,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.activeandroid.query.Select;
@@ -22,11 +23,15 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.HashBiMap;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Random;
 
 import de.happycarl.geotown.app.AppConstants;
+import de.happycarl.geotown.app.BuildConfig;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.FinishTrackRequest;
@@ -99,7 +104,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     //Stuff for service
-    NotificationManager mNM;
+    NotificationManagerCompat mNM;
     HashBiMap<Integer, Messenger> mClients = HashBiMap.create();
 
     private Random random;
@@ -163,7 +168,6 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
     private ListenMode currentListenMode;
 
-    NotificationCompat.Builder notificationBuilder;
 
     //--------------------------------------------------------------------------------------------------
     //GAME LOGIC VARIABLES
@@ -179,7 +183,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     //--------------------------------------------------------------------------------------------------
     @Override
     public void onCreate() {
-        mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNM = NotificationManagerCompat.from(this);
 
 
         mApiClient = new GoogleApiClient.Builder(getApplicationContext())
@@ -202,28 +206,78 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     public void onDestroy() {
         Log.d("GameService", "Shutting down...");
         mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION);
+        mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION + 1);
         LocationServices.FusedLocationApi.removeLocationUpdates(mApiClient, this);
     }
 
 
     private void showStatusNotification() {
+        if(currentListenMode == ListenMode.BACKGROUND)
+            showPhoneNotification();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                showWearableNotification();
+            }
+        }).start();
+    }
+
+    CharSequence wearDistText = "";
+
+    private void showWearableNotification() {
+        CharSequence text = getText(R.string.wear_notification_distance)  + " " + distanceToTarget + "m";
+        CharSequence distText = currentRoute.name;
+
+        if(distText.equals(wearDistText)) return;
+
+        Bitmap bigPicture = null;
+        try {
+            bigPicture = Picasso.with(GameService.this).load(currentWaypoint.imageURL).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.notification_world)
+                .setContentTitle(text)
+                .setContentText(distText)
+                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bigPicture))
+                .setOngoing(false)
+                .setOnlyAlertOnce(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setGroup("GROUP")
+                .setGroupSummary(false);
+
+        mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION + 1, wearableNotificationBuilder.build());
+
+        wearDistText = distText;
+    }
+
+    private void showPhoneNotification() {
         CharSequence text = getText(R.string.text_overview_currently_playing);
         CharSequence distText = getText(R.string.text_playing_distance_to);
 
         Log.d("ROUTE", currentRoute + "");
 
-        notificationBuilder = new NotificationCompat.Builder(this)
+
+        NotificationCompat.Builder phoneNotificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.notification_world)
                 .setContentTitle(text + " '" + currentRoute.name + "'")
                 .setContentText(distText + " " + distanceToTarget + "m")
-                .setOngoing(true);
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setGroup("GROUP")
+                .setGroupSummary(true);
+
+
         Intent intent = new Intent(this, PlayingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationBuilder.setContentIntent(pendingIntent);
+        phoneNotificationBuilder.setContentIntent(pendingIntent);
 
 
-        mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION, notificationBuilder.build());
+        mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION, phoneNotificationBuilder.build());
     }
 
     private void clearStatusNotification() {
@@ -427,16 +481,13 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
         routeLogger.addPosition(location);
 
-        if (currentListenMode == ListenMode.BACKGROUND)
-            showStatusNotification();
+        showStatusNotification();
     }
 
     private boolean isMockLocationEnabled() {
-        // returns true if mock location enabled, false if not enabled.
-        if (Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ALLOW_MOCK_LOCATION).equals("0"))
-            return false;
-        else return true;
+        if(BuildConfig.DEBUG) return false;
+        return !Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ALLOW_MOCK_LOCATION).equals("0");
     }
 
     public void setLocationListenMode(ListenMode mode) {

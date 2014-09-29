@@ -54,13 +54,14 @@
     <string name="action_playing_cancel">Route abbrechen</string>
     <string name="action_playing_sync">Mit Partner synchronisieren</string>
     <string name="text_playing_distance_to">Distanz zum Ziel:</string>
+    <string name="message_playing_right_answer">Richtig!</string>
     <string name="message_playing_wrong_answer">Du hast die falsche Antwort ausgewählt!</string>
     <string name="message_playing_route_finished">Glückwunsch! Du hast die Route beendet.</string>
 
     <!-- Activity Route Finished -->
-    <string name="title_activity_route_finished">Route Finished!</string>
-    <string name="text_route_finished_header">Congratulations!</string>
-    <string name="text_route_finished_text">You finished the Route %1$s.</string>
+    <string name="title_activity_route_finished">Route Abgeschlossen!</string>
+    <string name="text_route_finished_header">Glückwunsch!</string>
+    <string name="text_route_finished_text">Du hast die Route %1$s abgeschlossen.</string>
     <string name="button_route_finished_okay">Okay</string>
 
     <!-- Common -->
