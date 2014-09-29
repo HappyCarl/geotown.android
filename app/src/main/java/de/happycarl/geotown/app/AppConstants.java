@@ -20,7 +20,7 @@ public class AppConstants {
     //Sharing stuff
     public static final String SHARE_DOMAIN_NAME = "http://geotown.de";
     public static final String SHARE_PATH_PREFIX = "/routes/";
-    public static final String SHARE_APPSTORE_LINK = "market://details?id=de.happycarl.geotown.app";
+    public static final String SHARE_APPSTORE_LINK = "http://play.google.com/store/apps/details?id=de.happycarl.geotown.app";
 
     public static final String QR_CODE_PREFIX = "geotown-route";
 
