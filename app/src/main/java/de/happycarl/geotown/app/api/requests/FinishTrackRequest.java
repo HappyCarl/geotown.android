@@ -1,11 +1,15 @@
 package de.happycarl.geotown.app.api.requests;
 
+import android.graphics.Bitmap;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
 import com.appspot.drive_log.geotown.Geotown;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.MultipartContent;
 import com.path.android.jobqueue.Params;
+import com.squareup.mimecraft.Multipart;
+import com.squareup.mimecraft.Part;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
@@ -14,24 +18,29 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.boye.httpclientandroidlib.HttpResponse;
+import ch.boye.httpclientandroidlib.client.methods.HttpPost;
+import ch.boye.httpclientandroidlib.entity.mime.HttpMultipartMode;
+import ch.boye.httpclientandroidlib.entity.mime.MultipartEntity;
+import ch.boye.httpclientandroidlib.entity.mime.content.ByteArrayBody;
+import ch.boye.httpclientandroidlib.entity.mime.content.StringBody;
+import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
@@ -68,40 +77,33 @@ public class FinishTrackRequest extends NetworkRequestJob {
         Geotown gt = ApiUtils.getApiServiceHandle(cred);
 
         String uploadUrl = gt.tracks().getTrackGPXUploadURL().execute().getUploadUrl();
+        Log.d("Finish", "File:" + gpxFile);
         Log.d("FinishTrackRequest", "Got upload url: " + uploadUrl);
 
         if (uploadUrl != null && !uploadUrl.isEmpty()) {
-
-            RequestBody body = new MultipartBuilder()
-                    .type(MultipartBuilder.FORM)
-                    .addPart(Headers.of("Content-Disposition", "form-data; name=\"gpx\""),
-                            RequestBody.create(MediaType.parse("text/plain"), readGPXFile())).build();
-
-            Request request = new Request.Builder().url(uploadUrl).post(body).build();
-
-            Response r = new OkHttpClient().newCall(request).execute();
-
-
-            /*HttpClient httpClient = AndroidHttpClient.newInstance("GeoTown-App");
-            HttpPost httpPost = new HttpPost(uploadUrl);
-
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("gpx", readGPXFile()));
-
-            httpPost.setHeader("Content-Type", "multipart/form-data");
-
-            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-
-            HttpResponse response = httpClient.execute(httpPost);
-
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpPost postRequest = new HttpPost(uploadUrl);
+            MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+            try {
+                byte[] data = readFile(new File(gpxFile));
+                ByteArrayBody bab = new ByteArrayBody(data, new File(gpxFile).getName());
+                reqEntity.addPart("gpx", bab);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+                reqEntity.addPart("gpx", new StringBody(""));
+            }
+            postRequest.setEntity(reqEntity);
+            HttpResponse response = httpClient.execute(postRequest);
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-            StringBuilder builder = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line).append("\n");
-            }*/
-            String res = r.body().string();
-            Log.d("FinishTrackRequest", res);
+            String sResponse;
+            StringBuilder s = new StringBuilder();
+            while ((sResponse = reader.readLine()) != null) {
+                s = s.append(sResponse);
+            }
+            String res = s.toString();
+
+            Log.d("FinishTrackRequest", "Response: " + res);
             JSONObject finalResult = new JSONObject(res);
 
             Log.d("FinishTrackRequest", "Result: " + finalResult.toString());
@@ -127,6 +129,24 @@ public class FinishTrackRequest extends NetworkRequestJob {
         });
 
 
+    }
+
+    public static byte[] readFile(File file) throws IOException {
+        // Open file
+        RandomAccessFile f = new RandomAccessFile(file, "r");
+        try {
+            // Get and check length
+            long longlength = f.length();
+            int length = (int) longlength;
+            if (length != longlength)
+                throw new IOException("File size >= 2 GB");
+            // Read file and return data
+            byte[] data = new byte[length];
+            f.readFully(data);
+            return data;
+        } finally {
+            f.close();
+        }
     }
 
     private String readGPXFile() {
