@@ -345,6 +345,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     .from(GeoTownWaypoint.class)
                     .where("done = ?", false)
                     .where("route = ?", currentRoute.getId())
+                    .orderBy("question")
                     .execute();
 
             Log.d("selectNewWaypoint", "new route null?: " + (currentWaypoint == null));
