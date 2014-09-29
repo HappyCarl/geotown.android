@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">GeoTown</string>
+
     <string name="waypoints">Waypoints</string>
     <string name="route">Route</string>
+
+
     <!-- Activity Overview -->
     <string name="title_activity_overview">Overview</string>
     <string name="title_overview_my_routes">My Routes</string>

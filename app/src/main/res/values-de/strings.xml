@@ -6,6 +6,7 @@
     <string name="route">Route</string>
 
 
+    <!-- Activity Overview -->
     <string name="title_activity_overview">Übersicht</string>
     <string name="title_overview_my_routes">Meine Routen</string>
     <string name="title_overview_local_routes">Gespeicherte Routen</string>
@@ -14,6 +15,8 @@
     <string name="message_overview_no_near_routes">Keine Routen in der Nähe :(</string>
     <string name="message_overview_near_routes_no_location">Warte auf GPS…</string>
     <string name="message_overview_invalid_qr">Die Daten aus dem QR-Code sind ungültig!</string>
+    <string name="message_overview_sync_info">INFO: This route will be played in sync mode with another player. You will both have the waypoints appearing in the same order</string>
+    <string name="message_overview_submit_track_info">WARNING: If this option is activated, your movements while actively playing a route is logged and later uploaded to our servers. This might contain sensitive information about your position and the time you played. This information will NOT be visible for other users nor will it be used for marketing purposes. You can later download &amp; manage these track data from www.geotown.de. Do you agree with uploading the data?</string>
     <string name="unknown_place">Unbekannter Ort</string>
     <string name="unknown_town">Unbekannte Stadt</string>
     <string name="unknown_country">Unbekanntes Land</string>
@@ -26,9 +29,10 @@
     <string name="action_overview_see_more">Mehr</string>
     <string name="action_delete">Löschen</string>
     <string name="action_scan_qr_code">QR-Code scannen</string>
-
-
     <string name="title_activity_route_detail">Route betrachten</string>
+
+
+    <!-- Activity Route Detail -->
     <string name="text_routedetail_share_text">Ohjo, guck dir mal die GeoTown Route an: %1$s.\nDu hast kein GeoTown? Dann organize es dir jetzt: %2$s</string>
     <string name="error_routedetail_not_found">Route nicht gefunden werden</string>
     <string name="error_routedetail_not_found_detail">Diese Route konnte leider nicht gefunden werden.</string>
@@ -36,7 +40,7 @@
     <string name="action_routedetail_play_route">Route spielen</string>
     <string name="action_routedetail_clear_route_data">Route zurücksetzen</string>
 
-
+    <!-- Activity First Start -->
     <string name="title_activity_firststart">Anmelden</string>
     <string name="action_firststart_login">Anmelden</string>
     <string name="text_firststart_intro">Moin! Bitte melde Dich an um fortzufahren.</string>
@@ -45,6 +49,7 @@
     <string name="error_firststart_no_username">Bitte gib einen Nutzernamen ein.</string>
 
 
+    <!-- Activity Playing -->
     <string name="title_activity_playing">Spiele Route</string>
     <string name="action_playing_cancel">Route abbrechen</string>
     <string name="action_playing_sync">Mit Partner synchronisieren</string>
@@ -52,9 +57,14 @@
     <string name="message_playing_wrong_answer">Du hast die falsche Antwort ausgewählt!</string>
     <string name="message_playing_route_finished">Glückwunsch! Du hast die Route beendet.</string>
 
+    <!-- Activity Route Finished -->
+    <string name="title_activity_route_finished">Route Finished!</string>
+    <string name="text_route_finished_header">Congratulations!</string>
+    <string name="text_route_finished_text">You finished the Route %1$s.</string>
+    <string name="button_route_finished_okay">Okay</string>
 
+    <!-- Common -->
     <string name="service_connection_lost">Verbindung zum Service verloren.</string>
-
     <string name="gamehelper_sign_in_failed">Failed to sign in. Please check your network connection and try again.</string>
     <string name="gamehelper_app_misconfigured">The application is incorrectly configured. Check that the package name and signing certificate match the client ID created in Developer Console. Also, if the application is not yet published, check that the account you are trying to sign in with is listed as a tester account. See logs for more information.</string>
     <string name="gamehelper_license_failed">License check failed.</string>
