@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -411,18 +412,30 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     private void updateDistanceToTarget(Location location) {
         if (location == null || currentWaypoint == null || currentTarget == null)
             return;
-        distanceToTarget = (int) currentTarget.distanceTo(location);
+        if(isMockLocationEnabled()) {
+            Log.d("GameService", "Mock locations enabled");
+            distanceToTarget = -42;
+        } else {
+            distanceToTarget = (int) currentTarget.distanceTo(location);
 
-        if (distanceToTarget <= AppConstants.WAYPOINT_RADIUS && distanceToTarget > 0) {
-            sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
+            if (distanceToTarget <= AppConstants.WAYPOINT_RADIUS && distanceToTarget > 0) {
+                sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
+            }
         }
-
         reportDistanceToTarget();
 
         routeLogger.addPosition(location);
 
         if (currentListenMode == ListenMode.BACKGROUND)
             showStatusNotification();
+    }
+
+    private boolean isMockLocationEnabled() {
+        // returns true if mock location enabled, false if not enabled.
+        if (Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ALLOW_MOCK_LOCATION).equals("0"))
+            return false;
+        else return true;
     }
 
     public void setLocationListenMode(ListenMode mode) {
