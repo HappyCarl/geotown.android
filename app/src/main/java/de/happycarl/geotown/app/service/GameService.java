@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -218,7 +219,9 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         new Thread(new Runnable() {
             @Override
             public void run() {
-                showWearableNotification();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    showWearableNotification();
+                }
             }
         }).start();
     }
@@ -266,10 +269,12 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 .setContentTitle(text + " '" + currentRoute.name + "'")
                 .setContentText(distText + " " + distanceToTarget + "m")
                 .setOngoing(true)
-                .setOnlyAlertOnce(true)
-                .setGroup("GROUP")
-                .setGroupSummary(true);
+                .setOnlyAlertOnce(true);
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            phoneNotificationBuilder.setGroup("GROUP")
+                    .setGroupSummary(true);
+        }
 
         Intent intent = new Intent(this, PlayingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
