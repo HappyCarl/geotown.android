@@ -197,6 +197,9 @@ public class PlayingActivity extends SystemBarTintActivity{
         imageView.setFadeDirection(FadingImageView.FadeSide.BOTTOM_SIDE);
         imageView.setEdgeLength(30);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        switcher.setInAnimation(this, android.R.anim.slide_in_left);
+        switcher.setOutAnimation(this, android.R.anim.slide_out_right);
     }
 
     @Override

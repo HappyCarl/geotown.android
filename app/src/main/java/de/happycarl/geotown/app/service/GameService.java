@@ -221,6 +221,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
 
     private void showStatusNotification() {
+        if(currentListenMode == ListenMode.FOREGROUND) return;
         /**
         if(currentListenMode == ListenMode.BACKGROUND)
             showPhoneNotification();
