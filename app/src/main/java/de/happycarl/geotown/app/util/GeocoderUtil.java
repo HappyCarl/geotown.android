@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 
 import java.io.IOException;
+import java.util.List;
 
 import de.happycarl.geotown.app.R;
 
@@ -13,7 +14,7 @@ import de.happycarl.geotown.app.R;
  */
 public class GeocoderUtil {
     public static String geocodeLocation(double lat, double lng, Context ctx) {
-        Geocoder gc = new Geocoder(ctx);
+        GoogleGeocoder gc = new GoogleGeocoder(ctx);
         String result = "";
         try {
             Address address = gc.getFromLocation(lat, lng, 1).get(0);
@@ -28,6 +29,8 @@ public class GeocoderUtil {
             }
             result = town + ", " + country;
         } catch (IOException | IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        } catch (GoogleGeocoder.LimitExceededException e) {
             e.printStackTrace();
         }
 
