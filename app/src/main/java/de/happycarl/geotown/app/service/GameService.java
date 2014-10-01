@@ -201,8 +201,14 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         loadRoute();
 
         long seed = GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0);
+        Log.d("Seed", "seed is " + seed + "  : " + (seed != 0L));
 
-        random = new Random((seed != 0L) ? seed : System.currentTimeMillis());
+        if(seed == 0L) {
+            seed = System.currentTimeMillis();
+            GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, seed).apply();
+            Log.d("seed", "put seed " + seed);
+        }
+        random = new Random(seed);
     }
 
     @Override
@@ -329,6 +335,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     }
 
     private void reportDistanceToTarget() {
+        if(currentTarget == null)
+            return;
         if (distanceToTarget == -1) {
             Location oldGPS = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
             if (oldGPS != null) {
@@ -425,7 +433,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     .from(GeoTownWaypoint.class)
                     .where("done = ?", false)
                     .where("route = ?", currentRoute.getId())
-                    .orderBy("question")
+                    .orderBy("RANDOM()")
                     .execute();
 
             Log.d("selectNewWaypoint", "new route null?: " + (currentWaypoint == null));
@@ -446,7 +454,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     Log.d("GameService", "NO TRACK UPLOAD");
                 }
             } else {
-                int index = random.nextInt(waypoints.size());
+                int index = Math.abs(random.nextInt() % waypoints.size());
+                Log.d("seed", "index: " + index + ": " + waypoints.size());
                 currentWaypoint = waypoints.get(index);
                 currentWaypoint.save();
                 Log.d("selectNewWaypoint", "new ID: " + currentWaypoint.id);

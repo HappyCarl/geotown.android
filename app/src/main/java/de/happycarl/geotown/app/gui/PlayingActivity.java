@@ -187,10 +187,10 @@ public class PlayingActivity extends SystemBarTintActivity{
 
         ButterKnife.inject(this);
 
-        if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) <= 0) {
+        /*if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) <= 0) {
             seed = System.currentTimeMillis();
             GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, seed).apply();
-        }
+        }*/
 
         doBindService();
 
@@ -280,7 +280,7 @@ public class PlayingActivity extends SystemBarTintActivity{
             intent.putExtra("ENCODE_FORMAT", "QR_CODE");
             intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
 
-            String qrPayload = AppConstants.QR_CODE_PREFIX + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) + ":" + seed;
+            String qrPayload = AppConstants.QR_CODE_PREFIX + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L);
             intent.putExtra("ENCODE_DATA", qrPayload);
 
             try {
@@ -369,11 +369,12 @@ public class PlayingActivity extends SystemBarTintActivity{
                 .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
         GeotownApplication.getPreferences().edit()
                 .putLong(AppConstants.PREF_CURRENT_ROUTE, -1L).apply();
+        GeotownApplication.getPreferences().edit()
+                .putLong(AppConstants.PREF_PRNG_SEED, 0L).apply();
 
         if(finished) {
             //we finished the route
-            GeotownApplication.getPreferences().edit()
-                    .putLong(AppConstants.PREF_PRNG_SEED, 0L).apply();
+
             GameUtil.publishRouteFinishToPlayGames(this, mGameHelper);
 
             Crouton.makeText(this, R.string.message_playing_route_finished, Style.CONFIRM).show();

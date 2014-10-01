@@ -295,6 +295,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
         } else { //No current Route
             editor.putLong(AppConstants.PREF_CURRENT_ROUTE, mRoute.id);
+            editor.putLong(AppConstants.PREF_PRNG_SEED, 0L);
             editor.apply();
 
             //if route was played before, reset it now
