@@ -1,5 +1,6 @@
 package de.happycarl.geotown.app.service;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -14,7 +15,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+//import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.activeandroid.query.Select;
@@ -105,7 +106,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     //Stuff for service
-    NotificationManagerCompat mNM;
+    NotificationManager mNM;
     HashBiMap<Integer, Messenger> mClients = HashBiMap.create();
 
     private Random random;
@@ -168,6 +169,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     }
 
     private ListenMode currentListenMode;
+    NotificationCompat.Builder notificationBuilder;
 
 
     //--------------------------------------------------------------------------------------------------
@@ -184,7 +186,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     //--------------------------------------------------------------------------------------------------
     @Override
     public void onCreate() {
-        mNM = NotificationManagerCompat.from(this);
+        mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
 
         mApiClient = new GoogleApiClient.Builder(getApplicationContext())
@@ -213,6 +215,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
 
     private void showStatusNotification() {
+        /**
         if(currentListenMode == ListenMode.BACKGROUND)
             showPhoneNotification();
 
@@ -223,12 +226,29 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     showWearableNotification();
                 }
             }
-        }).start();
+        }).start();**/
+        CharSequence text = getText(R.string.text_overview_currently_playing);
+        CharSequence distText = getText(R.string.text_playing_distance_to);
+
+        Log.d("ROUTE", currentRoute + "");
+
+        notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.notification_world)
+                .setContentTitle(text + " '" + currentRoute.name + "'")
+                .setContentText(distText + " " + distanceToTarget + "m")
+                .setOngoing(true);
+        Intent intent = new Intent(this, PlayingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(pendingIntent);
+
+
+        mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION, notificationBuilder.build());
     }
 
     CharSequence wearDistText = "";
 
-    private void showWearableNotification() {
+    /*private void showWearableNotification() {
         CharSequence text = getText(R.string.wear_notification_distance)  + " " + distanceToTarget + "m";
         CharSequence distText = currentRoute.name;
 
@@ -255,7 +275,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION + 1, wearableNotificationBuilder.build());
 
         wearDistText = distText;
-    }
+    }*/
 
     private void showPhoneNotification() {
         CharSequence text = getText(R.string.text_overview_currently_playing);
@@ -271,10 +291,11 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 .setOngoing(true)
                 .setOnlyAlertOnce(true);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Log.d("GameService", "Using wear notification");
             phoneNotificationBuilder.setGroup("GROUP")
                     .setGroupSummary(true);
-        }
+        }*/
 
         Intent intent = new Intent(this, PlayingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

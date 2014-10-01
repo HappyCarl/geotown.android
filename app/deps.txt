@@ -1,0 +1,286 @@
+Parallel execution is an incubating feature.
+Relying on packaging to define the extension of the main artifact has been deprecated and is scheduled to be removed in Gradle 2.0
+:app:dependencies
+
+------------------------------------------------------------
+Project :app
+------------------------------------------------------------
+
+_debugApk - ## Internal use, do not manually configure ##
++--- com.android.support:support-v4:20.0.+ -> 20.0.0
+|    \--- com.android.support:support-annotations:20.0.0
++--- com.readystatesoftware.systembartint:systembartint:1.0.3
++--- com.squareup:otto:1.3.5
++--- com.jakewharton:butterknife:5.1.0
++--- com.afollestad.silk:silk:1.0.0
++--- com.afollestad.cardsui:CardsUI:1.0.0
++--- com.squareup.picasso:picasso:2.3.2
++--- com.squareup.okhttp:okhttp:2.0.0
+|    \--- com.squareup.okio:okio:1.0.0
++--- com.squareup.okhttp:okhttp-urlconnection:2.0.0
+|    \--- com.squareup.okhttp:okhttp:2.0.0 (*)
++--- com.path:android-priority-jobqueue:1.1.2
+|    \--- com.google.android:android:2.2.1
+|         +--- commons-logging:commons-logging:1.1.1
+|         +--- org.khronos:opengl-api:gl1.1-android-2.1_r1
+|         +--- xerces:xmlParserAPIs:2.6.2
+|         +--- xpp3:xpp3:1.1.4c
+|         \--- org.json:json:20080701
++--- com.squareup.mimecraft:mimecraft:1.1.1
++--- de.cketti.library.changelog:ckchangelog:1.2.0
++--- de.keyboardsurfer.android.widget:crouton:1.8.5
++--- com.google.android.gms:play-services:5.0.89
+|    \--- com.android.support:support-v4:19.1.0 -> 20.0.0 (*)
++--- com.google.http-client:google-http-client-android:1.18.0-rc
+|    \--- com.google.http-client:google-http-client:1.18.0-rc -> 1.19.0
+|         \--- com.google.code.findbugs:jsr305:1.3.9
++--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0
+|    +--- com.google.oauth-client:google-oauth-client:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.google.code.findbugs:jsr305:1.3.9
+|    +--- com.google.http-client:google-http-client-jackson2:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.fasterxml.jackson.core:jackson-core:2.1.3
+|    \--- com.google.guava:guava-jdk5:13.0
++--- com.google.api-client:google-api-client-android:1.18.0-rc
+|    +--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0 (*)
+|    \--- com.google.http-client:google-http-client-android:1.18.0-rc (*)
++--- com.appspot.drive_log:geotown:0.3.9-SNAPSHOT
+|    \--- com.google.api-client:google-api-client:1.19.0 (*)
+\--- com.google.zxing:android-integration:3.0.0
+
+_debugCompile - ## Internal use, do not manually configure ##
++--- com.android.support:support-v4:20.0.+ -> 20.0.0
+|    \--- com.android.support:support-annotations:20.0.0
++--- com.readystatesoftware.systembartint:systembartint:1.0.3
++--- com.squareup:otto:1.3.5
++--- com.jakewharton:butterknife:5.1.0
++--- com.afollestad.silk:silk:1.0.0
++--- com.afollestad.cardsui:CardsUI:1.0.0
++--- com.squareup.picasso:picasso:2.3.2
++--- com.squareup.okhttp:okhttp:2.0.0
+|    \--- com.squareup.okio:okio:1.0.0
++--- com.squareup.okhttp:okhttp-urlconnection:2.0.0
+|    \--- com.squareup.okhttp:okhttp:2.0.0 (*)
++--- com.path:android-priority-jobqueue:1.1.2
+|    \--- com.google.android:android:2.2.1
+|         +--- commons-logging:commons-logging:1.1.1
+|         +--- org.khronos:opengl-api:gl1.1-android-2.1_r1
+|         +--- xerces:xmlParserAPIs:2.6.2
+|         +--- xpp3:xpp3:1.1.4c
+|         \--- org.json:json:20080701
++--- com.squareup.mimecraft:mimecraft:1.1.1
++--- de.cketti.library.changelog:ckchangelog:1.2.0
++--- de.keyboardsurfer.android.widget:crouton:1.8.5
++--- com.google.android.gms:play-services:5.0.89
+|    \--- com.android.support:support-v4:19.1.0 -> 20.0.0 (*)
++--- com.google.http-client:google-http-client-android:1.18.0-rc
+|    \--- com.google.http-client:google-http-client:1.18.0-rc -> 1.19.0
+|         \--- com.google.code.findbugs:jsr305:1.3.9
++--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0
+|    +--- com.google.oauth-client:google-oauth-client:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.google.code.findbugs:jsr305:1.3.9
+|    +--- com.google.http-client:google-http-client-jackson2:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.fasterxml.jackson.core:jackson-core:2.1.3
+|    \--- com.google.guava:guava-jdk5:13.0
++--- com.google.api-client:google-api-client-android:1.18.0-rc
+|    +--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0 (*)
+|    \--- com.google.http-client:google-http-client-android:1.18.0-rc (*)
++--- com.appspot.drive_log:geotown:0.3.9-SNAPSHOT
+|    \--- com.google.api-client:google-api-client:1.19.0 (*)
+\--- com.google.zxing:android-integration:3.0.0
+
+_debugTestApk - ## Internal use, do not manually configure ##
+No dependencies
+
+_debugTestCompile - ## Internal use, do not manually configure ##
+No dependencies
+
+_releaseApk - ## Internal use, do not manually configure ##
++--- com.android.support:support-v4:20.0.+ -> 20.0.0
+|    \--- com.android.support:support-annotations:20.0.0
++--- com.readystatesoftware.systembartint:systembartint:1.0.3
++--- com.squareup:otto:1.3.5
++--- com.jakewharton:butterknife:5.1.0
++--- com.afollestad.silk:silk:1.0.0
++--- com.afollestad.cardsui:CardsUI:1.0.0
++--- com.squareup.picasso:picasso:2.3.2
++--- com.squareup.okhttp:okhttp:2.0.0
+|    \--- com.squareup.okio:okio:1.0.0
++--- com.squareup.okhttp:okhttp-urlconnection:2.0.0
+|    \--- com.squareup.okhttp:okhttp:2.0.0 (*)
++--- com.path:android-priority-jobqueue:1.1.2
+|    \--- com.google.android:android:2.2.1
+|         +--- commons-logging:commons-logging:1.1.1
+|         +--- org.khronos:opengl-api:gl1.1-android-2.1_r1
+|         +--- xerces:xmlParserAPIs:2.6.2
+|         +--- xpp3:xpp3:1.1.4c
+|         \--- org.json:json:20080701
++--- com.squareup.mimecraft:mimecraft:1.1.1
++--- de.cketti.library.changelog:ckchangelog:1.2.0
++--- de.keyboardsurfer.android.widget:crouton:1.8.5
++--- com.google.android.gms:play-services:5.0.89
+|    \--- com.android.support:support-v4:19.1.0 -> 20.0.0 (*)
++--- com.google.http-client:google-http-client-android:1.18.0-rc
+|    \--- com.google.http-client:google-http-client:1.18.0-rc -> 1.19.0
+|         \--- com.google.code.findbugs:jsr305:1.3.9
++--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0
+|    +--- com.google.oauth-client:google-oauth-client:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.google.code.findbugs:jsr305:1.3.9
+|    +--- com.google.http-client:google-http-client-jackson2:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.fasterxml.jackson.core:jackson-core:2.1.3
+|    \--- com.google.guava:guava-jdk5:13.0
++--- com.google.api-client:google-api-client-android:1.18.0-rc
+|    +--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0 (*)
+|    \--- com.google.http-client:google-http-client-android:1.18.0-rc (*)
++--- com.appspot.drive_log:geotown:0.3.9-SNAPSHOT
+|    \--- com.google.api-client:google-api-client:1.19.0 (*)
+\--- com.google.zxing:android-integration:3.0.0
+
+_releaseCompile - ## Internal use, do not manually configure ##
++--- com.android.support:support-v4:20.0.+ -> 20.0.0
+|    \--- com.android.support:support-annotations:20.0.0
++--- com.readystatesoftware.systembartint:systembartint:1.0.3
++--- com.squareup:otto:1.3.5
++--- com.jakewharton:butterknife:5.1.0
++--- com.afollestad.silk:silk:1.0.0
++--- com.afollestad.cardsui:CardsUI:1.0.0
++--- com.squareup.picasso:picasso:2.3.2
++--- com.squareup.okhttp:okhttp:2.0.0
+|    \--- com.squareup.okio:okio:1.0.0
++--- com.squareup.okhttp:okhttp-urlconnection:2.0.0
+|    \--- com.squareup.okhttp:okhttp:2.0.0 (*)
++--- com.path:android-priority-jobqueue:1.1.2
+|    \--- com.google.android:android:2.2.1
+|         +--- commons-logging:commons-logging:1.1.1
+|         +--- org.khronos:opengl-api:gl1.1-android-2.1_r1
+|         +--- xerces:xmlParserAPIs:2.6.2
+|         +--- xpp3:xpp3:1.1.4c
+|         \--- org.json:json:20080701
++--- com.squareup.mimecraft:mimecraft:1.1.1
++--- de.cketti.library.changelog:ckchangelog:1.2.0
++--- de.keyboardsurfer.android.widget:crouton:1.8.5
++--- com.google.android.gms:play-services:5.0.89
+|    \--- com.android.support:support-v4:19.1.0 -> 20.0.0 (*)
++--- com.google.http-client:google-http-client-android:1.18.0-rc
+|    \--- com.google.http-client:google-http-client:1.18.0-rc -> 1.19.0
+|         \--- com.google.code.findbugs:jsr305:1.3.9
++--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0
+|    +--- com.google.oauth-client:google-oauth-client:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.google.code.findbugs:jsr305:1.3.9
+|    +--- com.google.http-client:google-http-client-jackson2:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.fasterxml.jackson.core:jackson-core:2.1.3
+|    \--- com.google.guava:guava-jdk5:13.0
++--- com.google.api-client:google-api-client-android:1.18.0-rc
+|    +--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0 (*)
+|    \--- com.google.http-client:google-http-client-android:1.18.0-rc (*)
++--- com.appspot.drive_log:geotown:0.3.9-SNAPSHOT
+|    \--- com.google.api-client:google-api-client:1.19.0 (*)
+\--- com.google.zxing:android-integration:3.0.0
+
+androidJacocoAgent - The Jacoco agent to use to get coverage data.
+\--- org.jacoco:org.jacoco.agent:0.6.2.201302030002
+
+androidJacocoAnt - The Jacoco ant tasks to use to get execute Gradle tasks.
+\--- org.jacoco:org.jacoco.ant:0.6.2.201302030002
+     +--- org.jacoco:org.jacoco.core:0.6.2.201302030002
+     |    \--- org.ow2.asm:asm-all:4.1
+     +--- org.jacoco:org.jacoco.report:0.6.2.201302030002
+     |    +--- org.jacoco:org.jacoco.core:0.6.2.201302030002 (*)
+     |    \--- org.ow2.asm:asm-all:4.1
+     \--- org.jacoco:org.jacoco.agent:0.6.2.201302030002
+
+androidTestApk - Classpath packaged with the compiled androidTest classes.
+No dependencies
+
+androidTestCompile - Classpath for compiling the androidTest sources.
+No dependencies
+
+androidTestProvided - Classpath for only compiling the androidTest sources.
+No dependencies
+
+apk - Classpath packaged with the compiled main classes.
+No dependencies
+
+archives - Configuration for archive artifacts.
+No dependencies
+
+compile - Classpath for compiling the main sources.
++--- com.android.support:support-v4:20.0.+ -> 20.0.0
+|    \--- com.android.support:support-annotations:20.0.0
++--- com.readystatesoftware.systembartint:systembartint:1.0.3
++--- com.squareup:otto:1.3.5
++--- com.jakewharton:butterknife:5.1.0
++--- com.afollestad.silk:silk:1.0.0
++--- com.afollestad.cardsui:CardsUI:1.0.0
++--- com.squareup.picasso:picasso:2.3.2
++--- com.squareup.okhttp:okhttp:2.0.0
+|    \--- com.squareup.okio:okio:1.0.0
++--- com.squareup.okhttp:okhttp-urlconnection:2.0.0
+|    \--- com.squareup.okhttp:okhttp:2.0.0 (*)
++--- com.path:android-priority-jobqueue:1.1.2
+|    \--- com.google.android:android:2.2.1
+|         +--- commons-logging:commons-logging:1.1.1
+|         +--- org.khronos:opengl-api:gl1.1-android-2.1_r1
+|         +--- xerces:xmlParserAPIs:2.6.2
+|         +--- xpp3:xpp3:1.1.4c
+|         \--- org.json:json:20080701
++--- com.squareup.mimecraft:mimecraft:1.1.1
++--- de.cketti.library.changelog:ckchangelog:1.2.0
++--- de.keyboardsurfer.android.widget:crouton:1.8.5
++--- com.google.android.gms:play-services:5.0.89
+|    \--- com.android.support:support-v4:19.1.0 -> 20.0.0 (*)
++--- com.google.http-client:google-http-client-android:1.18.0-rc
+|    \--- com.google.http-client:google-http-client:1.18.0-rc -> 1.19.0
+|         \--- com.google.code.findbugs:jsr305:1.3.9
++--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0
+|    +--- com.google.oauth-client:google-oauth-client:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.google.code.findbugs:jsr305:1.3.9
+|    +--- com.google.http-client:google-http-client-jackson2:1.19.0
+|    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|    |    \--- com.fasterxml.jackson.core:jackson-core:2.1.3
+|    \--- com.google.guava:guava-jdk5:13.0
++--- com.google.api-client:google-api-client-android:1.18.0-rc
+|    +--- com.google.api-client:google-api-client:1.18.0-rc -> 1.19.0 (*)
+|    \--- com.google.http-client:google-http-client-android:1.18.0-rc (*)
++--- com.appspot.drive_log:geotown:0.3.9-SNAPSHOT
+|    \--- com.google.api-client:google-api-client:1.19.0 (*)
+\--- com.google.zxing:android-integration:3.0.0
+
+debugApk - Classpath packaged with the compiled debug classes.
+No dependencies
+
+debugCompile - Classpath for compiling the debug sources.
+No dependencies
+
+debugProvided - Classpath for only compiling the debug sources.
+No dependencies
+
+default - Configuration for default artifacts.
+No dependencies
+
+provided - Classpath for only compiling the main sources.
+No dependencies
+
+releaseApk - Classpath packaged with the compiled release classes.
+No dependencies
+
+releaseCompile - Classpath for compiling the release sources.
+No dependencies
+
+releaseProvided - Classpath for only compiling the release sources.
+No dependencies
+
+wearApp
+No dependencies
+
+BUILD SUCCESSFUL
+
+Total time: 3.885 secs
