@@ -13,8 +13,14 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -139,6 +145,23 @@ public class GPXRouteLogger {
         return trackFile.getAbsolutePath();
     }
 
+    static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+            public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+                return ((Comparable<V>) o1.getValue())
+                        .compareTo(o2.getValue());
+            }
+        });
+
+        Map<K, V> result = new LinkedHashMap<K, V>();
+        for (Iterator<Map.Entry<K, V>> it = list.iterator(); it.hasNext();) {
+            Map.Entry<K, V> entry = it.next();
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+
     private void generateGPSTrack(XmlSerializer serializer) throws IOException {
         serializer.startTag("", "trk"); //beginning of actual position data
 
@@ -151,6 +174,8 @@ public class GPXRouteLogger {
         serializer.endTag("", "desc");
 
         serializer.startTag("", "trkseg");
+
+        position = sortByValue(position);
 
         for (Map.Entry<Location, Date> entry : position.entrySet()) {
             serializer.startTag("", "trkpt");
