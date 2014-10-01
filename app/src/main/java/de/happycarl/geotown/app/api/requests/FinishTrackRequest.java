@@ -1,38 +1,20 @@
 package de.happycarl.geotown.app.api.requests;
 
-import android.graphics.Bitmap;
-import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
 import com.appspot.drive_log.geotown.Geotown;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.MultipartContent;
 import com.path.android.jobqueue.Params;
-import com.squareup.mimecraft.Multipart;
-import com.squareup.mimecraft.Part;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.List;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.client.methods.HttpPost;
@@ -52,8 +34,8 @@ import de.happycarl.geotown.app.events.net.TrackFinishedEvent;
  */
 public class FinishTrackRequest extends NetworkRequestJob {
 
-    long trackId;
-    String gpxFile;
+    final long trackId;
+    final String gpxFile;
 
     public FinishTrackRequest(long trackId, String gpxFile) {
         super(new Params(1).requireNetwork().persist().groupBy("finish-track"));
@@ -147,30 +129,6 @@ public class FinishTrackRequest extends NetworkRequestJob {
         } finally {
             f.close();
         }
-    }
-
-    private String readGPXFile() {
-        File file = new File(gpxFile);
-
-        StringBuilder buf = new StringBuilder();
-
-        BufferedReader br;
-        try {
-            br = new BufferedReader(new FileReader(file));
-            String line = "";
-
-            while ((line = br.readLine()) != null) {
-                buf.append(line);
-                buf.append('\n');
-            }
-            br.close();
-
-        } catch (IOException e) {
-            Log.e("FinishTrackRequest", "Read error: " + e.getMessage());
-            return null;
-        }
-
-        return buf.toString();
     }
 
     @Override

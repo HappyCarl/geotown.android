@@ -20,11 +20,11 @@ public class WaypointDistanceView extends View {
     private Paint centerPaint;
     private Paint centerHighlightPaint;
 
-    private Paint boxPaint;
     private Paint textPaint;
 
     private float circleMaxDiameter = 0;
-    private float centerX, centerY, textOffX;
+    private float centerX;
+    private float centerY;
 
     public WaypointDistanceView(Context context) {
         super(context);
@@ -68,7 +68,7 @@ public class WaypointDistanceView extends View {
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(80);
 
-        boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boxPaint.setColor(getResources().getColor(android.R.color.background_light));
         boxPaint.setStyle(Paint.Style.FILL);
     }
@@ -79,8 +79,6 @@ public class WaypointDistanceView extends View {
 
     public void setDistance(int dist) {
         distance = dist;
-        String distStr = dist + " m";
-        textOffX = textPaint.getTextSize() * (distStr.length() / 2);
         invalidate();
         requestLayout();
     }

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/share_route"
-        android:title="Share"
+        android:title=""
         android:showAsAction="ifRoom"
         android:actionProviderClass="android.widget.ShareActionProvider" />
 

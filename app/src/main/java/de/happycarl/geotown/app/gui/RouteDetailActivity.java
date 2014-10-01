@@ -14,14 +14,11 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.widget.ShareActionProvider;
-import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
-import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardListView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,9 +57,6 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     private NfcAdapter mNfcAdapter;
 
-    private RouteDetailCard mRouteDetailCard;
-    private RouteActionsCard mRouteActionsCard;
-
 
     //================================================================================
     // Activity Lifecycle
@@ -94,6 +88,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             try {
                 routeId = Long.valueOf(path);
             } catch (RuntimeException e) {
+                e.printStackTrace();
             }
         } else {
             if (getActionBar() != null) {
@@ -225,8 +220,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         mCardAdapter.clear();
 
         if (mRoute != null) {
-            mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
-            mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
+            RouteDetailCard mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
+            RouteActionsCard mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
 
             mCardAdapter.add(mRouteActionsCard);
         } else {

@@ -4,9 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,10 +23,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.HashBiMap;
 import com.squareup.otto.Subscribe;
-import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Random;
 
@@ -358,8 +353,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         reportDistanceToTarget();
     }
 
-    private void reportError(int errorCode) {
-        sendMessage(MSG_ERROR, errorCode, 0);
+    private void reportError() {
+        sendMessage(MSG_ERROR, GameService.ERROR_NO_ROUTE, 0);
     }
 
 
@@ -376,7 +371,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 .where("routeID = ?", id)
                 .executeSingle();
         if (currentRoute == null) {
-            reportError(ERROR_NO_ROUTE);
+            reportError();
             stopSelf();
         } else {
 
@@ -521,9 +516,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     }
 
     private boolean isMockLocationEnabled() {
-        if(BuildConfig.DEBUG) return false;
-        return !Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ALLOW_MOCK_LOCATION).equals("0");
+        return !BuildConfig.DEBUG && !Settings.Secure.getString(getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0");
     }
 
     public void setLocationListenMode(ListenMode mode) {

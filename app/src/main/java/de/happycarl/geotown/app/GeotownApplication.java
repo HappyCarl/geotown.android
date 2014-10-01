@@ -1,6 +1,5 @@
 package de.happycarl.geotown.app;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,10 +16,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
 import de.happycarl.geotown.app.api.ApiUtils;
-import de.happycarl.geotown.app.api.GameHelper;
-import de.happycarl.geotown.app.events.ApplicationStartedEvent;
-import de.happycarl.geotown.app.events.google.GoogleClientConnectedEvent;
-import de.happycarl.geotown.app.events.google.GoogleClientConnectionFailedEvent;
 
 /**
  * Created by jhbruhn on 19.06.14.
@@ -68,8 +63,6 @@ public class GeotownApplication extends Application {
         mGeotown = ApiUtils.getApiServiceHandle(null);
 
         configureJobManager();
-
-        mEventBus.post(new ApplicationStartedEvent(this));
 
         mContext = this.getApplicationContext();
 

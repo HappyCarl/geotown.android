@@ -2,7 +2,6 @@ package de.happycarl.geotown.app.api.requests;
 
 import com.appspot.drive_log.geotown.model.Waypoint;
 import com.appspot.drive_log.geotown.model.WaypointCollection;
-import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
 import java.util.ArrayList;

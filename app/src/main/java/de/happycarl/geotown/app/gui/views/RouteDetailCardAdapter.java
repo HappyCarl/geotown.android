@@ -7,7 +7,6 @@ import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardBase;
 
 import de.happycarl.geotown.app.R;
-import de.happycarl.geotown.app.models.GeoTownRoute;
 
 /**
  * Created by jhbruhn on 22.06.14.

@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -21,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
 import com.squareup.picasso.Picasso;
 
@@ -79,7 +77,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     long seed;
 
     String[] answers = new String[4];
-    CountDownTimer wrongAnswerCountdown = new CountDownTimer(30000, 1000) {
+    final CountDownTimer wrongAnswerCountdown = new CountDownTimer(30000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
             answer1.setEnabled(false);

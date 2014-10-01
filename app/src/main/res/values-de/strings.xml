@@ -27,6 +27,7 @@
     <string name="action_overview_gplus_sign_out">Ausloggen</string>
     <string name="action_overview_gplus_sign_in">Einloggen</string>
     <string name="action_overview_see_more">Mehr</string>
+    <string name="action_overview_upload_track_data">Upload track</string>
     <string name="action_delete">Löschen</string>
     <string name="action_scan_qr_code">QR-Code scannen</string>
     <string name="title_activity_route_detail">Route betrachten</string>

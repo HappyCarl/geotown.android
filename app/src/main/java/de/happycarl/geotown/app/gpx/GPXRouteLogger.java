@@ -36,13 +36,13 @@ public class GPXRouteLogger {
 
     GeoTownRoute route;
 
-    Map<GeoTownWaypoint, Date> waypointsInOrder = new HashMap<>();
+    final Map<GeoTownWaypoint, Date> waypointsInOrder = new HashMap<>();
 
     Map<Location, Date> position = new HashMap<>();
 
-    String username;
+    final String username;
 
-    DateFormat dateFormat;
+    final DateFormat dateFormat;
 
     Location lastLocation;
 
@@ -59,14 +59,6 @@ public class GPXRouteLogger {
         this();
         route = r;
 
-    }
-
-    public boolean setRoute(GeoTownRoute r) {
-        if (route == null) {
-            route = r;
-            return true;
-        }
-        return false;
     }
 
     public void addWaypoint(GeoTownWaypoint wp) {
@@ -154,9 +146,8 @@ public class GPXRouteLogger {
             }
         });
 
-        Map<K, V> result = new LinkedHashMap<K, V>();
-        for (Iterator<Map.Entry<K, V>> it = list.iterator(); it.hasNext();) {
-            Map.Entry<K, V> entry = it.next();
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
@@ -251,9 +242,6 @@ public class GPXRouteLogger {
     * Taken from https://developer.android.com/training/basics/data-storage/files.html*/
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 }

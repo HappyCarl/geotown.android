@@ -3,18 +3,11 @@ package de.happycarl.geotown.app.gui.views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
-import android.os.AsyncTask;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.happycarl.geotown.app.util.GoogleUtils;
 import de.happycarl.geotown.app.R;

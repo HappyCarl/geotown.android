@@ -35,7 +35,7 @@ public class RouteDetailCard extends Card {
     TextView mWaypointAmountTextView;
 
     private final GeoTownRoute mRoute;
-    private CardAdapter mAdapter;
+    private final CardAdapter mAdapter;
     private String mLocationString;
 
     public RouteDetailCard(Context ctx, CardAdapter cardAdapter, GeoTownRoute route) {
@@ -71,7 +71,8 @@ public class RouteDetailCard extends Card {
     }
 
     private class Location {
-        double lat, lng;
+        final double lat;
+        final double lng;
 
         public Location(double lat, double lng) {
             this.lat = lat;
@@ -94,8 +95,8 @@ public class RouteDetailCard extends Card {
 
     private class GeoCodingAsyncTask extends AsyncTask<Void, Void, String> {
 
-        private Location l;
-        private Context ctx;
+        private final Location l;
+        private final Context ctx;
 
         public GeoCodingAsyncTask(Context ctx, Location l) {
             this.l = l;

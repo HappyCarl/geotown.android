@@ -1,7 +1,6 @@
 package de.happycarl.geotown.app.api.requests;
 
 import com.appspot.drive_log.geotown.model.UserData;
-import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
 import de.happycarl.geotown.app.GeotownApplication;

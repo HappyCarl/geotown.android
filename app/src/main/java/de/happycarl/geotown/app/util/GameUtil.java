@@ -25,7 +25,7 @@ public class GameUtil {
 
         incrementEvent(c.getString(R.string.event_routes), 1, gameHelper);
         submitScore(c.getString(R.string.leaderboard_routes), currCount++, gameHelper);
-        GeotownApplication.getPreferences().edit().putInt(AppConstants.PREF_SCORE_ROUTE, currCount++).apply();
+        GeotownApplication.getPreferences().edit().putInt(AppConstants.PREF_SCORE_ROUTE, currCount).apply();
 
     }
 
@@ -35,7 +35,7 @@ public class GameUtil {
         incrementEvent(c.getString(R.string.event_waypoints), 1, gameHelper);
         submitScore(c.getString(R.string.leaderboard_waypoints), currCount++, gameHelper);
 
-        GeotownApplication.getPreferences().edit().putInt(AppConstants.PREF_SCORE_WAYPOINT, currCount++).apply();
+        GeotownApplication.getPreferences().edit().putInt(AppConstants.PREF_SCORE_WAYPOINT, currCount).apply();
     }
 
     public static void unlockAchievement(String id, GameHelper gameHelper) {

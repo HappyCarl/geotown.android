@@ -17,7 +17,7 @@ import de.happycarl.geotown.app.events.net.TrackStartedEvent;
  */
 public class StartTrackRequest extends NetworkRequestJob {
 
-    long routeId;
+    final long routeId;
 
     public StartTrackRequest(long routeId) {
         super(new Params(1).requireNetwork().persist().groupBy("start-track"));

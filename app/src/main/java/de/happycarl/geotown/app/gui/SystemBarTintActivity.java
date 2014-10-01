@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.appspot.drive_log.geotown.Geotown;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import de.happycarl.geotown.app.GeotownApplication;

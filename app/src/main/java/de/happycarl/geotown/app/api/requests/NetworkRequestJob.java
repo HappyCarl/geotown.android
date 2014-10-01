@@ -14,8 +14,6 @@ public abstract class NetworkRequestJob extends Job {
     }
     @Override
     protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        if (throwable instanceof java.net.SocketTimeoutException || throwable instanceof javax.net.ssl.SSLException)
-            return true;
-        return false;
+        return throwable instanceof java.net.SocketTimeoutException || throwable instanceof javax.net.ssl.SSLException;
     }
 }
