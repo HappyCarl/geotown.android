@@ -313,7 +313,6 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     private void loadRoute() {
         GeotownApplication.getJobManager().addJob(new RouteRequest(routeId));
-        new LoadRouteTask().execute(routeId);
     }
 
     @Subscribe
