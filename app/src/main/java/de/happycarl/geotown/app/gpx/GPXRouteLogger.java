@@ -50,7 +50,7 @@ public class GPXRouteLogger {
         username = GeotownApplication.getPreferences().getString(AppConstants.PREF_ACCOUNT_EMAIL, "<no-mail-given>");
 
         TimeZone tz = TimeZone.getTimeZone("UTC");
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         dateFormat.setTimeZone(tz);
 
     }
