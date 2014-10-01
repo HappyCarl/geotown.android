@@ -365,9 +365,15 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             } finally {
                 ActiveAndroid.endTransaction();
             }
-            loadRoute();
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            loadRoute();
         }
     }
 
