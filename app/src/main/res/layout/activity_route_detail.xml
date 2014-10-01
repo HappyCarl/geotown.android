@@ -1,36 +1,30 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_alignParentTop="true"
+    android:weightSum="2"
+    android:background="@color/card_gray"
+    android:layout_centerHorizontal="true"
     android:padding="0dp"
     tools:context="de.happycarl.geotown.app.gui.RouteDetailActivity">
 
 
-    <LinearLayout
-        android:orientation="vertical"
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:clickable="false" />
+
+    <com.afollestad.cardsui.CardListView
+        android:id="@+id/route_detail_card_list"
+        android:layout_marginTop="6dp"
+        android:layout_weight="1"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:weightSum="2"
-        android:background="@color/card_gray"
-        android:layout_centerHorizontal="true">
+        android:layout_height="0dp" />
 
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/map"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:name="com.google.android.gms.maps.MapFragment"
-            android:clickable="false" />
-
-        <com.afollestad.cardsui.CardListView
-            android:id="@+id/route_detail_card_list"
-            android:layout_marginTop="6dp"
-            android:layout_weight="1"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp" />
-
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

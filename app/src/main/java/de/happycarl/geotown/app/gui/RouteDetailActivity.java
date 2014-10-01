@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
@@ -52,12 +53,15 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     CardListView cardsList;
 
     private ShareActionProvider mShareActionProvider;
-    private CardAdapter mCardAdapter;
+    private RouteDetailCardAdapter mCardAdapter;
 
     private long routeId = -1;
     private GeoTownRoute mRoute;
 
     private NfcAdapter mNfcAdapter;
+
+    private RouteDetailCard mRouteDetailCard;
+    private RouteActionsCard mRouteActionsCard;
 
 
     //================================================================================
@@ -66,7 +70,10 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_route_detail);
 
 
@@ -110,9 +117,10 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             });
             b.show();
         } else {
-            loadRoute();
-
             updateRouteUI();
+
+
+            loadRoute();
 
             mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         }
@@ -176,6 +184,9 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
             case R.id.clear_route_data:
                 new ResetRouteTask().execute();
                 return true;
@@ -214,8 +225,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         mCardAdapter.clear();
 
         if (mRoute != null) {
-            RouteDetailCard mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
-            RouteActionsCard mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
+            mRouteDetailCard = new RouteDetailCard(this, mCardAdapter, mRoute);
+            mRouteActionsCard = new RouteActionsCard(this, this, mRoute);
 
             mCardAdapter.add(mRouteActionsCard);
         } else {
@@ -313,6 +324,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
     private void loadRoute() {
         GeotownApplication.getJobManager().addJob(new RouteRequest(routeId));
+        setProgressBarIndeterminateVisibility(true);
+        new LoadRouteTask().execute(routeId);
     }
 
     @Subscribe
@@ -320,6 +333,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         if (event.route.getId() == routeId) {
             //Route is loaded and fully in db
             new LoadRouteTask().execute(routeId);
+            setProgressBarIndeterminateVisibility(false);
         }
     }
 

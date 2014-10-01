@@ -27,7 +27,7 @@ public class RouteActionsCard extends Card {
     }
 
     @InjectView(R.id.card_route_actions_play_button)
-    ImageButton mPlayButton;
+    public ImageButton mPlayButton;
 
     @InjectView(R.id.card_route_actions_star_checkbox)
     CheckBox mCheckBox;
