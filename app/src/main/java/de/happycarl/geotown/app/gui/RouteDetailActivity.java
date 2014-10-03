@@ -20,6 +20,7 @@ import android.widget.ShareActionProvider;
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
 import com.afollestad.cardsui.CardListView;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -306,6 +307,11 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
             //if route was played before, reset it now
             new ResetRouteTask().execute();
+
+            ((GeotownApplication) getApplication()).getTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(("InGame"))
+                    .setAction("Route Started")
+                    .build());
 
             startActivity(new Intent(this, PlayingActivity.class));
         }

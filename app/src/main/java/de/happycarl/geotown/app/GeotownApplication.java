@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 import com.appspot.drive_log.geotown.Geotown;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
@@ -48,6 +50,10 @@ public class GeotownApplication extends Application {
 
     public static Context getContext() {return mContext;}
 
+
+    private Tracker mTracker;
+
+
     public void doServerLogin(GoogleAccountCredential cred) {
         mGeotown = ApiUtils.getApiServiceHandle(cred);
     }
@@ -65,6 +71,9 @@ public class GeotownApplication extends Application {
         configureJobManager();
 
         mContext = this.getApplicationContext();
+
+        mTracker = GoogleAnalytics.getInstance(this).newTracker(R.xml.tracker);
+        mTracker.enableAdvertisingIdCollection(true);
 
     }
 
@@ -99,6 +108,10 @@ public class GeotownApplication extends Application {
                 .consumerKeepAlive(120)//wait 2 minute
                 .build();
         mJobManager = new JobManager(this, configuration);
+    }
+
+    public Tracker getTracker() {
+        return mTracker;
     }
 
     @Override

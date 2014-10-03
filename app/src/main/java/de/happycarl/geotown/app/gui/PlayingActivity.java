@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.activeandroid.query.Select;
+import com.google.android.gms.analytics.HitBuilders;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -304,15 +305,30 @@ public class PlayingActivity extends SystemBarTintActivity{
 
 
     private void newCurrentWaypoint(long id) {
+
+
         Log.d("newCurrentWaypoint", "ID: " + id);
         if(id == -1L) {
             //Somewhat error handling here
 
             return;
         } else if(id == -2L) {
+            ((GeotownApplication)getApplication()).getTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory("InGame")
+                    .setAction("Route Finished")
+                    .build());
+
             routeEnd(true);
+
             return;
         }
+
+        ((GeotownApplication)getApplication()).getTracker().send(new HitBuilders.EventBuilder()
+                .setCategory("InGame")
+                .setAction("New Waypoint")
+                .setLabel("Waypoint: " + id)
+                .build());
+
         currentWaypoint = new Select()
                 .from(GeoTownWaypoint.class)
                 .where("WaypointID = ?", id)
@@ -336,6 +352,10 @@ public class PlayingActivity extends SystemBarTintActivity{
     }
 
     private void showWaypointQuestion() {
+        ((GeotownApplication)getApplication()).getTracker().send(new HitBuilders.EventBuilder()
+                .setCategory("InGame")
+                .setAction("Waypoint Reached")
+                .build());
 
         Log.d("showWaypointQuestion", "Question showing: " + currentWaypoint.question + ": \n"
                 +currentWaypoint.rightAnswer + "\n" + currentWaypoint.wrongAnswers);
@@ -354,6 +374,10 @@ public class PlayingActivity extends SystemBarTintActivity{
         sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
         GameUtil.publishWaypointFinishToPlayGames(this, mGameHelper);
 
+        ((GeotownApplication)getApplication()).getTracker().send(new HitBuilders.EventBuilder()
+                .setCategory("InGame")
+                .setAction("Question Correctly Answered")
+                .build());
 
         if(questionShowing) {
             switcher.showNext();
@@ -445,6 +469,11 @@ public class PlayingActivity extends SystemBarTintActivity{
     }
 
     private void wrongAnswerClicked() {
+        ((GeotownApplication)getApplication()).getTracker().send(new HitBuilders.EventBuilder()
+                .setCategory("InGame")
+                .setAction("Question Incorrectly Answered")
+                .build());
+
         if(!BuildConfig.DEBUG)
             wrongAnswerCountdown.start();
         Crouton.makeText(this, R.string.message_playing_wrong_answer, Style.ALERT).show();
