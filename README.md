@@ -1,6 +1,8 @@
 geotown.android
 ===============
 
+[![Build Status](https://travis-ci.org/HappyCarl/geotown.android.svg?branch=develop)](https://travis-ci.org/HappyCarl/geotown.android)
+
 This is the GeoTown android client.
 Later it will allow the user to play Routes and (maybe) even create Routes.
 
