@@ -45,9 +45,9 @@ android {
     signingConfigs {
         release {
             storeFile file("../release.keystore")
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEYSTORE_ALIAS")
-            keyPassword System.getenv("KEYSTORE_PASSWORD")
+            storePassword "ErdbeerMarmeladeIstBeste"
+            keyAlias "geotown"
+            keyPassword "ErdbeerMarmeladeIstBeste"
         }
     }
 
