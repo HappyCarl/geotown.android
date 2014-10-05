@@ -41,7 +41,6 @@ def main():
   flags = argparser.parse_args()
 
   package_name = flags.package_name
-  track = flags.track
   version_code = flags.version
 
   try:
