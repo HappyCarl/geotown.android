@@ -14,8 +14,8 @@ before_install:
   - gem install git
   - gem install htmlentities
   - sudo pip install pyopenssl
-  - pip install oauth2client
-  - pip install google-api-python-client
+  - sudo pip install oauth2client
+  - sudo pip install google-api-python-client
   - git fetch origin master
   - git fetch --all
 before_script:
