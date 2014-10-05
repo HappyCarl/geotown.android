@@ -13,6 +13,9 @@ before_install:
   - export PATH=${PATH}:${ANDROID_HOME}/build-tools/20.0.0
   - gem install git
   - gem install htmlentities
+  - pip install pyopenssl
+  - pip install oauth2client
+  - pip install google-api-python-client
   - git fetch origin master
   - git fetch --all
 before_script:
