@@ -26,8 +26,8 @@ script:
 - cat app/src/main/res/xml/changelog_master.xml
 - "./gradlew build assembleRelease"
 - if [ "$TRAVIS_BRANCH" = "develop" ]; then ./testfairy-upload.sh app/build/outputs/apk/app-release.apk; fi;
-- if [ "$TRAVIS_BRANCH" = "develop" ]; then python scripts/uploadApk.py de.happycarl.geotown.app alpha app/build/outputs/apk/app-release.apk; fi;
-- if [ -z "$TRAVIS_TAG" ]; then python scripts/uploadApk.py de.happycarl.geotown.app production app/build/outputs/apk/app-release.apk; fi;
+- if [ "$TRAVIS_TAG" ]; then python scripts/uploadApk.py de.happycarl.geotown.app production app/build/outputs/apk/app-release.apk;
+- elif [ "$TRAVIS_BRANCH" = "develop" ]; then python scripts/uploadApk.py de.happycarl.geotown.app alpha app/build/outputs/apk/app-release.apk; fi;
 env:
   global:
   - secure: WR7j7bQVR5IAvn4fR9xT5IyQglUxmmDj3ohzrSVmTwDCuHEo/QuZX5QxpJHIciSNUBDEiAIQYmtvYredIdoPk3W0s8d7PCYhMdiKgojs/dD65BfxiXDlEos7Y/seTO84m4M10MN0nnwTf8owzlO9FMQioLbDFzJUTQU9d3/wdCo=
