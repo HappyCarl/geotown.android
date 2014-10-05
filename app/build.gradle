@@ -11,7 +11,7 @@ android {
     } catch(e) {}
 
     project.ext.vName = System.getenv("TRAVIS_TAG")
-    
+
     if(!project.ext.vName) {
         if(System.getenv("TRAVIS_COMMIT")) {
             project.ext.vName = System.getenv("TRAVIS_COMMIT").substring(0, 10)
@@ -45,9 +45,9 @@ android {
     signingConfigs {
         release {
             storeFile file("../release.keystore")
-            storePassword "ErdbeerMarmeladeIstBeste"
-            keyAlias "geotown"
-            keyPassword "ErdbeerMarmeladeIstBeste"
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEYSTORE_ALIAS")
+            keyPassword System.getenv("KEYSTORE_PASSWORD")
         }
     }
 
