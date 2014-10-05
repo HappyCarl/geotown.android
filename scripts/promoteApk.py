@@ -64,9 +64,6 @@ def main():
         packageName=package_name,
         body={u'versionCodes': []}).execute()
 
-    print 'Track %s is set for version code(s) %s' % (
-        track_response2['track'], str(track_response2['versionCodes']))
-
     commit_request = service.edits().commit(
         editId=edit_id, packageName=package_name).execute()
     print 'Edit "%s" has been committed' % (commit_request['id'])
