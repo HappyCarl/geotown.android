@@ -12,9 +12,6 @@ SERVICE_ACCOUNT_EMAIL = (
 argparser = argparse.ArgumentParser(add_help=False)
 argparser.add_argument('package_name',
                        help='The package name. Example: com.android.sample')
-argparser.add_argument('track',
-                       default='alpha',
-                       help='The Track. production, beta, alpha')
 argparser.add_argument('version',
                        help='The target version of the apk.')
 
@@ -55,12 +52,21 @@ def main():
 
     track_response = service.edits().tracks().update(
         editId=edit_id,
-        track=track,
+        track="production",
         packageName=package_name,
         body={u'versionCodes': [version_code]}).execute()
 
     print 'Track %s is set for version code(s) %s' % (
         track_response['track'], str(track_response['versionCodes']))
+
+    track_response2 = service.edits().tracks().update(
+        editId=edit_id,
+        track="alpha",
+        packageName=package_name,
+        body={u'versionCodes': []}).execute()
+
+    print 'Track %s is set for version code(s) %s' % (
+        track_response2['track'], str(track_response2['versionCodes']))
 
     commit_request = service.edits().commit(
         editId=edit_id, packageName=package_name).execute()

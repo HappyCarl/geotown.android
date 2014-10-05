@@ -27,7 +27,7 @@ script:
 - "./gradlew build assembleRelease"
 - if [ "$TRAVIS_BRANCH" = "develop" ]; then ./testfairy-upload.sh app/build/outputs/apk/app-release.apk; fi;
 - python scripts/uploadApk.py de.happycarl.geotown.app alpha app/build/outputs/apk/app-release.apk
-- if [ "$TRAVIS_TAG" ]; then python scripts/promoteApk.py de.happycarl.geotown.app production $TRAVIS_BUILD_NUMBER; fi;
+- if [ "$TRAVIS_TAG" ]; then python scripts/promoteApk.py de.happycarl.geotown.app $TRAVIS_BUILD_NUMBER; fi;
 env:
   global:
   - secure: WR7j7bQVR5IAvn4fR9xT5IyQglUxmmDj3ohzrSVmTwDCuHEo/QuZX5QxpJHIciSNUBDEiAIQYmtvYredIdoPk3W0s8d7PCYhMdiKgojs/dD65BfxiXDlEos7Y/seTO84m4M10MN0nnwTf8owzlO9FMQioLbDFzJUTQU9d3/wdCo=
