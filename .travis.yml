@@ -9,11 +9,7 @@ android:
   licenses:
     - android-sdk-license-.+
 before_install:
-  - #'sudo mv /usr/local/android-sdk/tools/android-* /usr/local/bin'
-  - #"android-update-sdk --components='platform-tools,tools' --accept-licenses='.+'"
-  - #"android-update-sdk --components='build-tools-20.0.0' --accept-licenses='.+'"
-  - #"android-update-sdk --components='android-20,android-19' --accept-licenses='.+'"
-  - #"android-update-sdk --components='extra-android-m2repository,extra-google-m2repository' --accept-licenses='.+'"
+  - openssl aes-256-cbc -K $encrypted_5ebf751f8018_key -iv $encrypted_5ebf751f8018_iv -in key.p12.enc -out key.p12 -d
   - export PATH=${PATH}:${ANDROID_HOME}/build-tools/20.0.0
   - gem install git
   - gem install htmlentities
@@ -27,6 +23,8 @@ script:
 - cat app/src/main/res/xml/changelog_master.xml
 - "./gradlew build assembleRelease"
 - if [ "$TRAVIS_BRANCH" = "develop" ]; then ./testfairy-upload.sh app/build/outputs/apk/app-release.apk; fi;
+- if [ "$TRAVIS_BRANCH" = "develop" ]; then python scripts/uploadApk.py de.happycarl.geotown.app alpha app/build/outputs/apk/app-release.apk; fi;
+- if [ -z "$TRAVIS_TAG" ]; then python scripts/uploadApk.py de.happycarl.geotown.app production app/build/outputs/apk/app-release.apk; fi;
 env:
   global:
   - secure: WR7j7bQVR5IAvn4fR9xT5IyQglUxmmDj3ohzrSVmTwDCuHEo/QuZX5QxpJHIciSNUBDEiAIQYmtvYredIdoPk3W0s8d7PCYhMdiKgojs/dD65BfxiXDlEos7Y/seTO84m4M10MN0nnwTf8owzlO9FMQioLbDFzJUTQU9d3/wdCo=

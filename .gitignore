@@ -1,4 +1,5 @@
 *.keystore
+*.p12
 
 /build
 
