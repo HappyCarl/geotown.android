@@ -17,12 +17,18 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EditorAction;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.ViewById;
 
 import de.happycarl.geotown.app.AppConstants;
@@ -56,44 +62,6 @@ public class FirstStartActivity extends SystemBarTintActivity {
     private ProgressDialog progressDialog;
 
     //================================================================================
-    // Activity Lifecycle
-    //================================================================================
-    private final View.OnTouchListener spinnerTouchListener = new View.OnTouchListener() {
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            FirstStartActivity.this.accountChooserClicked();
-            return true;
-        }
-    };
-    private final View.OnKeyListener spinnerKeyListener = new View.OnKeyListener() {
-
-        @Override
-        public boolean onKey(View view, int i, KeyEvent keyEvent) {
-            FirstStartActivity.this.accountChooserClicked();
-            return true;
-        }
-    };
-    private final TextWatcher usernameEditTextListener = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            if (usernameEditText.getText().toString().length() <= 0)
-                usernameEditText.setError(getString(R.string.error_firststart_no_username));
-        }
-    };
-
-
-    //================================================================================
     // UI
     //================================================================================
 
@@ -108,11 +76,6 @@ public class FirstStartActivity extends SystemBarTintActivity {
 
     @AfterViews
     protected void afterViews() {
-
-        accountChooser.setOnTouchListener(spinnerTouchListener);
-        accountChooser.setOnKeyListener(spinnerKeyListener);
-        usernameEditText.addTextChangedListener(usernameEditTextListener);
-
         credential = GoogleAccountCredential.usingAudience(this, getString(R.string.client_id));
 
         Account[] list = credential.getAllAccounts();
@@ -136,23 +99,16 @@ public class FirstStartActivity extends SystemBarTintActivity {
         GeotownApplication.getEventBus().unregister(this);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case REQUEST_ACCOUNT_PICKER:
-                if (data != null && data.getExtras() != null) {
-                    requestedAccountPicker = false;
-                    String accountName =
-                            data.getExtras().getString(
-                                    AccountManager.KEY_ACCOUNT_NAME);
-                    if (accountName != null) {
-                        setSelectedAccountName(accountName);
-                    }
-                }
-                break;
+    @OnActivityResult(REQUEST_ACCOUNT_PICKER)
+    protected void onResult(Intent data) {
+        if (data != null && data.getExtras() != null) {
+            requestedAccountPicker = false;
+            String accountName =
+                    data.getExtras().getString(
+                            AccountManager.KEY_ACCOUNT_NAME);
+            if (accountName != null) {
+                setSelectedAccountName(accountName);
+            }
         }
     }
 
@@ -166,6 +122,17 @@ public class FirstStartActivity extends SystemBarTintActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //So why would someone need an event responder
         return true;
+    }
+
+    @AfterTextChange(R.id.username_edit_text)
+    protected void afterTextChangedUsername(Editable text, TextView hello) {
+        if(usernameEditText.getText().toString().length() <= 0)
+            usernameEditText.setError(getString(R.string.error_firststart_no_username));
+    }
+
+    @Touch(R.id.account_chooser_spinner)
+    protected void onTouchSpinner() {
+        accountChooserClicked();
     }
 
     private void startOverview() {
