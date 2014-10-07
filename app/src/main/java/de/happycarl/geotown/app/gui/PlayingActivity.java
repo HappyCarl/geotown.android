@@ -32,6 +32,7 @@ import com.squareup.picasso.Picasso;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EActivity(R.layout.activity_playing)
+@OptionsMenu(R.menu.playing)
 public class PlayingActivity extends SystemBarTintActivity{
 
 
@@ -195,19 +197,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        /*if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) <= 0) {
-            seed = System.currentTimeMillis();
-            GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, seed).apply();
-        }*/
-
         doBindService();
-
-
-
-
-
     }
 
     @AfterViews
@@ -268,17 +258,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     @Override
     public void onResume() {
         sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
-
-
-
         super.onResume();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.playing, menu);
-        return true;
     }
 
     @Override

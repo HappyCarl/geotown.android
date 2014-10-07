@@ -27,6 +27,8 @@ import com.google.zxing.integration.android.IntentResult;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import de.cketti.library.changelog.ChangeLog;
@@ -45,6 +47,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 @EActivity(R.layout.activity_overview)
+@OptionsMenu(R.menu.overview)
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, CardListView.CardClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -206,95 +209,78 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.overview, menu);
-        return true;
-    }
-
-    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.action_upload_track_data).setChecked(GeotownApplication.getPreferences().getBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false));
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        switch (id) {
-            //case R.id.action_settings:
-            //    return true;
-            case R.id.action_close:
-                finish();
-                return true;
-            case R.id.action_achievements:
-                if (mGameHelper.isSignedIn()) {
-                    startActivityForResult(Games.Achievements.getAchievementsIntent(mGameHelper.getApiClient()), 42);
-                } else {
-                    Crouton.makeText(this, R.string.gplus_first_sign_in, Style.INFO).show();
-                }
+    @OptionsItem(R.id.action_close)
+    void closeSelected() {
+        finish();
+    }
 
-                break;
+    @OptionsItem(R.id.action_achievements)
+    void achievementsSelected() {
+        if (mGameHelper.isSignedIn()) {
+            startActivityForResult(Games.Achievements.getAchievementsIntent(mGameHelper.getApiClient()), 42);
+        } else {
+            Crouton.makeText(this, R.string.gplus_first_sign_in, Style.INFO).show();
+        }    }
 
-            case R.id.action_leaderboard:
-                if (mGameHelper.isSignedIn()) {
-                    startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGameHelper.getApiClient(),
-                            getString(R.string.leaderboard_routes)), 43);
-                } else {
-                    Crouton.makeText(this, R.string.gplus_first_sign_in, Style.INFO).show();
-                }
-
-                break;
-
-            case R.id.action_glpus_sign_out:
-                if (mGameHelper.isSignedIn())
-                    mGameHelper.signOut();
-                break;
-
-            case R.id.action_scan_qr_route:
-                IntentIntegrator integrator = new IntentIntegrator(this);
-                integrator.initiateScan();
-                break;
-
-            case R.id.action_upload_track_data:
-                Log.d("OverviewActivity", "Clicked Upload GPS");
-                if (!item.isChecked()) {
-                    final MenuItem finItem = item;
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, true).apply();
-                                    finItem.setChecked(true);
-                                    break;
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false).apply();
-                                    finItem.setChecked(false);
-                                    break;
-                            }
-                        }
-                    };
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder
-                            .setMessage(R.string.message_overview_submit_track_info)
-                            .setPositiveButton(android.R.string.yes, dialogClickListener)
-                            .setNegativeButton(android.R.string.no, dialogClickListener).show();
-                } else {
-                    GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false).apply();
-                    item.setChecked(false);
-                }
-
-                break;
-
+    @OptionsItem(R.id.action_leaderboard)
+    void leaderboardSelected() {
+        if (mGameHelper.isSignedIn()) {
+            startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGameHelper.getApiClient(),
+                    getString(R.string.leaderboard_routes)), 43);
+        } else {
+            Crouton.makeText(this, R.string.gplus_first_sign_in, Style.INFO).show();
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    @OptionsItem(R.id.action_glpus_sign_out)
+    void gplusSignoutSelected() {
+        if (mGameHelper.isSignedIn())
+            mGameHelper.signOut();
+    }
+
+    @OptionsItem(R.id.action_scan_qr_route)
+    void scanQRRouteSelected() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.initiateScan();
+    }
+
+    @OptionsItem(R.id.action_upload_track_data)
+    void uploadTrackSelected(MenuItem item) {
+        Log.d("OverviewActivity", "Clicked Upload GPS");
+        if (!item.isChecked()) {
+            final MenuItem finItem = item;
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, true).apply();
+                            finItem.setChecked(true);
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false).apply();
+                            finItem.setChecked(false);
+                            break;
+                    }
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder
+                    .setMessage(R.string.message_overview_submit_track_info)
+                    .setPositiveButton(android.R.string.yes, dialogClickListener)
+                    .setNegativeButton(android.R.string.no, dialogClickListener).show();
+        } else {
+            GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false).apply();
+            item.setChecked(false);
+        }
     }
 
     @Override

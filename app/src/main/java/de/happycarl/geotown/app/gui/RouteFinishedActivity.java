@@ -16,8 +16,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import de.happycarl.geotown.app.R;
@@ -25,6 +28,7 @@ import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
 @EActivity(R.layout.activity_route_finished)
+@OptionsMenu(R.menu.route_finished)
 public class RouteFinishedActivity extends Activity {
 
     private GoogleMap mMap;
@@ -38,25 +42,7 @@ public class RouteFinishedActivity extends Activity {
         mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.route_finished_map)).getMap();
 
         Long routeId = getIntent().getExtras().getLong("routeId");
-        new LoadRouteTask().execute(routeId);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.route_finished, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
+        loadRoute(routeId);
     }
 
     @Override
@@ -71,6 +57,7 @@ public class RouteFinishedActivity extends Activity {
         finish();
     }
 
+    @UiThread
     private void updateRouteUI() {
         mRouteDetailText.setText(getString(R.string.text_route_finished_text, mRoute.name));
 
@@ -80,22 +67,14 @@ public class RouteFinishedActivity extends Activity {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mRoute.latitude, mRoute.longitude), 13));
     }
 
-    private class LoadRouteTask extends AsyncTask<Long, Void, GeoTownRoute> {
-
-        @Override
-        protected void onPostExecute(GeoTownRoute geoTownRoute) {
-            mRoute = geoTownRoute;
-            updateRouteUI();
-        }
-
-        @Override
-        protected GeoTownRoute doInBackground(Long... longs) {
-            return new Select()
-                    .from(GeoTownRoute.class)
-                    .where("routeID = ?", longs[0])
-                    .limit(1)
-                    .executeSingle();
-        }
+    @Background
+    private void loadRoute(long routeId) {
+        mRoute = new Select()
+                .from(GeoTownRoute.class)
+                .where("routeID = ?", routeId)
+                .limit(1)
+                .executeSingle();
+        updateRouteUI();
     }
 
 }
