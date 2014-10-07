@@ -2,8 +2,13 @@ package de.happycarl.geotown.app.gui;
 
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -47,6 +52,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
 
     public static final int SERVICE_CONNECTION_ID = 42129;
+
 
 
     @InjectView(R.id.distance_view)
@@ -109,6 +115,8 @@ public class PlayingActivity extends SystemBarTintActivity{
     private boolean serviceIntoBackgroundMode = true;
     private boolean questionShowing = false;
 
+
+
     private class IncomingHandler extends Handler{
         @Override
         public void handleMessage(Message msg) {
@@ -119,6 +127,8 @@ public class PlayingActivity extends SystemBarTintActivity{
                     break;
                 case GameService.MSG_DISTANCE_TO_TARGET:
                     waypointDistanceView.setDistance(msg.arg1);
+                    waypointDistanceView.setBearing((float) Math.toRadians(msg.arg2));
+
                     break;
                 case GameService.MSG_NEW_WAYPOINT:
                     newCurrentWaypoint(MathUtil.intsToLong(msg.arg1, msg.arg2));
@@ -193,6 +203,9 @@ public class PlayingActivity extends SystemBarTintActivity{
 
         doBindService();
 
+
+
+
         imageView.setFadeDirection(FadingImageView.FadeSide.BOTTOM_SIDE);
         imageView.setEdgeLength(30);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -249,6 +262,9 @@ public class PlayingActivity extends SystemBarTintActivity{
     @Override
     public void onResume() {
         sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
+
+
+
         super.onResume();
     }
 

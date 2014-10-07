@@ -3,7 +3,13 @@ package de.happycarl.geotown.app.service;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.GeomagneticField;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,7 +50,7 @@ import de.happycarl.geotown.app.util.MathUtil;
 /**
  * Created by ole on 12.07.14.
  */
-public class GameService extends Service implements GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener, GoogleApiClient.OnConnectionFailedListener {
+public class GameService extends Service implements GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener, GoogleApiClient.OnConnectionFailedListener, SensorEventListener {
 
     /**
      * Command to the service to register a client, receiving callbacks
@@ -110,6 +116,15 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
     private long trackId;
 
+    private SensorManager sensorManager;
+
+    private float[] mGravs = new float[3];
+    private float[] mGeoMags = new float[3];
+    private float[] mOrientation = new float[3];
+    private float[] mRotationM = new float[9];
+
+    private Location currentLocation;
+
     private class IncomingHandler extends Handler {
 
         @Override
@@ -171,6 +186,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     //GAME LOGIC VARIABLES
     //--------------------------------------------------------------------------------------------------
     private int distanceToTarget = -1;
+    private int compassDirection;
     private GeoTownRoute currentRoute;
     private GeoTownWaypoint currentWaypoint;
     private Location currentTarget;
@@ -204,6 +220,10 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
             Log.d("seed", "put seed " + seed);
         }
         random = new Random(seed);
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        //sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        //sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -212,6 +232,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION);
         mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION + 1);
         LocationServices.FusedLocationApi.removeLocationUpdates(mApiClient, this);
+        //sensorManager.unregisterListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+        //sensorManager.unregisterListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD));
     }
 
 
@@ -340,7 +362,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
             }
 
         }
-        sendMessage(MSG_DISTANCE_TO_TARGET, distanceToTarget, 0);
+        sendMessage(MSG_DISTANCE_TO_TARGET, distanceToTarget, compassDirection);
     }
 
     private void reportWaypoint() {
@@ -504,6 +526,10 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         } else {
             distanceToTarget = (int) currentTarget.distanceTo(location);
 
+            float compass = location.bearingTo(currentTarget) - location.getBearing();
+            compassDirection = (int)compass;
+            Log.d("Compass", compassDirection + "  " + compass + "   " + location.bearingTo(currentTarget) + " - " + location.getBearing());
+
             if (distanceToTarget <= AppConstants.WAYPOINT_RADIUS && distanceToTarget > 0) {
                 sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
             }
@@ -562,6 +588,47 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         } else {
             Log.e("GameService", "Upload of track failed");
         }
+    }
+
+
+    /*
+    All this stuff found there: https://groups.google.com/forum/#!topic/android-beginners/V4pOfLn8klQ
+     */
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        switch(event.sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                System.arraycopy(event.values,0,mGravs,0,3);
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                System.arraycopy(event.values, 0, mGeoMags,0,3);
+                break;
+            default:
+                return;
+        }
+        if(SensorManager.getRotationMatrix(mRotationM, null, mGravs, mGeoMags)) {
+            SensorManager.getOrientation(mRotationM, mOrientation);
+
+            if (currentLocation == null)
+                return;
+            GeomagneticField geomagneticField = new GeomagneticField(
+                    (float) currentLocation.getLatitude(),
+                    (float) currentLocation.getLongitude(),
+                    (float) currentLocation.getAltitude(),
+                    System.currentTimeMillis());
+
+            float bearing = currentLocation.bearingTo(currentTarget);
+            float heading = mOrientation[0] + geomagneticField.getDeclination();
+
+            float compass = bearing - heading;
+            Log.d("Bearing", compass + " : " + bearing + " : " + heading);
+
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
 

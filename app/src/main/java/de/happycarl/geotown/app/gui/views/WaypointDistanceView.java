@@ -3,9 +3,14 @@ package de.happycarl.geotown.app.gui.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Point;
+import android.hardware.GeomagneticField;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+
+import java.text.DecimalFormat;
 
 /**
  * TODO: document your custom view class.
@@ -14,8 +19,13 @@ public class WaypointDistanceView extends View {
 
     private int distance;
 
+    float bearing;
+    boolean showCompass = true;
+
     private Paint circlePaint;
     private Paint circleHighlightPaint;
+
+    private Paint compassPaint;
 
     private Paint centerPaint;
     private Paint centerHighlightPaint;
@@ -25,6 +35,9 @@ public class WaypointDistanceView extends View {
     private float circleMaxDiameter = 0;
     private float centerX;
     private float centerY;
+
+    DecimalFormat f = new DecimalFormat("##.00");
+    Path compassTriangle = new Path();
 
     public WaypointDistanceView(Context context) {
         super(context);
@@ -52,6 +65,10 @@ public class WaypointDistanceView extends View {
         circleHighlightPaint.setStyle(Paint.Style.STROKE);
         circleHighlightPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
         circleHighlightPaint.setStrokeWidth(10f);
+
+        compassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        compassPaint.setStyle(Paint.Style.FILL);
+        compassPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
 
         centerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         centerPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -83,24 +100,93 @@ public class WaypointDistanceView extends View {
         requestLayout();
     }
 
+    public float getBearing() {
+        return bearing;
+    }
+
+    /*
+    Sets the bearing that will be shown to the user
+    The parameter has to be in radian, with 0 facing to device top and pi to bottom
+     */
+    public void setBearing(float bearing) {
+        this.bearing = (float)(bearing - Math.PI/2);
+        invalidate();
+        requestLayout();
+    }
+
+    public boolean isShowCompass() {
+        return showCompass;
+    }
+
+    public void setShowCompass(boolean show) {
+        showCompass = show;
+        invalidate();
+        requestLayout();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        Log.d("CircleStuff", "onDraw");
 
-        canvas.drawCircle(centerX, centerY, circleMaxDiameter / 35, (distance < 200)? centerHighlightPaint : centerPaint);
+        float compassRadius = 0;
+
+        canvas.drawCircle(centerX, centerY, circleMaxDiameter / 35, (distance < 200) ? centerHighlightPaint : centerPaint);
 
         for (int i = 200; i <= 800; i += 200) {
             Paint paint = circlePaint;
-            if(distance >= i && distance < i + 200)
+
+            float radius = (circleMaxDiameter / 2) * ((float) i / 1000);
+            if (distance >= i && distance < i + 200) {
                 paint = circleHighlightPaint;
-            canvas.drawCircle(centerX, centerY, (circleMaxDiameter / 2) * ((float)i / 1000), paint);
+
+                compassRadius = radius;
+            }
+            canvas.drawCircle(centerX, centerY, radius, paint);
         }
 
-        canvas.drawCircle(centerX, centerY, circleMaxDiameter / 2, (distance >= 1000)? circleHighlightPaint : circlePaint);
+        if(compassRadius == 0) {
+            compassRadius = circleMaxDiameter/2;
+        }
 
+        canvas.drawCircle(centerX, centerY, circleMaxDiameter / 2, (distance >= 1000) ? circleHighlightPaint : circlePaint);
 
+        if(showCompass) {
+            //The following operations take place in a cartesian coordinate system assuming centerX,centerY as point of origin
 
-        canvas.drawText(distance + " m", centerX, (float) (centerY * 1.3), textPaint );
+            //Top of arrow
+            int point1Dist = (int) (compassRadius + (circleMaxDiameter / 20));
+            float point1Angle = bearing;
+
+            //Bottom right of arrow
+            int point2Dist = (int) compassRadius;
+            float point2Angle = (float) (bearing + (Math.PI/40));
+
+            //Bottom left of arrow
+            int point3Dist = (int) compassRadius;
+            float point3Angle = (float) (bearing - (Math.PI/40));
+
+            compassTriangle.reset();
+            compassTriangle.setFillType(Path.FillType.EVEN_ODD);
+            //Top of arrow
+            compassTriangle.moveTo((float) (point1Dist * Math.cos(point1Angle) + centerX), (float) (point1Dist * Math.sin(point1Angle) + centerY));
+            //Down to bottom right
+            compassTriangle.lineTo((float)( point2Dist * Math.cos(point2Angle) + centerX),(float) (point2Dist * Math.sin(point2Angle) + centerY));
+            //To the left corner
+            compassTriangle.lineTo((float)( point3Dist * Math.cos(point3Angle) + centerX),(float) (point3Dist * Math.sin(point3Angle) + centerY));
+            compassTriangle.close();
+
+            canvas.drawPath(compassTriangle, compassPaint);
+
+        }
+
+        if(distance < 1000) {
+            canvas.drawText(distance + " m", centerX, (float) (centerY * 1.3), textPaint);
+        } else {
+
+            canvas.drawText(f.format((float)distance/1000) + " km", centerX, (float) (centerY * 1.3), textPaint);
+        }
+
 
     }
 
@@ -109,7 +195,7 @@ public class WaypointDistanceView extends View {
         Log.d("OnSizeChanged", "size: " + w + ":" + h + "; pos: " + getX() + ":" + getY());
 
 
-        circleMaxDiameter = Math.min(w,h);
+        circleMaxDiameter = Math.min(w, h);
         circleMaxDiameter -= (circleMaxDiameter / 10);
 
         centerX = w / 2;
