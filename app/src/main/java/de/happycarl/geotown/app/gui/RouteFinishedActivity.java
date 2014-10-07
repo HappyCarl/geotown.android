@@ -58,7 +58,7 @@ public class RouteFinishedActivity extends Activity {
     }
 
     @UiThread
-    private void updateRouteUI() {
+    protected void updateRouteUI() {
         mRouteDetailText.setText(getString(R.string.text_route_finished_text, mRoute.name));
 
         for(GeoTownWaypoint w : mRoute.waypoints())
@@ -68,7 +68,7 @@ public class RouteFinishedActivity extends Activity {
     }
 
     @Background
-    private void loadRoute(long routeId) {
+    protected void loadRoute(long routeId) {
         mRoute = new Select()
                 .from(GeoTownRoute.class)
                 .where("routeID = ?", routeId)
