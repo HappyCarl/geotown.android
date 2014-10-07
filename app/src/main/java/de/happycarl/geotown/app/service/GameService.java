@@ -28,7 +28,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.HashBiMap;
-import com.squareup.otto.Subscribe;
 
 import java.util.List;
 import java.util.Random;
@@ -576,13 +575,11 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         }
     }
 
-    @Subscribe
-    public void onTrackStarted(TrackStartedEvent event) {
+    public void onEvent(TrackStartedEvent event) {
         trackId = event.trackId;
     }
 
-    @Subscribe
-    public void onTrackFinished(TrackFinishedEvent event) {
+    public void onEvent(TrackFinishedEvent event) {
         if (event.success) {
             Log.d("GameService", "Upload of track successfull");
         } else {

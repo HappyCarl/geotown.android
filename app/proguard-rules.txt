@@ -93,6 +93,10 @@
     public static final ** CREATOR;
 }
 
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
+
 -dontwarn com.google.**
 
 -keepnames class com.levelup.http.okhttp.** { *; }

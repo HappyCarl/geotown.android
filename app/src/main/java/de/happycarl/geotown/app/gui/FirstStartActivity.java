@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -233,8 +232,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         GeotownApplication.getJobManager().addJob(new SetUsernameRequest(name));
     }
 
-    @Subscribe
-    public void onUsernameSet(UsernameSetEvent e) {
+    public void onEvent(UsernameSetEvent e) {
         GeotownApplication.getPreferences().edit().putString(AppConstants.PREF_ACCOUNT_NAME, e.userData.getUsername()).apply();
         progressDialog.cancel();
 

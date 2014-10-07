@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -332,13 +331,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
         GeotownApplication.getJobManager().addJob(new NearRoutesRequest(currentLocation.getLatitude(), currentLocation.getLongitude(), DEFAULT_NEAR_ROUTES_SEARCH_RADIUS));
     }
 
-    @Subscribe
-    public void onRouteDeleted(GeoTownRouteDeletedEvent event) {
+    public void onEvent(GeoTownRouteDeletedEvent event) {
         adapter.startRefreshSavedRoutes();
     }
 
-    @Subscribe
-    public void onGeoTownRouteRetrieved(GeoTownRouteRetrievedEvent event) {
+    public void onEvent(GeoTownRouteRetrievedEvent event) {
         if (event.id == GET_ROUTE_BY_NAME_DETAIL_REQUEST) {
             Intent intent = new Intent(this, RouteDetailActivity.class);
             intent.putExtra("routeID", event.route.id);
@@ -346,14 +343,12 @@ public class OverviewActivity extends SystemBarTintActivity implements
         }
     }
 
-    @Subscribe
-    public void onNearRoutesDataReceived(NearRoutesDataReceivedEvent event) {
+    public void onEvent(NearRoutesDataReceivedEvent event) {
         adapter.startRefreshNearRoutes();
         this.cardUILayout.setRefreshing(false);
     }
 
-    @Subscribe
-    public void onMyRoutesDataReceived(MyRoutesDataReceivedEvent event) {
+    public void onEvent(MyRoutesDataReceivedEvent event) {
         Log.d("Update", "Received my Routes.");
         adapter.startRefreshMyRoutes();
     }

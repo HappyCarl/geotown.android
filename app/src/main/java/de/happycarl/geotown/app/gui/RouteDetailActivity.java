@@ -26,7 +26,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -329,8 +328,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
         new LoadRouteTask().execute(routeId);
     }
 
-    @Subscribe
-    public void onRouteDataReceived(RouteDataReceivedEvent event) {
+    public void onEvent(RouteDataReceivedEvent event) {
         if (event.route.getId() == routeId) {
             //Route is loaded and fully in db
             new LoadRouteTask().execute(routeId);

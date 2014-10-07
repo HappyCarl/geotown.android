@@ -14,9 +14,8 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.path.android.jobqueue.log.CustomLogger;
-import com.squareup.otto.Bus;
-import com.squareup.otto.ThreadEnforcer;
 
+import de.greenrobot.event.EventBus;
 import de.happycarl.geotown.app.api.ApiUtils;
 
 /**
@@ -26,13 +25,13 @@ public class GeotownApplication extends Application {
 
     public static final Handler mHandler = new Handler();
 
-    private static Bus mEventBus;
+    private static EventBus mEventBus;
     private static SharedPreferences mPreferences;
     private static Geotown mGeotown;
     private static JobManager mJobManager;
     private static Context mContext;
 
-    public static Bus getEventBus() {
+    public static EventBus getEventBus() {
         return mEventBus;
     }
 
@@ -64,7 +63,7 @@ public class GeotownApplication extends Application {
 
         ActiveAndroid.initialize(this);
 
-        mEventBus = new Bus(ThreadEnforcer.MAIN);
+        mEventBus = new EventBus();
         mPreferences = getSharedPreferences(AppConstants.PREF_NAME, MODE_MULTI_PROCESS);
         mGeotown = ApiUtils.getApiServiceHandle(null);
 
