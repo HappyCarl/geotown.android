@@ -20,9 +20,11 @@ import android.widget.Spinner;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.util.GoogleUtils;
@@ -32,6 +34,7 @@ import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
 import de.happycarl.geotown.app.events.net.UsernameSetEvent;
 
 
+@EActivity(R.layout.activity_start)
 public class FirstStartActivity extends SystemBarTintActivity {
     //================================================================================
     // Constants
@@ -42,9 +45,9 @@ public class FirstStartActivity extends SystemBarTintActivity {
     //================================================================================
     // Properties
     //================================================================================
-    @InjectView(R.id.account_chooser_spinner)
+    @ViewById(R.id.account_chooser_spinner)
     Spinner accountChooser;
-    @InjectView(R.id.username_edit_text)
+    @ViewById(R.id.username_edit_text)
     EditText usernameEditText;
 
     private GoogleAccountCredential credential;
@@ -98,10 +101,13 @@ public class FirstStartActivity extends SystemBarTintActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mGameHelper.setConnectOnStart(false);
-        setContentView(R.layout.activity_start);
 
-        ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
+
+    }
+
+    @AfterViews
+    protected void afterViews() {
 
         accountChooser.setOnTouchListener(spinnerTouchListener);
         accountChooser.setOnKeyListener(spinnerKeyListener);
@@ -167,8 +173,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
         Log.d("Login", "Successfully logged in");
         GeotownApplication.getJobManager().addJob(new CurrentUserDataRequest());
 
-        Intent overviewScreen = new Intent(this, OverviewActivity.class);
-        startActivity(overviewScreen);
+        OverviewActivity_.intent(this).start();
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
         finish();
     }
@@ -187,7 +192,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
     // Networking
     //================================================================================
 
-    @OnClick(R.id.start_button)
+    @Click(R.id.start_button)
     protected void loginGoogle() {
         if (!GoogleUtils.checkGooglePlayServicesAvailable(this))
             return;
@@ -245,8 +250,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
 
         Log.i("PEDAB", "Sign In Arrived");
         if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, -1L) != -1) {
-            Intent playingActivity = new Intent(this, PlayingActivity.class);
-            startActivity(playingActivity);
+            PlayingActivity_.intent(this).start();
             finish();
         } else {
             startOverview();

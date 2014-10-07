@@ -25,7 +25,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".gui.FirstStartActivity"
+            android:name=".gui.FirstStartActivity_"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,10 +34,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".gui.OverviewActivity"
+            android:name=".gui.OverviewActivity_"
             android:label="@string/title_activity_overview" />
         <activity
-            android:name=".gui.RouteDetailActivity"
+            android:name=".gui.RouteDetailActivity_"
             android:label="@string/title_activity_route_detail" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -65,6 +65,20 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".gui.PlayingActivity_"
+            android:label="@string/title_activity_playing" >
+        </activity>
+
+        <activity
+            android:name=".gui.RouteFinishedActivity_"
+            android:label="@string/title_activity_route_finished" >
+        </activity>
+
+        <service
+            android:name=".service.GameService"
+            android:process=":gameservice" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -81,19 +95,9 @@
             android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/app_id" />
 
-        <activity
-            android:name=".gui.PlayingActivity"
-            android:label="@string/title_activity_playing" >
-        </activity>
 
-        <service
-            android:name=".service.GameService"
-            android:process=":gameservice" />
 
-        <activity
-            android:name=".gui.RouteFinishedActivity"
-            android:label="@string/title_activity_route_finished" >
-        </activity>
+
     </application>
 
 </manifest>

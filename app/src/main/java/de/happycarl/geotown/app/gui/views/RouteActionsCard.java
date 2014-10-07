@@ -7,9 +7,12 @@ import android.widget.ImageButton;
 
 import com.afollestad.cardsui.Card;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
+
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.EView;
+import org.androidannotations.annotations.ViewById;
+
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
@@ -26,11 +29,8 @@ public class RouteActionsCard extends Card {
         public void onPlayButtonClicked();
     }
 
-    @InjectView(R.id.card_route_actions_play_button)
-    public ImageButton mPlayButton;
-
-    @InjectView(R.id.card_route_actions_star_checkbox)
-    CheckBox mCheckBox;
+    private ImageButton mPlayButton;
+    private CheckBox mCheckBox;
 
     private final GeoTownRoute mRoute;
 
@@ -48,16 +48,27 @@ public class RouteActionsCard extends Card {
     }
 
     public void buildView(View view) {
-        ButterKnife.inject(this, view);
+        mPlayButton = (ImageButton) view.findViewById(R.id.card_route_actions_play_button);
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onPlayButtonClicked();
+            }
+        });
+        mCheckBox = (CheckBox) view.findViewById(R.id.card_route_actions_star_checkbox);
+        mCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onStarCheckboxClicked();
+            }
+        });
         updateUI();
     }
 
-    @OnClick(R.id.card_route_actions_star_checkbox)
     void onStarCheckboxClicked() {
         mListener.onCheckBoxClicked(mCheckBox.isChecked());
     }
 
-    @OnClick(R.id.card_route_actions_play_button)
     void onPlayButtonClicked() {
         mListener.onPlayButtonClicked();
     }

@@ -15,28 +15,26 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
+@EActivity(R.layout.activity_route_finished)
 public class RouteFinishedActivity extends Activity {
 
     private GoogleMap mMap;
     private GeoTownRoute mRoute;
 
-    @InjectView(R.id.route_finished_detail)
+    @ViewById(R.id.route_finished_detail)
     TextView mRouteDetailText;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_route_finished);
-
-        ButterKnife.inject(this);
-
+    @AfterViews
+    protected void afterViews() {
         mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.route_finished_map)).getMap();
 
         Long routeId = getIntent().getExtras().getLong("routeId");
@@ -66,7 +64,7 @@ public class RouteFinishedActivity extends Activity {
         okay();
     }
 
-    @OnClick(R.id.route_finished_button_okay)
+    @Click(R.id.route_finished_button_okay)
     void okay() {
         Intent overview = new Intent(this, OverviewActivity.class);
         startActivity(overview);

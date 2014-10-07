@@ -29,6 +29,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.HashBiMap;
 
+import org.androidannotations.annotations.EService;
+
 import java.util.List;
 import java.util.Random;
 
@@ -41,7 +43,7 @@ import de.happycarl.geotown.app.api.requests.StartTrackRequest;
 import de.happycarl.geotown.app.events.net.TrackFinishedEvent;
 import de.happycarl.geotown.app.events.net.TrackStartedEvent;
 import de.happycarl.geotown.app.gpx.GPXRouteLogger;
-import de.happycarl.geotown.app.gui.PlayingActivity;
+import de.happycarl.geotown.app.gui.PlayingActivity_;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 import de.happycarl.geotown.app.util.MathUtil;
@@ -260,9 +262,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 .setContentTitle(text + " '" + currentRoute.name + "'")
                 .setContentText(distText + " " + distanceToTarget + "m")
                 .setOngoing(true);
-        Intent intent = new Intent(this, PlayingActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,PlayingActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP).get() , PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(pendingIntent);
 
 
@@ -320,9 +321,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     .setGroupSummary(true);
         }*/
 
-        Intent intent = new Intent(this, PlayingActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,PlayingActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP).get() , PendingIntent.FLAG_UPDATE_CURRENT);
         phoneNotificationBuilder.setContentIntent(pendingIntent);
 
 

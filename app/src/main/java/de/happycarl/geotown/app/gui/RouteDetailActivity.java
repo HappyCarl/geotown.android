@@ -27,8 +27,13 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+
+
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;
@@ -41,12 +46,13 @@ import de.happycarl.geotown.app.gui.views.RouteDetailCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
+@EActivity(R.layout.activity_route_detail)
 public class RouteDetailActivity extends SystemBarTintActivity implements RouteActionsCard.RouteActionsCardListener {
     //================================================================================
     // Properties
     //================================================================================
 
-    @InjectView(R.id.route_detail_card_list)
+    @ViewById(R.id.route_detail_card_list)
     CardListView cardsList;
 
     private ShareActionProvider mShareActionProvider;
@@ -65,19 +71,22 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_route_detail);
 
-
-        ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
+    }
 
-
+    @AfterViews
+    protected void afterViews() {
         mCardAdapter = new RouteDetailCardAdapter(this, R.color.primary_color);
         cardsList.setAdapter(mCardAdapter);
 
+        initRouteID();
+
+    }
+
+    private void initRouteID() {
         String path = "";
         if (getIntent().getData() != null && getIntent().getData().getPath() != null)
             path = getIntent().getData().getPath().replaceAll("[^\\d]", "");
@@ -115,7 +124,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             updateRouteUI();
 
 
-            loadRoute();
+            loadNetworkRoute();
 
             mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         }
@@ -183,7 +192,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
                 this.finish();
                 return true;
             case R.id.clear_route_data:
-                new ResetRouteTask().execute();
+                resetRoute();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -191,7 +200,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     }
 
 
-    private void updateRouteUI() {
+    @UiThread
+    protected void updateRouteUI() {
         updateCardsList();
         if (mRoute == null) {
             return;
@@ -305,14 +315,14 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             editor.apply();
 
             //if route was played before, reset it now
-            new ResetRouteTask().execute();
+            resetRoute();
 
             ((GeotownApplication) getApplication()).getTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(("InGame"))
                     .setAction("Route Started")
                     .build());
 
-            startActivity(new Intent(this, PlayingActivity.class));
+            PlayingActivity_.intent(this).start();
         }
 
         updateRouteUI();
@@ -322,62 +332,46 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     // Network
     //================================================================================
 
-    private void loadRoute() {
+    private void loadNetworkRoute() {
         GeotownApplication.getJobManager().addJob(new RouteRequest(routeId));
         setProgressBarIndeterminateVisibility(true);
-        new LoadRouteTask().execute(routeId);
+        loadLocalRoute();
+    }
+
+    @Background
+    protected void loadLocalRoute() {
+        mRoute = new Select()
+                .from(GeoTownRoute.class)
+                .where("routeID = ?", routeId)
+                .limit(1)
+                .executeSingle();
+
+        updateRouteUI();
+    }
+
+
+    @Background
+    protected void resetRoute() {
+        try {
+            ActiveAndroid.beginTransaction();
+
+            for (GeoTownWaypoint wp : mRoute.waypoints()) {
+                wp.done = false;
+                wp.save();
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
+        }
+
+        loadLocalRoute();
     }
 
     public void onEvent(RouteDataReceivedEvent event) {
         if (event.route.getId() == routeId) {
             //Route is loaded and fully in db
-            new LoadRouteTask().execute(routeId);
+            loadLocalRoute();
             setProgressBarIndeterminateVisibility(false);
-        }
-    }
-
-    private class LoadRouteTask extends AsyncTask<Long, Void, GeoTownRoute> {
-
-        @Override
-        protected void onPostExecute(GeoTownRoute geoTownRoute) {
-            mRoute = geoTownRoute;
-            updateRouteUI();
-        }
-
-        @Override
-        protected GeoTownRoute doInBackground(Long... longs) {
-            return new Select()
-                    .from(GeoTownRoute.class)
-                    .where("routeID = ?", longs[0])
-                    .limit(1)
-                    .executeSingle();
-        }
-    }
-
-    private class ResetRouteTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                ActiveAndroid.beginTransaction();
-
-                for (GeoTownWaypoint wp : mRoute.waypoints()) {
-                    wp.done = false;
-                    wp.save();
-                }
-                ActiveAndroid.setTransactionSuccessful();
-            } finally {
-                ActiveAndroid.endTransaction();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            loadRoute();
         }
     }
 

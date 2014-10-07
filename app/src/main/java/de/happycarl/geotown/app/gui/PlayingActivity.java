@@ -29,12 +29,14 @@ import com.activeandroid.query.Select;
 import com.google.android.gms.analytics.HitBuilders;
 import com.squareup.picasso.Picasso;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.BuildConfig;
 import de.happycarl.geotown.app.GeotownApplication;
@@ -48,6 +50,7 @@ import de.happycarl.geotown.app.util.MathUtil;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+@EActivity(R.layout.activity_playing)
 public class PlayingActivity extends SystemBarTintActivity{
 
 
@@ -55,28 +58,28 @@ public class PlayingActivity extends SystemBarTintActivity{
 
 
 
-    @InjectView(R.id.distance_view)
+    @ViewById(R.id.distance_view)
     WaypointDistanceView waypointDistanceView;
 
-    @InjectView(R.id.waypointImage)
+    @ViewById(R.id.waypointImage)
     FadingImageView imageView;
 
-    @InjectView(R.id.viewswitch_playing)
+    @ViewById(R.id.viewswitch_playing)
     ViewFlipper switcher;
 
-    @InjectView(R.id.answer1)
+    @ViewById(R.id.answer1)
     Button answer1;
 
-    @InjectView(R.id.answer2)
+    @ViewById(R.id.answer2)
     Button answer2;
 
-    @InjectView(R.id.answer3)
+    @ViewById(R.id.answer3)
     Button answer3;
 
-    @InjectView(R.id.answer4)
+    @ViewById(R.id.answer4)
     Button answer4;
 
-    @InjectView(R.id.questionText)
+    @ViewById(R.id.questionText)
     TextView questionText;
 
     Messenger gameService = null;
@@ -192,9 +195,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playing);
 
-        ButterKnife.inject(this);
 
         /*if (GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L) <= 0) {
             seed = System.currentTimeMillis();
@@ -206,6 +207,11 @@ public class PlayingActivity extends SystemBarTintActivity{
 
 
 
+
+    }
+
+    @AfterViews
+    protected void afterViews() {
         imageView.setFadeDirection(FadingImageView.FadeSide.BOTTOM_SIDE);
         imageView.setEdgeLength(30);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -422,13 +428,10 @@ public class PlayingActivity extends SystemBarTintActivity{
 
             Long routeId = this.currentWaypoint.route.id;
 
-            Intent finishedActivity = new Intent(this, RouteFinishedActivity.class);
-            finishedActivity.putExtra("routeId", routeId);
-            startActivity(finishedActivity);
+            RouteFinishedActivity_.intent(this).extra("routeId", routeId).start();
             finish();
         } else {
-            Intent overview = new Intent(this, OverviewActivity.class);
-            startActivity(overview);
+            OverviewActivity_.intent(this).start();
             finish();
         }
     }
@@ -448,7 +451,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         }
     }
 
-    @OnClick(R.id.answer1)
+    @Click(R.id.answer1)
     public void onAnswer1Clicked() {
         if(answer1.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
@@ -457,7 +460,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         }
     }
 
-    @OnClick(R.id.answer2)
+    @Click(R.id.answer2)
     public void onAnswer2Clicked() {
         if(answer2.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
@@ -466,7 +469,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         }
     }
 
-    @OnClick(R.id.answer3)
+    @Click(R.id.answer3)
     public void onAnswer3Clicked() {
         if(answer3.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();
@@ -475,7 +478,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         }
     }
 
-    @OnClick(R.id.answer4)
+    @Click(R.id.answer4)
     public void onAnswer4Clicked() {
         if(answer4.getText().toString().equals(currentWaypoint.rightAnswer)) {
             questionAnswerCorrect();

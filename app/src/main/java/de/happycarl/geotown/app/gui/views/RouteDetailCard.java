@@ -10,12 +10,13 @@ import android.widget.TextView;
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
 
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.ViewById;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 
@@ -25,14 +26,9 @@ import de.happycarl.geotown.app.models.GeoTownRoute;
 public class RouteDetailCard extends Card {
     private static final Map<Location, String> CACHE = new HashMap<>();
 
-    @InjectView(R.id.card_route_detail_location_text)
-    TextView mLocationTextView;
-
-    @InjectView(R.id.card_route_detail_owner_text)
-    TextView mOwnerTextView;
-
-    @InjectView(R.id.card_route_detail_waypoint_amount)
-    TextView mWaypointAmountTextView;
+    private TextView mLocationTextView;
+    private TextView mOwnerTextView;
+    private TextView mWaypointAmountTextView;
 
     private final GeoTownRoute mRoute;
     private final CardAdapter mAdapter;
@@ -48,8 +44,9 @@ public class RouteDetailCard extends Card {
     }
 
     public void updateView(View view) {
-        ButterKnife.inject(this, view);
-
+        mLocationTextView = (TextView) view.findViewById(R.id.card_route_detail_location_text);
+        mOwnerTextView = (TextView) view.findViewById(R.id.card_route_detail_owner_text);
+        mWaypointAmountTextView = (TextView) view.findViewById(R.id.card_route_detail_waypoint_amount);
         updateUi();
     }
 

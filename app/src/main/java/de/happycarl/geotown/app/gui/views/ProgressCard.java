@@ -7,8 +7,10 @@ import android.widget.TextView;
 
 import com.afollestad.cardsui.CardAdapter;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.EView;
+import org.androidannotations.annotations.ViewById;
+
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
@@ -20,11 +22,8 @@ public class ProgressCard extends RouteCard {
 
     final GeoTownRoute geoTownRoute;
 
-    @InjectView(R.id.progress)
-    ProgressBar progress;
-
-    @InjectView(R.id.progress_text)
-    TextView progressText;
+    private ProgressBar progress;
+    private TextView progressText;
 
     final Context c;
     View view;
@@ -47,8 +46,9 @@ public class ProgressCard extends RouteCard {
     }
 
     public void updateView(View view) {
-        ButterKnife.inject(this, view);
         this.view = view;
+        progress = (ProgressBar) view.findViewById(R.id.progress);
+        progressText = (TextView) view.findViewById(R.id.progress_text);
         updateUI();
     }
 

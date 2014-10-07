@@ -25,8 +25,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import de.cketti.library.changelog.ChangeLog;
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
@@ -42,6 +44,7 @@ import de.happycarl.geotown.app.gui.views.RouteCard;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+@EActivity(R.layout.activity_overview)
 public class OverviewActivity extends SystemBarTintActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, CardListView.CardClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -66,10 +69,10 @@ public class OverviewActivity extends SystemBarTintActivity implements
     // Properties
     //================================================================================
 
-    @InjectView(R.id.route_view)
+    @ViewById(R.id.route_view)
     CardListView cardListView;
 
-    @InjectView(R.id.overview_card_ptr_layout)
+    @ViewById(R.id.overview_card_ptr_layout)
     SwipeRefreshLayout cardUILayout;
     private OverviewCardsAdapter adapter;
     private LocationClient locationClient;
@@ -80,23 +83,16 @@ public class OverviewActivity extends SystemBarTintActivity implements
     //================================================================================
     // Activity Lifecycle
     //================================================================================
-    private CardHeader.ActionListener nearRoutesActionListener = new CardHeader.ActionListener() {
-
-        @Override
-        public void onHeaderActionClick(CardHeader cardHeader) {
-            // TODO: Show "NearRoutesActivity" here. Lel.
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_overview);
 
-        ButterKnife.inject(this);
         GeotownApplication.getEventBus().register(this);
+    }
 
+    @AfterViews
+    protected void afterViews() {
         cardUILayout.setOnRefreshListener(this);
         cardUILayout.setColorScheme(R.color.primary_color, android.R.color.holo_blue_light, R.color.primary_color, android.R.color.holo_blue_light);
 
@@ -206,9 +202,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
     }
 
     private void startOverviewActivity(long routeID) {
-        Intent intent = new Intent(this, RouteDetailActivity.class);
-        intent.putExtra("routeID", routeID);
-        startActivity(intent);
+        RouteDetailActivity_.intent(this).extra("routeID", routeID).start();
     }
 
     @Override
