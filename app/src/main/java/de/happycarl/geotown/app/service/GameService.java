@@ -117,8 +117,6 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
     private long trackId;
 
-    private SensorManager sensorManager;
-
     private float[] mGravs = new float[3];
     private float[] mGeoMags = new float[3];
     private float[] mOrientation = new float[3];
@@ -222,7 +220,6 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         }
         random = new Random(seed);
 
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         //sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
         //sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -268,64 +265,6 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
 
         mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION, notificationBuilder.build());
-    }
-
-    CharSequence wearDistText = "";
-
-    /*private void showWearableNotification() {
-        CharSequence text = getText(R.string.wear_notification_distance)  + " " + distanceToTarget + "m";
-        CharSequence distText = currentRoute.name;
-
-        if(distText.equals(wearDistText)) return;
-
-        Bitmap bigPicture = null;
-        try {
-            bigPicture = Picasso.with(GameService.this).load(currentWaypoint.imageURL).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.notification_world)
-                .setContentTitle(text)
-                .setContentText(distText)
-                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bigPicture))
-                .setOngoing(false)
-                .setOnlyAlertOnce(true)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setGroup("GROUP")
-                .setGroupSummary(false);
-
-        mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION + 1, wearableNotificationBuilder.build());
-
-        wearDistText = distText;
-    }*/
-
-    private void showPhoneNotification() {
-        CharSequence text = getText(R.string.text_overview_currently_playing);
-        CharSequence distText = getText(R.string.text_playing_distance_to);
-
-        Log.d("ROUTE", currentRoute + "");
-
-
-        NotificationCompat.Builder phoneNotificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.notification_world)
-                .setContentTitle(text + " '" + currentRoute.name + "'")
-                .setContentText(distText + " " + distanceToTarget + "m")
-                .setOngoing(true)
-                .setOnlyAlertOnce(true);
-
-        /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Log.d("GameService", "Using wear notification");
-            phoneNotificationBuilder.setGroup("GROUP")
-                    .setGroupSummary(true);
-        }*/
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,PlayingActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP).get() , PendingIntent.FLAG_UPDATE_CURRENT);
-        phoneNotificationBuilder.setContentIntent(pendingIntent);
-
-
-        mNM.notify(AppConstants.REMOTE_SERVICE_NOTIFICATION, phoneNotificationBuilder.build());
     }
 
     private void clearStatusNotification() {
@@ -507,7 +446,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
     @Override
     public void onLocationChanged(Location location) {
-        updateDistanceToTarget(location);
+        currentLocation = location; updateDistanceToTarget(location);
     }
 
     @Override
@@ -588,7 +527,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
 
     /*
-    All this stuff found there: https://groups.google.com/forum/#!topic/android-beginners/V4pOfLn8klQ
+     * All this stuff found there: https://groups.google.com/forum/#!topic/android-beginners/V4pOfLn8klQ
      */
     @Override
     public void onSensorChanged(SensorEvent event) {
