@@ -446,7 +446,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
     @Override
     public void onLocationChanged(Location location) {
-        currentLocation = location; updateDistanceToTarget(location);
+        currentLocation = location;
+        updateDistanceToTarget(location);
     }
 
     @Override
