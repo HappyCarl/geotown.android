@@ -31,7 +31,10 @@ import com.google.common.collect.HashBiMap;
 
 import org.androidannotations.annotations.EService;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import de.happycarl.geotown.app.AppConstants;
@@ -162,7 +165,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     }
                     break;
                 case MSG_QUESTION_ANSWERED:
-                    questionAswered();
+                    questionAnswered();
                     break;
                 default:
                     super.handleMessage(msg);
@@ -368,7 +371,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     }
 
     private void setLocationToWaypoint() {
-        currentTarget = new Location("GeoTownWaypoint");
+        currentTarget = new Location("GeoTown Dummy Provider");
         currentTarget.setLatitude(currentWaypoint.latitude);
         currentTarget.setLongitude(currentWaypoint.longitude);
 
@@ -383,7 +386,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         if (random == null || currentRoute == null)
             return;
         if (currentWaypoint == null || currentWaypoint.done) {
-            //Random with seed testing area
+
             List<GeoTownWaypoint> waypoints = new Select()
                     .from(GeoTownWaypoint.class)
                     .where("done = ?", false)
@@ -409,11 +412,25 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     Log.d("GameService", "NO TRACK UPLOAD");
                 }
             } else {
-                int index = Math.abs(random.nextInt() % waypoints.size());
-                Log.d("seed", "index: " + index + ": " + waypoints.size());
-                currentWaypoint = waypoints.get(index);
-                currentWaypoint.save();
-                Log.d("selectNewWaypoint", "new ID: " + currentWaypoint.id);
+                //Fist waypoint selection
+                if(currentTarget == null) {
+                    currentWaypoint = waypoints.get(0);
+                    currentWaypoint.save();
+                } else {
+                    Location nextWPLocation = new Location("GeoTown Dummy Provider");
+                    Map<Float, GeoTownWaypoint> waypointMap = new HashMap<>();
+
+                    //Calculate the distance to each waypoint
+                    for (GeoTownWaypoint wp : waypoints) {
+                        nextWPLocation.setLatitude(wp.latitude);
+                        nextWPLocation.setLongitude(wp.longitude);
+                        waypointMap.put(currentTarget.distanceTo(nextWPLocation), wp);
+                    }
+                    Float minDistance = Collections.min(waypointMap.keySet());
+                    currentWaypoint = waypointMap.get(minDistance);
+                    currentWaypoint.save();
+                }
+                
                 setLocationToWaypoint();
 
                 reportWaypoint();
@@ -421,7 +438,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         }
     }
 
-    private void questionAswered() {
+    private void questionAnswered() {
         currentWaypoint.done = true;
         currentWaypoint.save();
         selectNewWaypoint();
