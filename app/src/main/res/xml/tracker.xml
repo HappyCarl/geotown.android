@@ -6,5 +6,5 @@
     <bool name="ga_autoActivityTracking">true</bool>
 
     <!--  The following value should be replaced with correct property id. -->
-    <string name="ga_trackingId">UA-55866830-2</string>
+    <string name="ga_trackingId">UA-48059648-3</string>
 </resources>

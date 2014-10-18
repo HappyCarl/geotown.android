@@ -132,8 +132,9 @@ public class PlayingActivity extends SystemBarTintActivity{
                     break;
                 case GameService.MSG_DISTANCE_TO_TARGET:
                     waypointDistanceView.setDistance(msg.arg1);
-                    waypointDistanceView.setBearing((float) Math.toRadians(msg.arg2));
-
+                    //---This bearing still needs to be fixed
+                    //waypointDistanceView.setBearing((float) Math.toRadians(msg.arg2));
+                    waypointDistanceView.setShowCompass(false);
                     break;
                 case GameService.MSG_NEW_WAYPOINT:
                     newCurrentWaypoint(MathUtil.intsToLong(msg.arg1, msg.arg2));
