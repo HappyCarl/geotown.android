@@ -393,11 +393,8 @@ public class PlayingActivity extends SystemBarTintActivity{
         doUnbindService();
         stopService(new Intent(PlayingActivity.this, GameService.class));
         GeotownApplication.getPreferences().edit()
-                .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
-        GeotownApplication.getPreferences().edit()
+                .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L)
                 .putLong(AppConstants.PREF_CURRENT_ROUTE, -1L).apply();
-        GeotownApplication.getPreferences().edit()
-                .putLong(AppConstants.PREF_PRNG_SEED, 0L).apply();
 
         if(finished) {
             //we finished the route

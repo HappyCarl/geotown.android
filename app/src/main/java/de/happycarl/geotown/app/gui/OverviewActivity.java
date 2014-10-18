@@ -14,7 +14,6 @@ import android.view.View;
 
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardBase;
-import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -30,6 +29,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+
+import java.util.Arrays;
 
 import de.cketti.library.changelog.ChangeLog;
 import de.happycarl.geotown.app.AppConstants;
@@ -154,6 +155,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
 
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
+        super.onActivityResult(request, response, data);
 
         IntentResult scanResult = IntentIntegrator.parseActivityResult(request, response, data);
         if (scanResult != null) {
@@ -161,19 +163,25 @@ public class OverviewActivity extends SystemBarTintActivity implements
             if (contents == null || contents.isEmpty()) return;
 
             String[] splitResult = contents.split(":");
+            Log.d("QR-Scan", Arrays.toString(splitResult));
             if (splitResult.length == 3) {
 
-                if (!splitResult[0].equals(AppConstants.QR_CODE_PREFIX))
+                if (!splitResult[0].equals(AppConstants.QR_CODE_PREFIX)) {
                     Crouton.makeText(this, R.string.message_overview_invalid_qr, Style.ALERT).show();
-                Log.d("QR-Scan", "First part did not match prefix");
+                    Log.d("QR-Scan", "First part did not match prefix");
+                    return;
+                }
 
                 try {
 
                     long routeId = Long.parseLong(splitResult[1]);
-                    long prngSeed = Long.parseLong(splitResult[2]);
+                    long waypointId = Long.parseLong(splitResult[2]);
 
-                    GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, prngSeed);
-                    startOverviewActivity(routeId);
+                    GeotownApplication.getPreferences().edit()
+                            .putLong(AppConstants.PREF_CURRENT_ROUTE, routeId)
+                            .putLong(AppConstants.PREF_CURRENT_WAYPOINT, waypointId)
+                            .apply();
+                    startRouteDetailActivity(routeId);
 
                 } catch (NumberFormatException e) {
                     Crouton.makeText(this, R.string.message_overview_invalid_qr, Style.ALERT).show();
@@ -187,7 +195,7 @@ public class OverviewActivity extends SystemBarTintActivity implements
             }
         }
 
-        super.onActivityResult(request, response, data);
+
     }
     //================================================================================
     // UI
@@ -200,11 +208,11 @@ public class OverviewActivity extends SystemBarTintActivity implements
         RouteCard rc = (RouteCard) c;
         Log.d("Clicked", rc.getRouteID() + "");
 
-        startOverviewActivity(rc.getRouteID());
+        startRouteDetailActivity(rc.getRouteID());
         //GeoTownRoute.getRoute(item.getTitle().toString(), GET_ROUTE_BY_NAME_DETAIL_REQUEST);
     }
 
-    private void startOverviewActivity(long routeID) {
+    private void startRouteDetailActivity(long routeID) {
         RouteDetailActivity_.intent(this).extra("routeID", routeID).start();
     }
 
@@ -226,7 +234,8 @@ public class OverviewActivity extends SystemBarTintActivity implements
             startActivityForResult(Games.Achievements.getAchievementsIntent(mGameHelper.getApiClient()), 42);
         } else {
             Crouton.makeText(this, R.string.gplus_first_sign_in, Style.INFO).show();
-        }    }
+        }
+    }
 
     @OptionsItem(R.id.action_leaderboard)
     void leaderboardSelected() {

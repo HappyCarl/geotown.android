@@ -383,9 +383,30 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     }
 
     private void selectNewWaypoint() {
-        if (random == null || currentRoute == null)
+        if (currentRoute == null)
             return;
         if (currentWaypoint == null || currentWaypoint.done) {
+
+            //if the route should start with a certain waypoint
+            if(GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_WAYPOINT, 0L) > 0L) {
+                Log.d("WAYPOINT", "Selected by prefs: " + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_WAYPOINT, 0L));
+                GeoTownWaypoint wp = new Select()
+                        .from(GeoTownWaypoint.class)
+                        .where("WaypointID = ?", GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_WAYPOINT, 0L))
+                        .executeSingle();
+                if(wp != null) {
+                    currentWaypoint = wp;
+                    currentWaypoint.save();
+                }
+                GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_CURRENT_WAYPOINT, 0L).apply();
+                Log.d("WAYPOINT", "Get from prefs: " + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_WAYPOINT, 0L));
+
+                setLocationToWaypoint();
+
+                reportWaypoint();
+
+                return;
+            }
 
             List<GeoTownWaypoint> waypoints = new Select()
                     .from(GeoTownWaypoint.class)
