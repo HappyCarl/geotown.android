@@ -132,8 +132,9 @@ public class PlayingActivity extends SystemBarTintActivity{
                     break;
                 case GameService.MSG_DISTANCE_TO_TARGET:
                     waypointDistanceView.setDistance(msg.arg1);
-                    waypointDistanceView.setBearing((float) Math.toRadians(msg.arg2));
-
+                    //---This bearing still needs to be fixed
+                    //waypointDistanceView.setBearing((float) Math.toRadians(msg.arg2));
+                    waypointDistanceView.setShowCompass(false);
                     break;
                 case GameService.MSG_NEW_WAYPOINT:
                     newCurrentWaypoint(MathUtil.intsToLong(msg.arg1, msg.arg2));
@@ -284,7 +285,7 @@ public class PlayingActivity extends SystemBarTintActivity{
             intent.putExtra("ENCODE_FORMAT", "QR_CODE");
             intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
 
-            String qrPayload = AppConstants.QR_CODE_PREFIX + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L);
+            String qrPayload = AppConstants.QR_CODE_PREFIX + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) + ":" + currentWaypoint.id;
             intent.putExtra("ENCODE_DATA", qrPayload);
 
             try {
@@ -393,11 +394,8 @@ public class PlayingActivity extends SystemBarTintActivity{
         doUnbindService();
         stopService(new Intent(PlayingActivity.this, GameService.class));
         GeotownApplication.getPreferences().edit()
-                .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L).apply();
-        GeotownApplication.getPreferences().edit()
+                .putLong(AppConstants.PREF_CURRENT_WAYPOINT, -1L)
                 .putLong(AppConstants.PREF_CURRENT_ROUTE, -1L).apply();
-        GeotownApplication.getPreferences().edit()
-                .putLong(AppConstants.PREF_PRNG_SEED, 0L).apply();
 
         if(finished) {
             //we finished the route

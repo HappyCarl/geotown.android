@@ -280,7 +280,12 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     public void onPlayButtonClicked() {
         SharedPreferences pref = GeotownApplication.getPreferences();
         final SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
-        if (pref.getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) != 0L) { //User is currently playing a different route
+        long routeInPrefs = pref.getLong(AppConstants.PREF_CURRENT_ROUTE, 0L);
+        if (routeInPrefs > 0L) { //There is a route preselected due to co-op mode
+            if(routeInPrefs == routeId) {
+                startPlayingRoute(false);
+                return;
+            }
 
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 
@@ -296,7 +301,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
                             break;
                         case DialogInterface.BUTTON_NEGATIVE:
                             //Do nothing, user cancelled
-                            //TODO: Maybe go back to overview screen???
+
                             break;
                     }
                 }
@@ -309,22 +314,28 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
                     .setNegativeButton(android.R.string.no, dialogClickListener).show();
 
         } else { //No current Route
-            editor.putLong(AppConstants.PREF_CURRENT_ROUTE, mRoute.id);
-            editor.putLong(AppConstants.PREF_PRNG_SEED, 0L);
-            editor.apply();
-
-            //if route was played before, reset it now
-            resetRoute();
-
-            ((GeotownApplication) getApplication()).getTracker().send(new HitBuilders.EventBuilder()
-                    .setCategory(("InGame"))
-                    .setAction("Route Started")
-                    .build());
-
-            PlayingActivity_.intent(this).start();
+            startPlayingRoute(true);
         }
 
         updateRouteUI();
+    }
+
+    private void startPlayingRoute(boolean resetWaypoint) {
+        SharedPreferences.Editor editor = GeotownApplication.getPreferences().edit();
+        editor.putLong(AppConstants.PREF_CURRENT_ROUTE, mRoute.id);
+        if(resetWaypoint)
+            editor.putLong(AppConstants.PREF_CURRENT_WAYPOINT, 0L);
+        editor.apply();
+
+        //if route was played before, reset it now
+        resetRoute();
+
+        ((GeotownApplication) getApplication()).getTracker().send(new HitBuilders.EventBuilder()
+                .setCategory(("InGame"))
+                .setAction("Route Started")
+                .build());
+
+        PlayingActivity_.intent(this).start();
     }
 
     //================================================================================
