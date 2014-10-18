@@ -430,7 +430,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     currentWaypoint = waypointMap.get(minDistance);
                     currentWaypoint.save();
                 }
-                
+
                 setLocationToWaypoint();
 
                 reportWaypoint();

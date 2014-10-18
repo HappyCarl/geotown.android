@@ -284,7 +284,7 @@ public class PlayingActivity extends SystemBarTintActivity{
             intent.putExtra("ENCODE_FORMAT", "QR_CODE");
             intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
 
-            String qrPayload = AppConstants.QR_CODE_PREFIX + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_PRNG_SEED, 0L);
+            String qrPayload = AppConstants.QR_CODE_PREFIX + ":" + GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_ROUTE, 0L) + ":" + currentWaypoint.id;
             intent.putExtra("ENCODE_DATA", qrPayload);
 
             try {
