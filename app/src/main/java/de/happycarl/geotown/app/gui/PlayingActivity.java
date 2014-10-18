@@ -54,10 +54,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 @EActivity(R.layout.activity_playing)
 @OptionsMenu(R.menu.playing)
 public class PlayingActivity extends SystemBarTintActivity{
-
-
     public static final int SERVICE_CONNECTION_ID = 42129;
-
 
 
     @ViewById(R.id.distance_view)
@@ -342,7 +339,9 @@ public class PlayingActivity extends SystemBarTintActivity{
             Log.d("newCurrentWaypoint", "URL: " + currentWaypoint.imageURL);
 
             Picasso.with(this)
+
                     .load(currentWaypoint.imageURL)
+                    .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_launcher)
                     .into(imageView);
 

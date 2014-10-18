@@ -263,7 +263,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 .setContentText(distText + " " + distanceToTarget + "m")
                 .setOngoing(true);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,PlayingActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP).get() , PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, PlayingActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP).get() , PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(pendingIntent);
 
 
