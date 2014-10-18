@@ -10,8 +10,8 @@ apt {
 }
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion '20'
+    compileSdkVersion 21
+    buildToolsVersion '21'
 
     project.ext.vCode = 1
     try {
@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 20
+        targetSdkVersion 21
         versionCode project.ext.vCode
         versionName project.ext.vName
     }
@@ -88,36 +88,24 @@ dependencies {
     //compile "com.android.support:support-v4:20.0.+"
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
-
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
-
     compile 'de.greenrobot:eventbus:2.2.1'
-
     compile 'com.afollestad.silk:silk:1.0.0@aar'
     compile 'com.afollestad.cardsui:CardsUI:1.0.0@aar'
-
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
-
     compile 'com.path:android-priority-jobqueue:1.1.2'
-
-    compile 'com.squareup.mimecraft:mimecraft:1.1.1'
-
-
     compile 'de.cketti.library.changelog:ckchangelog:1.2.0'
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         exclude module: 'support-v4'
     }
-
     compile('com.google.android.gms:play-services:5.0.89') {
         exclude module: 'support-v4'
     }
     compile 'com.google.http-client:google-http-client-android:1.18.0-rc'
     compile 'com.google.api-client:google-api-client:1.18.0-rc'
     compile 'com.google.api-client:google-api-client-android:1.18.0-rc'
-
     compile 'com.appspot.drive_log:geotown:0.3.9-SNAPSHOT'
     compile 'com.google.zxing:android-integration:3.0.0'
-
 }

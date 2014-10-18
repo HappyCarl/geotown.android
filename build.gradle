@@ -14,13 +14,13 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            url "https://raw.github.com/HappyCarl/mvn-repo/master/snapshots"
-        }
-        maven {
             url 'http://google-api-client-libraries.appspot.com/mavenrepo'
         }
         flatDir {
             dirs 'aars'
+        }
+        maven {
+            url "https://raw.github.com/HappyCarl/mvn-repo/master/snapshots"
         }
 
     }
