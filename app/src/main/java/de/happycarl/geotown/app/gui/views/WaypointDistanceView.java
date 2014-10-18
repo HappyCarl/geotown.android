@@ -19,7 +19,9 @@ public class WaypointDistanceView extends View {
 
     private int distance;
 
-    float bearing;
+    float[] bearing = new float[50];
+    float bearingValue;
+    int bearingCounter = 0;
     boolean showCompass = true;
 
     private Paint circlePaint;
@@ -100,16 +102,23 @@ public class WaypointDistanceView extends View {
         requestLayout();
     }
 
-    public float getBearing() {
-        return bearing;
-    }
-
     /*
     Sets the bearing that will be shown to the user
     The parameter has to be in radian, with 0 facing to device top and pi to bottom
      */
     public void setBearing(float bearing) {
-        this.bearing = (float)(bearing - Math.PI/2);
+        if(bearingCounter >= this.bearing.length) {
+            System.arraycopy(this.bearing, 0, this.bearing, 1, this.bearing.length - 1);
+            this.bearing[0] = bearing;
+        } else {
+            this.bearing[bearingCounter++] = (float) (bearing - Math.PI / 2);
+        }
+
+        this.bearingValue = 0;
+        for(float b : this.bearing)
+            bearingValue += b;
+        bearingValue /= this.bearing.length;
+
         invalidate();
         requestLayout();
     }
@@ -127,7 +136,6 @@ public class WaypointDistanceView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d("CircleStuff", "onDraw");
 
         float compassRadius = 0;
 
@@ -156,15 +164,15 @@ public class WaypointDistanceView extends View {
 
             //Top of arrow
             int point1Dist = (int) (compassRadius + (circleMaxDiameter / 20));
-            float point1Angle = bearing;
+            float point1Angle = bearingValue;
 
             //Bottom right of arrow
             int point2Dist = (int) compassRadius;
-            float point2Angle = (float) (bearing + (Math.PI/40));
+            float point2Angle = (float) (bearingValue + (Math.PI/40));
 
             //Bottom left of arrow
             int point3Dist = (int) compassRadius;
-            float point3Angle = (float) (bearing - (Math.PI/40));
+            float point3Angle = (float) (bearingValue - (Math.PI/40));
 
             compassTriangle.reset();
             compassTriangle.setFillType(Path.FillType.EVEN_ODD);

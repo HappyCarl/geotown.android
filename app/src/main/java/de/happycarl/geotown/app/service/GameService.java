@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.HashBiMap;
 
 import org.androidannotations.annotations.EService;
+import org.androidannotations.annotations.SystemService;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -108,30 +109,20 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
     public static final int ERROR_NO_ROUTE = 0x1;
 
+
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     //Stuff for service
-    NotificationManager mNM;
-    HashBiMap<Integer, Messenger> mClients = HashBiMap.create();
-
-    private Random random;
-
-    GPXRouteLogger routeLogger;
-
+    private NotificationManager mNM;
+    private HashBiMap<Integer, Messenger> mClients = HashBiMap.create();
+    private GPXRouteLogger routeLogger;
     private long trackId;
-
-    private float[] mGravs = new float[3];
-    private float[] mGeoMags = new float[3];
-    private float[] mOrientation = new float[3];
-    private float[] mRotationM = new float[9];
-
-    private Location currentLocation;
+    private SensorManager sensorManager;
 
     private class IncomingHandler extends Handler {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.d("ServerReceiver", "Received " + msg.what + " (" + msg.arg1 + ";" + msg.arg2 + ")");
             switch (msg.what) {
                 case MSG_ATTACHED:
                     if (mApiClient.isConnected())
@@ -188,6 +179,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     //GAME LOGIC VARIABLES
     //--------------------------------------------------------------------------------------------------
     private int distanceToTarget = -1;
+    private float orientationToTarget = -1;
     private int compassDirection;
     private GeoTownRoute currentRoute;
     private GeoTownWaypoint currentWaypoint;
@@ -200,7 +192,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     @Override
     public void onCreate() {
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         mApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 .addApi(LocationServices.API)
@@ -221,10 +213,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
             GeotownApplication.getPreferences().edit().putLong(AppConstants.PREF_PRNG_SEED, seed).apply();
             Log.d("seed", "put seed " + seed);
         }
-        random = new Random(seed);
 
-        //sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        //sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -233,8 +222,6 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
         mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION);
         mNM.cancel(AppConstants.REMOTE_SERVICE_NOTIFICATION + 1);
         LocationServices.FusedLocationApi.removeLocationUpdates(mApiClient, this);
-        //sensorManager.unregisterListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
-        //sensorManager.unregisterListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD));
     }
 
 
@@ -280,8 +267,6 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     }
 
     private void sendMessage(int messageCode, int arg1, int arg2) {
-        Log.d("ServerMessenger", "Sending :" + messageCode + " (" + arg1 + ";" + arg2 + ")");
-        Log.d("ServerMessenger", "Clients: " + mClients.size());
         for (Messenger messenger : mClients.values()) {
             try {
                 messenger.send(Message.obtain(null, messageCode, arg1, arg2));
@@ -484,7 +469,6 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
 
     @Override
     public void onLocationChanged(Location location) {
-        currentLocation = location;
         updateDistanceToTarget(location);
     }
 
@@ -492,6 +476,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e("LOCATION", connectionResult.toString());
     }
+
+    GeomagneticField geoField;
 
     private void updateDistanceToTarget(Location location) {
         if (location == null || currentWaypoint == null || currentTarget == null)
@@ -501,11 +487,15 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
             distanceToTarget = -42;
         } else {
             distanceToTarget = (int) currentTarget.distanceTo(location);
-
-            float compass = location.bearingTo(currentTarget) - location.getBearing();
-            compassDirection = (int)compass;
-            Log.d("Compass", compassDirection + "  " + compass + "   " + location.bearingTo(currentTarget) + " - " + location.getBearing());
-
+            orientationToTarget = currentTarget.bearingTo(location);
+            if(orientationToTarget < 0) {
+                orientationToTarget = orientationToTarget + 360;
+            }
+            geoField = new GeomagneticField(
+                    (float) location.getLatitude(),
+                    (float) location.getLongitude(),
+                    (float) location.getAltitude(),
+                    System.currentTimeMillis());;
             if (distanceToTarget <= AppConstants.WAYPOINT_RADIUS && distanceToTarget > 0) {
                 sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
             }
@@ -540,6 +530,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, request, this);
                 Log.d("LocationService", "Set to GPS mode");
                 clearStatusNotification();
+                sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
+                sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_UI);
                 break;
             case BACKGROUND:
                 request.setPriority(LocationRequest.PRIORITY_LOW_POWER);
@@ -547,6 +539,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, request, this);
                 Log.d("LocationService", "Set to Network mode");
                 showStatusNotification();
+                sensorManager.unregisterListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+                sensorManager.unregisterListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD));
                 break;
             default:
         }
@@ -568,35 +562,30 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     /*
      * All this stuff found there: https://groups.google.com/forum/#!topic/android-beginners/V4pOfLn8klQ
      */
+    float[] mGravity = null, mGeomagnetic = null;
     @Override
     public void onSensorChanged(SensorEvent event) {
-        switch(event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER:
-                System.arraycopy(event.values,0,mGravs,0,3);
-                break;
-            case Sensor.TYPE_MAGNETIC_FIELD:
-                System.arraycopy(event.values, 0, mGeoMags,0,3);
-                break;
-            default:
-                return;
-        }
-        if(SensorManager.getRotationMatrix(mRotationM, null, mGravs, mGeoMags)) {
-            SensorManager.getOrientation(mRotationM, mOrientation);
-
-            if (currentLocation == null)
-                return;
-            GeomagneticField geomagneticField = new GeomagneticField(
-                    (float) currentLocation.getLatitude(),
-                    (float) currentLocation.getLongitude(),
-                    (float) currentLocation.getAltitude(),
-                    System.currentTimeMillis());
-
-            float bearing = currentLocation.bearingTo(currentTarget);
-            float heading = mOrientation[0] + geomagneticField.getDeclination();
-
-            float compass = bearing - heading;
-            Log.d("Bearing", compass + " : " + bearing + " : " + heading);
-
+        if(geoField == null) return;
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+            mGravity = event.values;
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+            mGeomagnetic = event.values;
+        if (mGravity != null && mGeomagnetic != null) {
+            float R[] = new float[9];
+            float I[] = new float[9];
+            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
+            if (success) {
+                float orientation[] = new float[3];
+                SensorManager.getOrientation(R, orientation);
+                double azimut = orientation[0]; // orientation contains: azimut, pitch and roll
+                azimut = Math.toDegrees(azimut);
+                azimut -= geoField.getDeclination();
+                compassDirection = (int) (orientationToTarget - azimut) + 90;
+                if(compassDirection < 0)
+                    compassDirection = compassDirection + 360;
+                compassDirection %= 360;
+                reportDistanceToTarget();
+            }
         }
     }
 

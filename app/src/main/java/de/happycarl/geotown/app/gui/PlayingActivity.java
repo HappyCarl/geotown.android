@@ -122,7 +122,6 @@ public class PlayingActivity extends SystemBarTintActivity{
     private class IncomingHandler extends Handler{
         @Override
         public void handleMessage(Message msg) {
-            Log.d("ClientReceiver" , "Received " + msg.what + " (" + msg.arg1 + ";" + msg.arg2 + ")");
             switch (msg.what) {
                 case GameService.MSG_CONNECTED:
                     PlayingActivity.this.sendMessage(GameService.MSG_SET_LOCATION_MODE, GameService.ListenMode.FOREGROUND.ordinal(), 0);
@@ -130,8 +129,8 @@ public class PlayingActivity extends SystemBarTintActivity{
                 case GameService.MSG_DISTANCE_TO_TARGET:
                     waypointDistanceView.setDistance(msg.arg1);
                     //---This bearing still needs to be fixed
-                    //waypointDistanceView.setBearing((float) Math.toRadians(msg.arg2));
-                    waypointDistanceView.setShowCompass(false);
+                    waypointDistanceView.setBearing((float) Math.toRadians(msg.arg2));
+                    waypointDistanceView.setShowCompass(true);
                     break;
                 case GameService.MSG_NEW_WAYPOINT:
                     newCurrentWaypoint(MathUtil.intsToLong(msg.arg1, msg.arg2));
@@ -416,7 +415,6 @@ public class PlayingActivity extends SystemBarTintActivity{
     private void sendMessage(int request, int arg1, int arg2) {
         if(gameService == null)
             return;
-        Log.d("ClientMessenger", "Sending :" + request + " (" + arg1 + ";"+arg2+")");
         try {
             Message msg = Message.obtain(null, request, arg1, arg2);
             msg.replyTo = messenger;
