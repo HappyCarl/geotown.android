@@ -15,12 +15,15 @@ import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.path.android.jobqueue.log.CustomLogger;
 
+import org.androidannotations.annotations.EApplication;
+
 import de.greenrobot.event.EventBus;
 import de.happycarl.geotown.app.api.ApiUtils;
 
 /**
  * Created by jhbruhn on 19.06.14.
  */
+@EApplication
 public class GeotownApplication extends Application {
 
     public static final Handler mHandler = new Handler();
