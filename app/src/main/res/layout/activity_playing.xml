@@ -30,7 +30,7 @@
                 android:layout_weight="6" />
 
 
-            <de.happycarl.geotown.app.gui.views.WaypointDistanceView
+            <de.happycarl.geotown.app.common.views.WaypointDistanceView
                 android:id="@+id/distance_view"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
