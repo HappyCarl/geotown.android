@@ -43,6 +43,11 @@
         android:orderInCategory="190"
         android:showAsAction="never"/>
 
+    <item android:id="@+id/action_credits"
+        android:title="@string/action_credits"
+        android:orderInCategory="190"
+        android:showAsAction="never"/>
+
     <item android:id="@+id/action_close"
         android:title="@string/action_overview_close"
         android:orderInCategory="200"

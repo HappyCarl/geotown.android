@@ -31,6 +31,8 @@
     <string name="action_delete">Delete</string>
     <string name="action_scan_qr_code">Scan QR-Code</string>
     <string name="title_activity_route_detail">Look at the Route</string>
+    <string name="action_credits">Credits</string>
+
 
 
     <!-- Activity Route Detail -->

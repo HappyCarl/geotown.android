@@ -31,6 +31,7 @@
     <string name="action_delete">Löschen</string>
     <string name="action_scan_qr_code">QR-Code scannen</string>
     <string name="title_activity_route_detail">Route betrachten</string>
+    <string name="action_credits">Mitwirkende</string>
 
 
     <!-- Activity Route Detail -->

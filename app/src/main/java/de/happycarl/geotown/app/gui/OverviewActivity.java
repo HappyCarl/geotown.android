@@ -44,8 +44,15 @@ import de.happycarl.geotown.app.events.net.MyRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.events.net.NearRoutesDataReceivedEvent;
 import de.happycarl.geotown.app.gui.data.OverviewCardsAdapter;
 import de.happycarl.geotown.app.gui.views.RouteCard;
+import de.happycarl.geotown.app.licenses.AndroidAnnotationLicense;
+import de.happycarl.geotown.app.licenses.GeoTownLicense;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import de.psdev.licensesdialog.LicensesDialog;
+import de.psdev.licensesdialog.licenses.ApacheSoftwareLicense20;
+import de.psdev.licensesdialog.licenses.MITLicense;
+import de.psdev.licensesdialog.model.Notice;
+import de.psdev.licensesdialog.model.Notices;
 
 @EActivity(R.layout.activity_overview)
 @OptionsMenu(R.menu.overview)
@@ -290,6 +297,60 @@ public class OverviewActivity extends SystemBarTintActivity implements
             GeotownApplication.getPreferences().edit().putBoolean(AppConstants.PREF_SUBMIT_TRACK_DATA, false).apply();
             item.setChecked(false);
         }
+    }
+
+    @OptionsItem(R.id.action_credits)
+    void showOpenSourceLicenses() {
+        final Notices notices = new Notices();
+
+        notices.addNotice(new Notice("GeoTown",
+                "geotown.de",
+                "Coypright 2014 HappyCarl (Jan-Henrik Bruhn, Ole Wehrmeyer)",
+                new GeoTownLicense()));
+
+        notices.addNotice(new Notice("AndroidAnnotations",
+                "http://androidannotations.org/",
+                "Copyright 2012-2014 eBusiness Information",
+                new AndroidAnnotationLicense()));
+
+        notices.addNotice(new Notice("SystemBarTint",
+                "https://github.com/jgilfelt/SystemBarTint",
+                "Copyright jgilfelt",
+                new ApacheSoftwareLicense20()));
+
+        notices.addNotice(new Notice("EventBus",
+                "https://github.com/greenrobot/EventBus",
+                "Copyright (C) 2012-2014 Markus Junginger, greenrobot (http://greenrobot.de)",
+                new ApacheSoftwareLicense20()));
+
+        notices.addNotice(new Notice("Picasso",
+                "http://square.github.io/picasso/",
+                "Copyright 2013 Square, Inc.",
+                new ApacheSoftwareLicense20()));
+
+        notices.addNotice(new Notice("OkHttp",
+                "http://square.github.io/okhttp/",
+                "Copyright 2014 Square, Inc.",
+                new ApacheSoftwareLicense20()));
+
+        notices.addNotice(new Notice("Android-Priority-Jobqueue",
+                "https://github.com/path/android-priority-jobqueue",
+                "Copyright (c) 2013 Path, Inc.",
+                new MITLicense()));
+
+        notices.addNotice(new Notice("ckChangeLog",
+                "https://github.com/cketti/ckChangeLog",
+                "Copyright cketti",
+                new ApacheSoftwareLicense20()));
+
+        notices.addNotice(new Notice("Crouton",
+                "https://github.com/keyboardsurfer/Crouton",
+                "Copyright 2012 - 2014 Benjamin Weiss",
+                new ApacheSoftwareLicense20()));
+
+
+        new LicensesDialog.Builder(this).setTitle("Open Source Licenses").setNotices(notices).setIncludeOwnLicense(true).build().show();
+
     }
 
     @Override
