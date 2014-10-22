@@ -378,6 +378,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                 GeoTownWaypoint wp = new Select()
                         .from(GeoTownWaypoint.class)
                         .where("WaypointID = ?", GeotownApplication.getPreferences().getLong(AppConstants.PREF_CURRENT_WAYPOINT, 0L))
+                        .where("route = ?", currentRoute)
                         .executeSingle();
                 if(wp != null) {
                     currentWaypoint = wp;
