@@ -494,7 +494,7 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
                     (float) location.getLatitude(),
                     (float) location.getLongitude(),
                     (float) location.getAltitude(),
-                    System.currentTimeMillis());;
+                    System.currentTimeMillis());
             if (distanceToTarget <= AppConstants.WAYPOINT_RADIUS && distanceToTarget > 0) {
                 sendMessage(MSG_TARGET_WAYPOINT_REACHED, distanceToTarget, 0);
             }

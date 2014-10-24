@@ -139,7 +139,7 @@ public class OverviewCardsAdapter extends CardAdapter {
         }
 
         if (myRoutes == null || myRoutes.size() == 0) {
-            this.add(myRoutesIndex++, noOwnRoutesHeader);
+            this.add(myRoutesIndex, noOwnRoutesHeader);
             return;
         } else {
             int noOwnRoutesIndex = this.getItems().indexOf(noOwnRoutesHeader);

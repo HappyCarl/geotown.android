@@ -35,26 +35,16 @@ public abstract class SystemBarTintActivity extends Activity {
             @Override
             public void onSignInSucceeded() {
                 GeotownApplication.getEventBus().post(new GoogleClientConnectedEvent());
-                SystemBarTintActivity.this.onSignInSucceeded();
             }
             @Override
             public void onSignInFailed() {
                 GeotownApplication.getEventBus().post(new GoogleClientConnectionFailedEvent());
-                SystemBarTintActivity.this.onSignInFailed();
             }
 
         };
         mGameHelper.setup(listener);
 
         super.onCreate(savedInstanceState);
-    }
-
-    protected void onSignInSucceeded() {
-
-    }
-
-    protected void onSignInFailed() {
-
     }
 
     @Override

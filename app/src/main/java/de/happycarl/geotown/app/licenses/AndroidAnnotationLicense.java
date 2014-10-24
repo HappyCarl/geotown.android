@@ -9,7 +9,7 @@ import de.psdev.licensesdialog.licenses.License;
  */
 public class AndroidAnnotationLicense extends License {
 
-    String fulltext = "Licensed under the Apache License, Version 2.0 (the \"License\"); you may not\n" +
+    private final String fulltext = "Licensed under the Apache License, Version 2.0 (the \"License\"); you may not\n" +
             "use this file except in compliance with the License. You may obtain a copy of\n" +
             "the License at\n" +
             "\n" +
