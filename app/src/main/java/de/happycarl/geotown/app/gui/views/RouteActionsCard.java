@@ -7,12 +7,6 @@ import android.widget.ImageButton;
 
 import com.afollestad.cardsui.Card;
 
-
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.EView;
-import org.androidannotations.annotations.ViewById;
-
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
 import de.happycarl.geotown.app.R;

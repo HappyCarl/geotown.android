@@ -2,24 +2,23 @@ package de.happycarl.geotown.app.util;
 
 // brought to you by StackOverflow: http://stackoverflow.com/questions/13906380/problems-with-android-location-geocoder
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.location.Address;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.location.Address;
 
 /**
  * A class for handling geocoding and reverse geocoding. Geocoding is the

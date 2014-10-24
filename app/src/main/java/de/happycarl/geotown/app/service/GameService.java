@@ -3,7 +3,6 @@ package de.happycarl.geotown.app.service;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
@@ -19,7 +18,6 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-//import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.activeandroid.query.Select;
@@ -29,14 +27,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.HashBiMap;
 
-import org.androidannotations.annotations.EService;
-import org.androidannotations.annotations.SystemService;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.BuildConfig;
@@ -51,6 +45,8 @@ import de.happycarl.geotown.app.gui.PlayingActivity_;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 import de.happycarl.geotown.app.util.MathUtil;
+
+//import android.support.v4.app.NotificationManagerCompat;
 
 /**
  * Created by ole on 12.07.14.
@@ -356,6 +352,8 @@ public class GameService extends Service implements GoogleApiClient.ConnectionCa
     }
 
     private void setLocationToWaypoint() {
+        if(currentWaypoint == null) return;
+
         currentTarget = new Location("GeoTown Dummy Provider");
         currentTarget.setLatitude(currentWaypoint.latitude);
         currentTarget.setLongitude(currentWaypoint.longitude);

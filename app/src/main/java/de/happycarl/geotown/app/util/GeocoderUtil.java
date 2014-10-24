@@ -2,10 +2,8 @@ package de.happycarl.geotown.app.util;
 
 import android.content.Context;
 import android.location.Address;
-import android.location.Geocoder;
 
 import java.io.IOException;
-import java.util.List;
 
 import de.happycarl.geotown.app.R;
 

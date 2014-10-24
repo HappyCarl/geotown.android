@@ -9,9 +9,9 @@ import com.afollestad.cardsui.CardAdapter;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import de.happycarl.geotown.app.util.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
+import de.happycarl.geotown.app.util.GoogleUtils;
 
 /**
  * Created by ole on 19.06.14.

@@ -1,11 +1,6 @@
 package de.happycarl.geotown.app.gui;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
@@ -52,8 +47,7 @@ public class RouteFinishedActivity extends Activity {
 
     @Click(R.id.route_finished_button_okay)
     void okay() {
-        Intent overview = new Intent(this, OverviewActivity.class);
-        startActivity(overview);
+        OverviewActivity_.intent(this).start();
         finish();
     }
 

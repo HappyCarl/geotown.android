@@ -7,13 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -25,19 +21,17 @@ import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.EditorAction;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.ViewById;
 
 import de.happycarl.geotown.app.AppConstants;
 import de.happycarl.geotown.app.GeotownApplication;
-import de.happycarl.geotown.app.util.GoogleUtils;
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.api.requests.CurrentUserDataRequest;
 import de.happycarl.geotown.app.api.requests.SetUsernameRequest;
 import de.happycarl.geotown.app.events.net.UsernameSetEvent;
+import de.happycarl.geotown.app.util.GoogleUtils;
 
 
 @EActivity(R.layout.activity_start)

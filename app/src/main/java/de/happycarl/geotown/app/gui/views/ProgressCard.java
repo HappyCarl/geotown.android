@@ -7,10 +7,6 @@ import android.widget.TextView;
 
 import com.afollestad.cardsui.CardAdapter;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.EView;
-import org.androidannotations.annotations.ViewById;
-
 import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
