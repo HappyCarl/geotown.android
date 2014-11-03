@@ -6,12 +6,15 @@
     android:clipToPadding="false"
     tools:context="de.happycarl.geotown.app.gui.OverviewActivity">
 
+    <include android:id="@+id/toolbar"
+             layout="@layout/toolbar" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/overview_card_ptr_layout"
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/toolbar"
         android:visibility="visible"
         android:background="#e5e5e5"
         android:layout_centerHorizontal="true">

@@ -13,7 +13,7 @@ public class LoadingCard extends Card {
     }
 
     public int getLayout() {
-        // Replace with your layout
+        // Replace with your toolbar
         return R.layout.card_loading;
     }
 }

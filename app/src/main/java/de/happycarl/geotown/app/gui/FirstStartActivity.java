@@ -34,7 +34,7 @@ import de.happycarl.geotown.app.events.net.UsernameSetEvent;
 import de.happycarl.geotown.app.util.GoogleUtils;
 
 
-@EActivity(R.layout.activity_start)
+@EActivity
 public class FirstStartActivity extends SystemBarTintActivity {
     //================================================================================
     // Constants
@@ -61,7 +61,7 @@ public class FirstStartActivity extends SystemBarTintActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState, (R.layout.activity_start));
         mGameHelper.setConnectOnStart(false);
 
         GeotownApplication.getEventBus().register(this);

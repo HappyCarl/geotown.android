@@ -12,7 +12,7 @@ apt {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.1'
+    buildToolsVersion '21.0.2'
 
     project.ext.vCode = 1
     try {
@@ -88,29 +88,43 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(":common")
 
-    //compile "com.android.support:support-v4:20.0.+"
+    compile ("com.android.support:appcompat-v7:21.+")
+    compile ("com.android.support:support-v13" +
+            ":21.+")
+
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
-    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+
+    compile ('com.readystatesoftware.systembartint:systembartint:1.0.3') {
+        exclude module: 'support-v4'
+    }
     compile 'de.greenrobot:eventbus:2.2.1'
-    compile 'com.afollestad.silk:silk:1.0.0@aar'
-    compile 'com.afollestad.cardsui:CardsUI:1.0.0@aar'
+    compile ('com.afollestad.silk:silk:1.0.0@aar')
+    compile ('com.afollestad.cardsui:CardsUI:1.0.0@aar') {
+        exclude module: 'support-v4'
+    }
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.path:android-priority-jobqueue:1.1.2'
-    compile 'de.cketti.library.changelog:ckchangelog:1.2.0'
+    compile ('de.cketti.library.changelog:ckchangelog:1.2.0') {
+        exclude module: 'support-v4'
+    }
+
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         exclude module: 'support-v4'
     }
-    compile('com.google.android.gms:play-services:5.0.89') {
+
+    compile('com.google.android.gms:play-services:6.1.+') {
         exclude module: 'support-v4'
     }
+
     compile 'com.google.http-client:google-http-client-android:1.18.0-rc'
     compile 'com.google.api-client:google-api-client:1.18.0-rc'
     compile 'com.google.api-client:google-api-client-android:1.18.0-rc'
     compile 'com.appspot.drive_log:geotown:0.4.2-SNAPSHOT'
     compile 'com.google.zxing:android-integration:3.0.0'
+
     compile('de.psdev.licensesdialog:licensesdialog:1.6.0') {
         exclude module: 'support-v4'
     }

@@ -36,7 +36,7 @@ public class ProgressCard extends RouteCard {
 
     @Override
     public int getLayout() {
-        // Replace with your layout
+        // Replace with your toolbar
         return R.layout.card_progress;
 
     }

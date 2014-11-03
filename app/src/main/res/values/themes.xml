@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="@style/_AppTheme"/>
+    <style name="AppTheme" parent="AppTheme.Base"/>
 
-    <style name="_AppTheme" parent="android:Theme.Holo.Light">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/primary_color</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+   <!-- <style name="_AppTheme" parent="android:Theme.Holo.Light">
 
         <item name="android:editTextBackground">@drawable/apptheme_edit_text_holo_light</item>
 
@@ -43,5 +50,5 @@
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_geotown</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Geotown</item>
 
-    </style>
+    </style>-->
 </resources>

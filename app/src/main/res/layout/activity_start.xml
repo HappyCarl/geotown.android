@@ -5,11 +5,12 @@
     android:fitsSystemWindows="true"
     tools:context="de.happycarl.geotown.app.gui.FirstStartActivity">
 
-
+    <include android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
     <TextView
         android:id="@+id/intro_text_view"
         android:layout_margin="17dp"
-        android:layout_marginTop="20dp"
+        android:layout_below="@id/toolbar"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,6 +24,7 @@
         android:hint="@string/text_firststart_username"
         android:ems="10"
         android:id="@+id/username_edit_text"
+
         android:layout_below="@+id/intro_text_view"
         android:layout_centerHorizontal="true" />
 

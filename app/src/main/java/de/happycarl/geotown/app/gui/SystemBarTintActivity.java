@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -19,12 +21,11 @@ import de.happycarl.geotown.app.events.google.GoogleClientConnectionFailedEvent;
 /**
  * Created by jhbruhn on 20.06.14.
  */
-public abstract class SystemBarTintActivity extends Activity {
+public abstract class SystemBarTintActivity extends ActionBarActivity {
 
     protected GameHelper mGameHelper;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState, int layoutId) {
         initSystemBarTint();
 
         // create game helper with all APIs (Games and Plus):
@@ -35,34 +36,43 @@ public abstract class SystemBarTintActivity extends Activity {
             @Override
             public void onSignInSucceeded() {
                 GeotownApplication.getEventBus().post(new GoogleClientConnectedEvent());
+                SystemBarTintActivity.this.onSignInSucceeded();
             }
             @Override
             public void onSignInFailed() {
                 GeotownApplication.getEventBus().post(new GoogleClientConnectionFailedEvent());
+                SystemBarTintActivity.this.onSignInFailed();
             }
 
         };
         mGameHelper.setup(listener);
-
+        setContentView(layoutId);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
         super.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mGameHelper.onStart(this);
+        if(mGameHelper != null)
+            mGameHelper.onStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mGameHelper.onStop();
+        if(mGameHelper != null)
+            mGameHelper.onStop();
     }
 
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
-        mGameHelper.onActivityResult(request, response, data);
+        if(mGameHelper != null)
+            mGameHelper.onActivityResult(request, response, data);
     }
 
     @TargetApi(19)
@@ -87,6 +97,12 @@ public abstract class SystemBarTintActivity extends Activity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setNavigationBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.primary_color);
+    }
+
+    protected void onSignInSucceeded() {
+    }
+
+    protected void onSignInFailed() {
     }
 
 
