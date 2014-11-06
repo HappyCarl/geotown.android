@@ -4,7 +4,10 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -12,6 +15,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -22,6 +26,7 @@ import android.widget.ViewFlipper;
 import com.activeandroid.query.Select;
 import com.google.android.gms.analytics.HitBuilders;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -45,7 +50,7 @@ import de.happycarl.geotown.app.util.MathUtil;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-@EActivity(R.layout.activity_playing)
+@EActivity()
 @OptionsMenu(R.menu.playing)
 public class PlayingActivity extends SystemBarTintActivity{
     public static final int SERVICE_CONNECTION_ID = 42129;
@@ -187,7 +192,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState, R.layout.activity_playing, false);
         doBindService();
     }
 
@@ -298,8 +303,6 @@ public class PlayingActivity extends SystemBarTintActivity{
 
 
     private void newCurrentWaypoint(long id) {
-
-
         Log.d("newCurrentWaypoint", "ID: " + id);
         if(id == -1L) {
             //Somewhat error handling here
@@ -332,17 +335,61 @@ public class PlayingActivity extends SystemBarTintActivity{
             Log.d("newCurrentWaypoint", "URL: " + currentWaypoint.imageURL);
 
             Picasso.with(this)
-
                     .load(currentWaypoint.imageURL)
-                    .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_launcher)
-                    .into(imageView);
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            imageView.setImageBitmap(bitmap);
+                            updateToolbarColor(bitmap);
+                        }
 
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            imageView.setImageDrawable(errorDrawable);
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            imageView.setImageDrawable(placeHolderDrawable);
+                        }
+                    });
             fillQuestion();
 
             sendMessage(GameService.MSG_DISTANCE_TO_TARGET, 0, 0);
         }
 
+
+    }
+
+    private void updateToolbarColor(Bitmap bitmap) {
+        Palette p = Palette.generate(bitmap, 26);
+        Palette.Swatch vibrant = p.getVibrantSwatch();
+        if(vibrant == null) {
+            vibrant = p.getLightVibrantSwatch();
+        }
+        Log.d("PEDA", "Palette: " + p);
+        Log.d("PEDA", "Vibrant: " + vibrant);
+        Log.d("PEDA", "Toolbar: " + mToolbar);
+        if(vibrant == null) return;
+
+        mToolbar.setBackgroundColor(vibrant.getRgb());
+        mToolbar.setTitleTextColor(vibrant.getTitleTextColor());
+        waypointDistanceView.setColor(vibrant.getRgb());
+
+        Palette.Swatch dark = p.getDarkVibrantSwatch();
+
+        if(dark == null) return;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(dark.getRgb());
+        }
+        this.findViewById(R.id.toolbar).getRootView().setBackgroundColor(p.getMutedColor(android.R.color.background_light));
+
+        Palette.Swatch muted = p.getMutedSwatch();
+        questionText.setTextColor(muted.getBodyTextColor());
+        for(Button a : new Button[] {answer1, answer2, answer3, answer4})
+            a.setTextColor(muted.getBodyTextColor());
 
     }
 
@@ -365,7 +412,7 @@ public class PlayingActivity extends SystemBarTintActivity{
     }
 
     private void questionAnswerCorrect() {
-        Crouton.makeText(this, R.string.message_playing_right_answer, Style.CONFIRM).show();
+        Crouton.makeText(this, R.string.message_playing_right_answer, Style.CONFIRM, R.id.toolbar).show();
         sendMessage(GameService.MSG_QUESTION_ANSWERED, 0, 0);
         GameUtil.publishWaypointFinishToPlayGames(this, mGameHelper);
 
@@ -394,7 +441,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
             GameUtil.publishRouteFinishToPlayGames(this, mGameHelper);
 
-            Crouton.makeText(this, R.string.message_playing_route_finished, Style.CONFIRM).show();
+            Crouton.makeText(this, R.string.message_playing_route_finished, Style.CONFIRM, R.id.toolbar).show();
 
             Long routeId = this.currentWaypoint.route.id;
 
@@ -416,7 +463,7 @@ public class PlayingActivity extends SystemBarTintActivity{
         } catch (RemoteException e) {
             e.printStackTrace();
             doUnbindService();
-            Crouton.makeText(this, "Service did not respond", Style.INFO).show();
+            Crouton.makeText(this, "Service did not respond", Style.INFO, R.id.toolbar).show();
         }
     }
 
@@ -464,7 +511,7 @@ public class PlayingActivity extends SystemBarTintActivity{
 
         if(!BuildConfig.DEBUG)
             wrongAnswerCountdown.start();
-        Crouton.makeText(this, R.string.message_playing_wrong_answer, Style.ALERT).show();
+        Crouton.makeText(this, R.string.message_playing_wrong_answer, Style.ALERT, R.id.toolbar).show();
     }
 
 

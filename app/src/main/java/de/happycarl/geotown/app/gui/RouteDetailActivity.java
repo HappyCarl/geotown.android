@@ -10,11 +10,13 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.view.MenuCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.ShareActionProvider;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
@@ -44,7 +46,7 @@ import de.happycarl.geotown.app.gui.views.RouteDetailCardAdapter;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
-@EActivity(R.layout.activity_route_detail)
+@EActivity()
 public class RouteDetailActivity extends SystemBarTintActivity implements RouteActionsCard.RouteActionsCardListener {
     //================================================================================
     // Properties
@@ -69,8 +71,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        super.onCreate(savedInstanceState);
-
+        super.onCreate(savedInstanceState, R.layout.activity_route_detail);
 
         GeotownApplication.getEventBus().register(this);
     }
@@ -98,9 +99,9 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
                 e.printStackTrace();
             }
         } else {
-            if (getActionBar() != null) {
-                getActionBar().setHomeButtonEnabled(true);
-                getActionBar().setDisplayHomeAsUpEnabled(true);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setHomeButtonEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
         }
 
@@ -176,7 +177,7 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
 
         MenuItem item = menu.findItem(R.id.share_route);
 
-        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
         updateShareIntent();
 
@@ -205,8 +206,8 @@ public class RouteDetailActivity extends SystemBarTintActivity implements RouteA
             return;
         }
 
-        if (getActionBar() != null) {
-            getActionBar().setTitle(mRoute.name);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(mRoute.name);
         }
 
         FragmentManager fm = this.getFragmentManager();

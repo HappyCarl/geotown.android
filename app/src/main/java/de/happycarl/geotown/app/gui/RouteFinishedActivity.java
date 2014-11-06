@@ -1,6 +1,7 @@
 package de.happycarl.geotown.app.gui;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
@@ -22,15 +23,20 @@ import de.happycarl.geotown.app.R;
 import de.happycarl.geotown.app.models.GeoTownRoute;
 import de.happycarl.geotown.app.models.GeoTownWaypoint;
 
-@EActivity(R.layout.activity_route_finished)
+@EActivity()
 @OptionsMenu(R.menu.route_finished)
-public class RouteFinishedActivity extends Activity {
+public class RouteFinishedActivity extends SystemBarTintActivity {
 
     private GoogleMap mMap;
     private GeoTownRoute mRoute;
 
     @ViewById(R.id.route_finished_detail)
     TextView mRouteDetailText;
+
+    @Override
+    protected void onCreate(Bundle sIS) {
+        super.onCreate(sIS, R.layout.activity_route_finished, false);
+    }
 
     @AfterViews
     protected void afterViews() {

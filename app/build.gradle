@@ -103,7 +103,7 @@ dependencies {
     compile ('com.afollestad.cardsui:CardsUI:1.0.0@aar') {
         exclude module: 'support-v4'
     }
-    compile 'com.squareup.picasso:picasso:2.3.2'
+    compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.path:android-priority-jobqueue:1.1.2'
@@ -124,7 +124,7 @@ dependencies {
     compile 'com.google.api-client:google-api-client-android:1.18.0-rc'
     compile 'com.appspot.drive_log:geotown:0.4.2-SNAPSHOT'
     compile 'com.google.zxing:android-integration:3.0.0'
-
+    compile 'com.android.support:palette-v7:21.0.+'
     compile('de.psdev.licensesdialog:licensesdialog:1.6.0') {
         exclude module: 'support-v4'
     }

@@ -61,14 +61,7 @@ public class WaypointDistanceView extends View {
         circlePaint.setColor(getResources().getColor(android.R.color.darker_gray));
         circlePaint.setStrokeWidth(10f);
 
-        circleHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circleHighlightPaint.setStyle(Paint.Style.STROKE);
-        circleHighlightPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
-        circleHighlightPaint.setStrokeWidth(10f);
-
-        compassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        compassPaint.setStyle(Paint.Style.FILL);
-        compassPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
+        setColor(getResources().getColor(android.R.color.holo_red_light));
 
         centerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         centerPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -210,4 +203,16 @@ public class WaypointDistanceView extends View {
     }
 
 
+    public void setColor(int rgb) {
+        circleHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circleHighlightPaint.setStyle(Paint.Style.STROKE);
+        circleHighlightPaint.setColor(rgb);
+        circleHighlightPaint.setStrokeWidth(10f);
+
+        compassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        compassPaint.setStyle(Paint.Style.FILL);
+        compassPaint.setColor(rgb);
+
+        this.invalidate();
+    }
 }

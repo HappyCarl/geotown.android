@@ -5,6 +5,7 @@ import com.activeandroid.query.Select;
 import com.appspot.drive_log.geotown.model.Route;
 import com.appspot.drive_log.geotown.model.Waypoint;
 import com.path.android.jobqueue.Params;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class RouteRequest extends NetworkRequestJob {
                     if (oldwp == null) {
                         wp.save();
                     }
+                    Picasso.with(GeotownApplication.getContext()).load(w.getImageUrl()).fetch();
                 }
             ActiveAndroid.setTransactionSuccessful();
         } finally {

@@ -3,6 +3,7 @@ package de.happycarl.geotown.app.api.requests;
 import com.appspot.drive_log.geotown.model.Waypoint;
 import com.appspot.drive_log.geotown.model.WaypointCollection;
 import com.path.android.jobqueue.Params;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,10 @@ public class GetRouteWaypointsRequest extends NetworkRequestJob {
         List<Waypoint> waypoints = new ArrayList<>();
         if (wc != null && wc.getItems() != null) {
             waypoints = wc.getItems();
+        }
+
+        for(Waypoint w : waypoints) {
+            Picasso.with(GeotownApplication.getContext()).load(w.getImageUrl()).fetch();
         }
 
         final List<Waypoint> pedaB = waypoints;

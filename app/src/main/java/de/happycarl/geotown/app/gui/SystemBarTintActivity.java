@@ -24,9 +24,11 @@ import de.happycarl.geotown.app.events.google.GoogleClientConnectionFailedEvent;
 public abstract class SystemBarTintActivity extends ActionBarActivity {
 
     protected GameHelper mGameHelper;
+    protected Toolbar mToolbar;
 
-    protected void onCreate(Bundle savedInstanceState, int layoutId) {
-        initSystemBarTint();
+    protected void onCreate(Bundle savedInstanceState, int layoutId, boolean tintStatusBar) {
+        if(tintStatusBar)
+            initSystemBarTint();
 
         // create game helper with all APIs (Games and Plus):
         mGameHelper = new GameHelper(this, GameHelper.CLIENT_GAMES);
@@ -45,13 +47,18 @@ public abstract class SystemBarTintActivity extends ActionBarActivity {
             }
 
         };
+        super.onCreate(savedInstanceState);
+
         mGameHelper.setup(listener);
         setContentView(layoutId);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
         }
-        super.onCreate(savedInstanceState);
+    }
+
+    protected void onCreate(Bundle savedInstanceState, int layoutId) {
+        onCreate(savedInstanceState, layoutId, true);
     }
 
     @Override
@@ -97,6 +104,11 @@ public abstract class SystemBarTintActivity extends ActionBarActivity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setNavigationBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.primary_color);
+    }
+
+    protected void setStatusBarTintColor(int color) {
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setTintColor(color);
     }
 
     protected void onSignInSucceeded() {
